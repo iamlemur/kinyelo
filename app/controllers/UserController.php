@@ -3,6 +3,7 @@
 class UserController extends \BaseController {
 
 	protected $user;
+	protected $layout = 'layouts.master';
 
 	public function __construct(User $user) {
 		$this->user = $user;
@@ -26,7 +27,7 @@ class UserController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make('author/create')->with('user', $this->user);
+		$this->layout->content = View::make('author/create')->with('user', $this->user);
 	}
 
 	/**
@@ -89,7 +90,7 @@ class UserController extends \BaseController {
 	}
 
 	public function getLogin() {
-		return View::make('author/login')->with('user', $this->user);
+		$this->layout->content = View::make('author/login')->with('user', $this->user);
 	}
 
 }

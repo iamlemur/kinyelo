@@ -2,6 +2,8 @@
 
 class HomeController extends BaseController {
 
+	protected $layout = 'layouts.master';
+
 	public function __construct() {
 		$this->beforeFilter('auth');
 	}
@@ -21,7 +23,7 @@ class HomeController extends BaseController {
 
 	public function showWelcome()
 	{
-		return View::make('hello');
+
 	}
 
 }

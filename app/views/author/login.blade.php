@@ -1,3 +1,4 @@
+@section('content')
 <?
 print_r($errors);
 ?>
@@ -15,3 +16,4 @@ print_r($errors);
 {{ Form::close() }}
 
 <p>Don't have an account? <a href="{{ action('UserController@create') }}">Create one.</a></p>
+@stop

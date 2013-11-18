@@ -3,6 +3,7 @@
 class PostController extends \BaseController {
 
 	protected $post;
+	protected $layout = 'layouts.master';
 
 	public function __construct(Post $post) {
 		$this->post = $post;
@@ -17,7 +18,7 @@ class PostController extends \BaseController {
 	public function index()
 	{
 		$posts = Post::with('author')->get();
-		return View::make('post/index')->with('posts', $posts);
+		$this->layout->content = View::make('post/index')->with('posts', $posts);
 	}
 
 	/**
@@ -27,7 +28,7 @@ class PostController extends \BaseController {
 	 */
 	public function create()
 	{
-		return View::make('post/create')->with('post', $this->post);
+		$this->layout->content = View::make('post/create')->with('post', $this->post);
 	}
 
 	/**
@@ -61,7 +62,7 @@ class PostController extends \BaseController {
 	public function show($id)
 	{
 		$this->post = Post::with('author')->findOrFail($id);
-		return View::make('post/show')->with('post', $this->post);
+		$this->layout->content = View::make('post/show')->with('post', $this->post);
 	}
 
 	/**

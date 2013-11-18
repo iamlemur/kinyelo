@@ -1,3 +1,4 @@
+@section('content')
 <?
 print_r($errors);
 echo Session::get('message');
@@ -28,3 +29,4 @@ echo Session::get('message');
 {{ Form::close() }}
 
 <p>Already registered? <a href="{{ action('LoginController@getLogin') }}">Log in.</a></p>
+@stop

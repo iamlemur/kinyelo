@@ -3,6 +3,7 @@
 class LoginController extends \BaseController {
 
 	protected $user;
+	protected $layout = 'layouts.master';
 
 	public function __construct(User $user) {
 		$this->user = $user;
@@ -13,7 +14,7 @@ class LoginController extends \BaseController {
 		if(!empty($user->id)){
 			return Redirect::to('/');
 		}
-		return View::make('author/login')->with('user', $this->user);
+		$this->layout->content = View::make('author/login')->with('user', $this->user);
 	}
 
 	public function postLogin() {

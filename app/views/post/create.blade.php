@@ -1,3 +1,4 @@
+@section('content')
 <?
 print_r($errors);
 echo Session::get('message');
@@ -18,3 +19,4 @@ echo Session::get('message');
 {{ Form::submit('Create Post') }}
 
 {{ Form::close() }}
+@stop
