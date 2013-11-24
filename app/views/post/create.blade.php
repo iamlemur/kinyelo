@@ -1,8 +1,11 @@
 @section('content')
-<?
-print_r($errors);
-echo Session::get('message');
-?>
+
+{{ Session::get('message') }}
+<div class="post-form">
+<h1 itemprop="title" name="title" contenteditable="true">Type your title</h1>
+<h2 data-default-value="Type your subtitle" role="textbox" contenteditable="true"></h2>
+</div>
+
 
 {{ Form::model($post, array('action' => array('PostController@store'), 'method' => 'POST')) }}
 

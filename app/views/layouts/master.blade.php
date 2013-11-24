@@ -14,86 +14,57 @@
 	<script src="/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body>
-<div class="site-outer-wrapper">
-	<div class="site-inner-wrapper">
-		<nav class="site-nav">
+
+		<nav class="site-nav" role="navigation">
 			<div class="site-nav-scrollable-container">
-				test
+				<h1>Postbook</h1>
+				<form role="search" method="get" action="/search">
+					<input type="text" name="q" />
+				</form>
+				<ul>
+					<li><a href="#">joelleimer</a></li>
+					<li>
+						<a href="#">posts</a>
+						<ul>
+							<li><a href="#" class="active">trending</a></li>
+							<li><a href="#">editor's picks</a></li>
+							<li><a href="#">most recent</a></li>
+							<li><a href="#">my reading list</a></li>
+							<li>
+								<a href="#">my posts</a>
+								<ul>
+									<li><a href="#">drafts</a></li>
+									<li><a href="#">published</a></li>
+									<li><a href="#">recommended</a></li>
+								</ul>
+							</li>
+							<li><a href="#">create new post</a></li>
+						</ul>
+					</li>
+					<li><a href="#">books</a></li>
+					<li><a href="#">chracters</a></li>
+					<li><a href="#">authors</a></li>
+				</ul>
 			</div>
 		</nav>
-		<div class="content-container" id="content-container">
+		<main class="content-container" id="content-container" role="main">
 			@yield('content')
+		</main>
+		<nav class="page-utils nano" role="complementary">
+			<div class="page-utils-scrollable-container content">
+
+			</div>
+		</nav>
+		<nav id="dev-nav">
 			<a href="#" id="openNav">Open Nav</a>
 			<a href="#" id="openUtils">Open Utils</a>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p>
-		</div>
-		<nav class="page-utils">
-			<div class="page-utils-scrollable-container">
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>&nbsp;</p>
-				<p>hey</p>
-			</div>
+			<a href="{{ action('PostController@index') }}">View all posts</a>
+			<a href="{{ action('PostController@create') }}">Create a post</a>
+			<a href="{{ action('LoginController@getLogin') }}">Login</a>
 		</nav>
-	</div>
-</div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<script src="/js/vendor/jquery.nanoscroller.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
 <script src="/js/scripts.js"></script>
 </body>

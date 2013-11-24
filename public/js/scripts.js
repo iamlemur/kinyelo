@@ -1,8 +1,9 @@
 $(document).ready(function() {
     $("#openNav").click(function() {
-        $("html").addClass('js-site-nav');
+        $("html").toggleClass('js-site-nav');
     });
     $("#openUtils").click(function() {
-        $("html").addClass('js-utils-nav');
-    })
+        $("html").toggleClass('js-utils-nav');
+    });
+    $(".nano").nanoScroller();
 });
