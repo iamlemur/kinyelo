@@ -1,22 +1,28 @@
 @section('content')
-<table>
-	<thead>
-	<tr>
-		<th>ID</th>
-		<th>Title</th>
-		<th>Status</th>
-		<th>Author</th>
-	</tr>
-	</thead>
-	<tbody>
-@foreach($posts as $post)
-	<tr>
-		<td>{{ $post->id }}</td>
-		<td><a href="{{ action('PostController@show', $post->id) }}">{{ $post->title }}</a></td>
-		<td>{{ $post->status }}</td>
-		<td>{{ $post->author->username }}</td>
-	</tr>
-@endforeach
-	</tbody>
-	</table>
+
+@section('content')
+<h1>posts</h1>
+<nav>
+	<ul>
+		<li class="active"><a href="#">trending</a></li>
+		<li><a href="#">editor's picks</a></li>
+		<li><a href="#">most recent</a></li>
+	</ul>
+</nav>
+<div id="inner-content-container">
+	<ul>
+		@foreach($posts as $post)
+			<li>
+				<h2><a href="{{ action('PostController@show', $post->id) }}">Title 1</a></h2>
+				<small>published by iamlemur on <time>May 1, 2014</time></small>
+			</li>
+		@endforeach
+		@foreach($posts as $post)
+		<li>
+			<h2><a href="{{ action('PostController@show', $post->id) }}">Title 1</a></h2>
+			<small>published by iamlemur on <time>May 1, 2014</time></small>
+		</li>
+		@endforeach
+	</ul>
+</div>
 @stop

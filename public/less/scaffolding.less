@@ -3,11 +3,151 @@ html {
 	height: 100%;
 }
 body {
-	color: #333333;
+	color: @black;
 	min-width: 20em;
 	font-size: 1.4rem;
 	position: relative;
 	height: 100%;
 	width: 100%;
 	overflow-x: hidden;
+	font-family: @serifFontFamily;
+}
+a {
+	color: @black;
+}
+body.pb-posts {
+	#fixed-nav {
+		#btn-add-favorite {
+			&:hover{
+				border-color: @postsColor;
+				&:before {
+					color: @postsColor;
+				}
+			}
+			&:active, .active {
+				border-color: @postsColor;
+				background-color: @postsColor;
+				&:before {
+					color: @bodyBackgroundColor;
+				}
+			}
+		}
+	}
+	nav li.active a {
+		color: @postsColor;
+	}
+}
+#fixed-nav {
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: block;
+	width: 100%;
+	#logo {
+		position: absolute;
+		top: 0;
+		left: 0;
+		border-radius: 500px;
+		border: 3px solid @grayDark;
+		height: 50px;
+		width: 50px;
+		display: block;
+		text-decoration: none;
+		&:before {
+			display: block;
+			font-family: @serifFontFamily;
+			font-size: 32px;
+			line-height: 40px;
+			height: 50px;
+			width: 35px;
+			color: @grayDark;
+			padding-left: 15px;
+			content: "p.";
+		}
+		&:hover {
+			&:before {
+				.icon-stroke();
+				content: "\e53d";
+				font-size: 24px;
+				line-height: 49px;
+				top: 0;
+				left: -1px;
+			}
+		}
+	}
+	#btn-add-favorite {
+		position: absolute;
+		top: 0;
+		right: 0;
+		border-radius: 500px;
+		border: 2px solid @grayLight;
+		display: block;
+		width: 50px;
+		height: 50px;
+		&:before {
+			color: @grayLight;
+			font-size: 24px;
+			content: "\e0b5";
+			.icon-solid();
+			line-height: 47px;
+			top: 0;
+			left: 13px;
+		}
+	}
+}
+.content-container {
+	> h1 {
+		text-align: center;
+		font-size: 44px;
+		line-height: 56px;
+	}
+	> nav {
+		border-top: 1px solid @grayLightest;
+		> ul {
+			margin: 0 0 20px;
+			padding: 0;
+			.clearfix();
+			> li {
+				float: left;
+				display: inline-block;
+				> a {
+					font-family: @sansFontFamily;
+					text-decoration: none;
+					font-size: 15px;
+					display: block;
+					padding: 10px 20px;
+					color: @grayLight;
+				}
+			}
+		}
+	}
+	#inner-content-container {
+		> ul {
+			padding: 0;
+			margin: 0;
+			> li {
+				padding: 15px 20px;
+				> h2 {
+					margin: 0;
+					font-size: 20px;
+					line-height: 1;
+					padding-bottom: 6px;
+					> a {
+						display: block;
+						text-decoration: none;
+					}
+				}
+				> small {
+					color: @grayLighter;
+					font-size: 15px;
+					line-height: 1;
+					font-family: @sansFontFamily;
+					display: block;
+					> time {
+
+					}
+				}
+			}
+		}
+	}
 }

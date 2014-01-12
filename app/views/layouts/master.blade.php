@@ -13,39 +13,43 @@
 	<link rel="stylesheet" href="/css/base.css">
 	<script src="/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
-<body>
+<body class="pb-posts">
 
 		<nav class="site-nav" role="navigation">
 			<div class="site-nav-scrollable-container">
-				<h1>Postbook</h1>
+				<h1>postbook.</h1>
 				<form role="search" method="get" action="/search">
-					<input type="text" name="q" />
+					<input type="text" name="q" placeholder="search" />
 				</form>
 				<ul>
-					<li><a href="#">joelleimer</a></li>
-					<li>
-						<a href="#">posts</a>
+					<li class="personal"><a href="#"><span>joelleimer</span></a></li>
+					<li class="posts active">
+						<a href="#"><span>posts</span></a>
 						<ul>
-							<li><a href="#" class="active">trending</a></li>
-							<li><a href="#">editor's picks</a></li>
-							<li><a href="#">most recent</a></li>
-							<li><a href="#">my reading list</a></li>
+							<li class="active"><a href="#"><span>trending</span></a></li>
+							<li><a href="#"><span>editor's picks</span></a></li>
+							<li><a href="#"><span>most recent</span></a></li>
+							<li><a href="#"><span>my reading list</span></a></li>
 							<li>
-								<a href="#">my posts</a>
+								<a href="#"><span>my posts</span></a>
 								<ul>
 									<li><a href="#">drafts</a></li>
 									<li><a href="#">published</a></li>
 									<li><a href="#">recommended</a></li>
 								</ul>
 							</li>
-							<li><a href="#">create new post</a></li>
+							<li class="add"><a href="#"><span>create new post</span></a></li>
 						</ul>
 					</li>
-					<li><a href="#">books</a></li>
-					<li><a href="#">chracters</a></li>
-					<li><a href="#">authors</a></li>
+					<li class="books"><a href="#"><span>books</span></a></li>
+					<li class="characters"><a href="#"><span>characters</span></a></li>
+					<li class="authors"><a href="#"><span>authors</span></a></li>
 				</ul>
 			</div>
+		</nav>
+		<nav id="fixed-nav">
+			<a href="#" id="logo"></a>
+			<a href="#" id="btn-add-favorite"></a>
 		</nav>
 		<main class="content-container" id="content-container" role="main">
 			@yield('content')
