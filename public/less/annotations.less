@@ -1,0 +1,84 @@
+nav[role=complementary] {
+	.page-utils-scrollable-container {
+		> ul {
+			font-family: @sansFontFamily;
+			margin: 0 4px 0 0;
+			padding: 0 0 5px;
+			position: relative;
+			display: block;
+			border-top: 2px solid @grayLightest;
+			&:after {
+				.icon-solid();
+				position: absolute;
+				top: 18px;
+				right: 13px;
+			}
+			&.comment:after {
+				content: "\e03b";
+			}
+			> li:first-child a.author {
+				padding-right: 15px;
+			}
+			li {
+				display: block;
+				padding: 0 10px 0 0;
+				background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjFweCIgaGVpZ2h0PSIzcHgiIHZpZXdCb3g9IjAgMCAxIDMiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPgogICAgPHRpdGxlPlNsaWNlIDE8L3RpdGxlPgogICAgPGRlc2NyaXB0aW9uPkNyZWF0ZWQgd2l0aCBTa2V0Y2ggKGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCk8L2Rlc2NyaXB0aW9uPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPHBhdGggZD0iTTAuNSwwLjUgTDAuNDk5OTk5OTM5LDIuMjUiIGlkPSJMaW5lIiBzdHJva2U9IiNCRkJGQkYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgIDwvZz4KPC9zdmc+');
+				background-repeat: repeat-y;
+				background-position: 27.5px top;
+				a.avatar {
+					padding: 7px 0;
+					background-color: @white;
+					text-align: center;
+					width: 55px;
+					position: absolute;
+					left: 0;
+					border: 0 none;
+					display: inline-block;
+					img {
+						border-radius: 35px;
+						border: 3px solid @grayLightest;
+						width: 35px;
+						height: 35px;
+					}
+				}
+				a.author {
+					font-size: 16px;
+					line-height: 18px;
+					font-weight: 600;
+					padding-top: 18px;
+					display: block;
+					padding-left: 55px;
+				}
+				p.content {
+					margin: 5px 0;
+					font-size: 13px;
+					line-height: 18px;
+					padding-left: 55px;
+				}
+				ul {
+					padding: 0;
+					margin: 0;
+					li {
+						background-image: none;
+						padding-left: 0;
+						&:last-child {
+							background-color: @white;
+						}
+						a.avatar {
+							padding: 5px 0;
+							img {
+								border-radius: 25px;
+								border-width: 2px;
+								width: 25px;
+								height: 25px;
+							}
+						}
+						a.author {
+							padding-top: 8px;
+						}
+					}
+				}
+			}
+		}
+	}
+}
