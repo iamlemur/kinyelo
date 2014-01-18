@@ -1,11 +1,11 @@
 @section('content')
 
-
+<div class="post-container">
 <header>
 	<h1>{{ $post->title }}</h1>
-	<small>{{ $post->status }} by <a href="#">{{ $post->author->username }}</a> on <time>December 15, 2013</time>, 15m, <a href="#">Favorites</a></small>
+	<small>{{ $post->status }} by <a href="#">{{ $post->author->username }}</a> on <time datetime="{{ $post->created_at->toISO8601String() }}">{{ $post->created_at->toFormattedDateString() }}</time></small>
 </header>
-<main>
+<div class="post-body">
 
 	<p>{{ $post->content }}</p>
 
@@ -19,6 +19,82 @@
 
 
 
-</main>
+</div>
 
+	<div class="post-actions">
+		<a href="#" class="btn-favorite"></a>
+		<a href="#" class="btn-email"></a>
+		<a href="#" class="btn-facebook"></a>
+		<a href="#" class="btn-twitter"></a>
+	</div>
+
+	<div class="tags">
+		<ul>
+			<li><a href="#">tag 1</a></li>
+			<li><a href="#">tag 2</a></li>
+			<li><a href="#">tag 3</a></li>
+			<li><a href="#">tag 4</a></li>
+			<li><a href="#">tag 5</a></li>
+			<li><a href="#">tag 6</a></li>
+		</ul>
+	</div>
+
+	<figure class="post-author">
+		<div class="img-wrapper">
+			<img src="/img/avatar.jpg" />
+		</div>
+		<div class="bio">
+			<h2>iamlemur</h2>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu neque non erat ullamcorper aliquet sed id nibh. Ut vel diam malesuada, interdum tortor ac, blandit tellus. Aliquam erat volutpat. Integer urna neque, molestie sed gravida ac, auctor quis felis. Fusce et rutrum massa. Etiam convallis arcu vel nulla tincidunt, aliquet vehicula urna suscipit. Sed auctor quam ac eleifend ultricies. Ut nibh tellus, scelerisque sit amet aliquam et, dignissim sed erat. Phasellus nibh odio, lobortis eget ante sed, dignissim ornare justo. Mauris sagittis tortor eget euismod dictum. Curabitur tincidunt nisi at enim malesuada tempus. In fringilla tristique mauris, ultrices adipiscing justo accumsan non. Aliquam aliquet orci eu metus dapibus faucibus. Aenean varius egestas tortor sed gravida. </p>
+		</div>
+	</figure>
+
+	<footer class="by-sa-30">
+		<h2>rights and usage</h2>
+		<p><a href="{{ action('PostController@show', $post->id) }}" property="dc:title" rel="cc:attributionURL">{{ $post->title }}</a> by <a href="#" rel="dc:creator" property="cc:attributionName">{{ $post->author->username }}</a> is licensed under a <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</p>
+		<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a>
+		<a href="#" class="btn-report">report a violation</a>
+	</footer>
+
+
+</div>
+
+@stop
+
+@section('upcoming')
+
+	<div class="upcoming">
+		<a href="#">Michael's Post is Much Better Than Joel's Paltry</a>
+		<small>published by asiral on May 10, 2014</small>
+	</div>
+
+@stop
+
+@section('annotations')
+<p>&nbsp;</p>
+<ul class="comment">
+	<li>
+		<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar1.jpg" /></a>
+		<a href="#" title="Go to the profile of..." class="author">jcomp</a>
+		<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+		<ul>
+			<li>
+				<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar2.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+			</li>
+			<li>
+				<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar2.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+			</li>
+		</ul>
+	</li>
+</ul>
+<ul class="character">
+
+</ul>
+<ul class="post">
+
+</ul>
 @stop

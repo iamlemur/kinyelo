@@ -2,7 +2,7 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready js-utils-nav"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,12 +51,18 @@
 			<a href="#" id="logo"></a>
 			<a href="#" id="btn-add-favorite"></a>
 		</nav>
-		<main class="content-container" id="content-container" role="main">
-			@yield('content')
+		<div id="active-nav-overlay"></div>
+		<main class="outer-content-wrapper" role="main">
+			<div class="inner-content-wrapper">
+				<div class="content-container" id="content-container">
+					@yield('content')
+				</div>
+				@yield('upcoming')
+			</div>
 		</main>
-		<nav class="page-utils nano" role="complementary">
+		<nav class="page-utils" role="complementary">
 			<div class="page-utils-scrollable-container content">
-
+				@yield('annotations')
 			</div>
 		</nav>
 		<nav id="dev-nav">
@@ -69,6 +75,8 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
 <script src="/js/vendor/jquery.nanoscroller.min.js"></script>
+<script src="/js/vendor/waypoints.min.js"></script>
+<script src="/js/vendor/waypoints-sticky.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
 <script src="/js/scripts.js"></script>
 </body>

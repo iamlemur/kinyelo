@@ -36,6 +36,26 @@
 	-webkit-font-smoothing: antialiased;
 }
 
+@font-face {
+	font-family: 'Flaticons Social';
+	src: url('../fonts/flaticons-social.eot');
+	src: url('../fonts/flaticons-social.eot?#iefix') format("embedded-opentype"),
+	url('../fonts/flaticons-social.woff') format('woff'),
+	url('../fonts/flaticons-social.ttf') format('truetype'),
+	url('../fonts/flaticons-social.svg#flaticons-social') format('svg');
+	font-weight: normal;
+	font-style: normal; }
+
+.flaticon-social() {
+	font-family: 'Flaticons Social';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+
 .icon-stroke() {
 	.flaticon-stroke();
 	position: absolute;
@@ -43,6 +63,11 @@
 }
 .icon-solid() {
 	.flaticon-solid();
+	position: absolute;
+	top: 0;
+}
+.icon-social() {
+	.flaticon-social();
 	position: absolute;
 	top: 0;
 }

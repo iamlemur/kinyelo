@@ -39,7 +39,7 @@ nav[role=navigation] {
 			}
 		}
 		a, a:visited, a:active, a:hover {
-			color: @white;
+			color: @white !important;
 			text-decoration: none;
 			font-size: @fontSizeNav;
 		}
@@ -150,13 +150,7 @@ nav[role=navigation] {
 		}
 	}
 }
-main[role=main] {
-	padding: 75px 2% 0;
-	z-index: @zIndexMain;
-	.clearfix();
-}
-nav[role=complementary] {
-	background-color: #efefef;
+/*nav[role=complementary] {
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -168,54 +162,74 @@ nav[role=complementary] {
 	.page-utils-scrollable-container {
 		height: 100%;
 	}
-}
-.js-utils-nav {
-	nav[role=complementary] {
-		right: 0;
+}*/
+nav[role=complementary] {
+	position: fixed;
+	height: 100%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: @zIndexComments;
+	-webkit-transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+	transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+	.page-utils-scrollable-container {
+		height: 100%;
+		overflow-y: scroll;
 	}
 }
+#active-nav-overlay {
+	width: 100%;
+	height: 100%;
+	display: none;
+	position: absolute;
+	background-color: @white;
+	opacity: 0.1;
+	bottom: 0;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: @zIndexOverlay;
+}
+nav[role=navigation] {
+	width: 250px;
+	left: -250px;
+}
+nav[role=complementary] {
+	width: 300px;
+	right: -300px;
+}
+main[role=main] {
+	transition: transform 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9) 0s;
+}
 .js-site-nav {
+	main[role=main] {
+		transform: translate3d(250px, 0px, 0px);
+		position: fixed;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
+	}
+	#active-nav-overlay {
+		display: block;
+	}
 	nav[role=navigation] {
 		left: 0;
 	}
 }
-
-main[role=main] {
-	margin: 0 auto;
-	max-width: 1024px;
-}
-
-@media @breakDesktop {
-	nav[role=navigation] {
-		width: 20%;
-		left: -20%;
-	}
-	nav[role=complementary] {
-		width: 20%;
-		right: -20%;
-	}
-}
-
-@media @breakMiddle {
-	nav[role=navigation] {
-		width: 250px;
-		left: -250px;
-	}
-	nav[role=complementary] {
-		width: 250px;
-		right: -250px;
-	}
+.js-utils-nav {
 	main[role=main] {
-		transition: transform 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9) 0s;
+		transform: translate3d(-300px, 0px, 0px);
+		position: fixed;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
 	}
-	.js-site-nav {
-		main[role=main] {
-			transform: translate3d(250px, 0px, 0px);
-		}
+	#active-nav-overlay {
+		display: block;
 	}
-	.js-utils-nav {
-		main[role=main] {
-			transform: translate3d(-250px, 0px, 0px);
-		}
+	nav[role=complementary] {
+		right: 0;
 	}
 }
