@@ -24,7 +24,7 @@
 				<ul>
 					<li class="personal"><a href="#"><span>joelleimer</span></a></li>
 					<li class="posts active">
-						<a href="{{ action('BookController@index') }}"><span>posts</span></a>
+						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
 						<ul>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "trending" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'trending')) }}"><span>trending</span></a></li>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "editor" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'editor')) }}"><span>editor's picks</span></a></li>

@@ -7,6 +7,7 @@ class LoginController extends \BaseController {
 
 	public function __construct(User $user) {
 		$this->user = $user;
+		View::share('context', null);
 	}
 
 	public function getLogin() {

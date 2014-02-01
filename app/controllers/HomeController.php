@@ -5,7 +5,7 @@ class HomeController extends BaseController {
 	protected $layout = 'layouts.master';
 
 	public function __construct() {
-
+		View::share('context', null);
 	}
 
 	/*

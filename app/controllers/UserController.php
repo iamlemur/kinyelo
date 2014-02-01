@@ -8,6 +8,7 @@ class UserController extends \BaseController {
 	public function __construct(User $user) {
 		$this->user = $user;
 		$this->beforeFilter('auth', array('except' => array('create', 'store')));
+		View::share('context', null);
 	}
 
 	/**
