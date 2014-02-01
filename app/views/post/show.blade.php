@@ -5,7 +5,7 @@
 	<h1>{{ $post->title }}</h1>
 	<small>{{ $post->status }} by <a href="#">{{ $post->author->username }}</a> on <time datetime="{{ $post->created_at->toISO8601String() }}">{{ $post->created_at->toFormattedDateString() }}</time></small>
 </header>
-<div class="post-body">
+<div class="content-body">
 
 	<p>{{ $post->content }}</p>
 
@@ -21,7 +21,7 @@
 
 </div>
 
-	<div class="post-actions">
+	<div class="social-actions">
 		<a href="#" class="btn-favorite"></a>
 		<a href="#" class="btn-email"></a>
 		<a href="#" class="btn-facebook"></a>
@@ -39,7 +39,7 @@
 		</ul>
 	</div>
 
-	<figure class="post-author">
+	<figure class="content-author">
 		<div class="img-wrapper">
 			<img src="/img/avatar.jpg" />
 		</div>
@@ -71,30 +71,144 @@
 @stop
 
 @section('annotations')
-<p>&nbsp;</p>
-<ul class="comment">
-	<li>
-		<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar1.jpg" /></a>
-		<a href="#" title="Go to the profile of..." class="author">jcomp</a>
-		<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
-		<ul>
-			<li>
-				<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar2.jpg" /></a>
-				<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+<div class="annotations-container">
+	<p>&nbsp;</p>
+	<ul class="annotation-list comment">
+		<li class="has-children">
+			<div class="entry">
+				<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar1.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">jcomp</a>
 				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
-			</li>
-			<li>
-				<a href="#" title="Go to the profile of..." class="avatar"><img src="/img/avatar2.jpg" /></a>
-				<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+			</div>
+			<ul>
+				<li>
+					<div class="entry">
+						<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar2.jpg" /></a>
+						<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+						<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+					</div>
+				</li>
+				<li>
+					<div class="entry">
+						<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar2.jpg" /></a>
+						<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+						<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+					</div>
+				</li>
+				<li>
+					<div class="entry">
+						<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar.jpg" /></a>
+						<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
+						<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+						<p class="approval"><span>The comment has been sent to the author for approval.</span></p>
+					</div>
+				</li>
+			</ul>
+			<a href="#" class="reply start-reply">reply</a>
+		</li>
+	</ul>
+	<ul class="annotation-list character">
+		<li>
+			<div class="entry">
+				<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
+				<a href="#" title="Go to the character profile of..." class="character">Robert Bloch</a>
 				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
-			</li>
-		</ul>
-	</li>
-</ul>
-<ul class="character">
-
-</ul>
-<ul class="post">
-
-</ul>
+				<p class="approval"><span>The character has been sent to the author for approval.</span></p>
+			</div>
+			<a href="#" class="reply start-reply">reply</a>
+		</li>
+	</ul>
+	<ul class="annotation-list comment">
+		<li class="has-children">
+			<div class="entry">
+				<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar1.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">jcomp</a>
+				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+			</div>
+			<ul>
+				<li>
+					<div class="entry">
+						<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar2.jpg" /></a>
+						<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+						<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+					</div>
+				</li>
+				<li>
+					<div class="entry">
+						<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar2.jpg" /></a>
+						<a href="#" title="Go to the profile of..." class="author">sammyshake</a>
+						<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+					</div>
+				</li>
+			</ul>
+			<div class="action-reply-metadata input-metadata comment">
+				<div class="entry">
+					<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar.jpg" /></a>
+					<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
+					<p class="content">Add a comment...</p>
+					<ul>
+						<li><a href="#" class="reply submit-reply-metadata">reply</a></li>
+						<li><a href="#" class="cancel cancel-reply-metadata">cancel</a></li>
+					</ul>
+				</div>
+			</div>
+		</li>
+	</ul>
+	<ul class="annotation-list character">
+		<li>
+			<div class="entry">
+				<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar1.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">jcomp</a>
+				<a href="#" title="Go to the character profile of..." class="character">Firstname Lastname</a>
+				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+			</div>
+			<a href="#" class="reply start-reply">reply</a>
+		</li>
+	</ul>
+	<ul class="annotation-list post">
+		<li>
+			<div class="entry">
+				<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar1.jpg" /></a>
+				<a href="#" title="Go to the profile of..." class="author">jcomp</a>
+				<a href="#" title="Go to post..." class="post">Lorem ipsum dolor sit amet</a>
+				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
+			</div>
+			<a href="#" class="reply start-reply">reply</a>
+		</li>
+	</ul>
+	<ul class="actions">
+		<li>
+			<a href="#" class="add-comment">add a comment</a>
+		</li>
+		<li>
+			<a href="#" class="suggest-character">suggest a character</a>
+		</li>
+		<li>
+			<a href="#" class="connect-post">connect a post</a>
+		</li>
+	</ul>
+	<div class="action-create-metadata input-metadata comment">
+		<div class="entry">
+			<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar.jpg" /></a>
+			<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
+			<p class="content">Add a comment...</p>
+			<ul>
+				<li><a href="#" class="reply submit-create-metadata">add</a></li>
+				<li><a href="#" class="cancel cancel-create-metadata">cancel</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="action-create-metadata input-metadata character">
+		<div class="entry">
+			<a href="#" title="Go to the profile of..." class="avatar" rel="nofollow"><img src="/img/avatar.jpg" /></a>
+			<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
+			<p class="content">Type the character's name...</p>
+			<ul>
+				<li><a href="#" class="reply submit-create-metadata">suggest</a></li>
+				<li><a href="#" class="cancel cancel-create-metadata">cancel</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
 @stop

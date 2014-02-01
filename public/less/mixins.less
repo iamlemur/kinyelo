@@ -176,7 +176,37 @@
 	filter: ~"alpha(opacity=@{opacity-ie})";
 }
 
-.content-container() {
+.contextual-colors(@color) {
+	#fixed-nav #btn-add-favorite,
+	.content-container .post-container .post-actions a,
+	.content-container .post-container footer a {
+		&:hover{
+			border-color: @color;
+			color: @color;
+			&:before {
+				color: @color;
+			}
+		}
+		&:active, .active {
+			border-color: @color;
+			background-color: @color;
+			&:before {
+				color: @bodyBackgroundColor;
+			}
+		}
+	}
+	nav li.active a {
+		color: @color;
+	}
+	a:hover {
+		color: @color;
+	}
+	div.upcoming {
+		background-color: @color;
+	}
+}
+
+.container() {
 	padding: 4% 5%;
 	margin: 0 auto;
 	max-width: 1024px;

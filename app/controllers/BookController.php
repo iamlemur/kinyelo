@@ -1,14 +1,14 @@
 <?php
 
-class PostController extends \BaseController {
+class BookController extends \BaseController {
 
-	protected $post;
+	protected $book;
 	protected $layout = 'layouts.master';
 
-	public function __construct(Post $post) {
-		$this->post = $post;
+	public function __construct(Book $book) {
+		$this->book = $book;
 		$this->beforeFilter('auth');
-		View::share('context', 'pb-posts');
+		View::share('context', 'pb-books');
 	}
 
 	/**
@@ -23,8 +23,8 @@ class PostController extends \BaseController {
 
 	public function listing($filter = 'recent')
 	{
-		$posts = Post::with('author')->get();
-		$this->layout->content = View::make('post/index')->with('posts', $posts);
+		$books = Book::with('author')->get();
+		$this->layout->content = View::make('book/index')->with('books', $books);
 	}
 
 	/**
@@ -34,7 +34,7 @@ class PostController extends \BaseController {
 	 */
 	public function create()
 	{
-		$this->layout->content = View::make('post/create')->with('post', $this->post);
+		$this->layout->content = View::make('book/create')->with('book', $this->book);
 	}
 
 	/**
@@ -44,18 +44,18 @@ class PostController extends \BaseController {
 	 */
 	public function store()
 	{
-		$this->post = new Post;
-		$this->post->title = Input::get('title');
-		$this->post->content = Input::get('content');
-		$this->post->status = Input::get('status');
+		$this->book= new Book;
+		$this->book->title = Input::get('title');
+		$this->book->summary= Input::get('summary');
+		$this->book->status = Input::get('status');
 		if(Input::get('status') == "published") {
-			$this->post->published_at = Carbon\Carbon::now();
+			$this->book->published_at = Carbon\Carbon::now();
 		}
-		$this->post->user_id = Auth::user()->id;
-		if ( $this->post->save() ) {
-			return Redirect::to('/')->with( 'message', 'Thanks for posting!' );
+		$this->book->user_id = Auth::user()->id;
+		if ( $this->book->save() ) {
+			return Redirect::action('BookController@show', $this->book->id)->with( 'message', 'Thanks for posting!' );
 		} else {
-			return Redirect::action('PostController@create')->withErrors( $this->post->errors() );
+			return Redirect::action('BookController@create')->withErrors( $this->post->errors() );
 		}
 	}
 
@@ -67,8 +67,8 @@ class PostController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$this->post = Post::with('author')->findOrFail($id);
-		$this->layout->content = View::make('post/show')->with('post', $this->post);
+		$this->book = Book::with('author')->findOrFail($id);
+		$this->layout->content = View::make('book/show')->with('book', $this->book);
 	}
 
 	/**

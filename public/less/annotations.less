@@ -1,84 +1,252 @@
-nav[role=complementary] {
-	.page-utils-scrollable-container {
-		> ul {
-			font-family: @sansFontFamily;
-			margin: 0 4px 0 0;
-			padding: 0 0 5px;
-			position: relative;
+@alignmentMargin:                  55px;
+
+.annotations-container {
+	font-family: @sansFontFamily;
+	font-size: 13px;
+	line-height: 18px;
+	ul, li {
+		padding: 0;
+		margin: 0;
+	}
+	div.entry {
+		padding: 0 25px 0 @alignmentMargin;
+		a {
 			display: block;
-			border-top: 2px solid @grayLightest;
-			&:after {
-				.icon-solid();
-				position: absolute;
-				top: 18px;
-				right: 13px;
-			}
-			&.comment:after {
-				content: "\e03b";
-			}
-			> li:first-child a.author {
-				padding-right: 15px;
-			}
-			li {
-				display: block;
-				padding: 0 10px 0 0;
+		}
+	}
+	//target direct descendant so nested lists are not affected and box-model does not compound
+	> ul {
+		border-top: 2px solid @grayLightest;
+		li {
+			display: block;
+			&.has-children {
 				background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+Cjxzdmcgd2lkdGg9IjFweCIgaGVpZ2h0PSIzcHgiIHZpZXdCb3g9IjAgMCAxIDMiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeG1sbnM6c2tldGNoPSJodHRwOi8vd3d3LmJvaGVtaWFuY29kaW5nLmNvbS9za2V0Y2gvbnMiPgogICAgPHRpdGxlPlNsaWNlIDE8L3RpdGxlPgogICAgPGRlc2NyaXB0aW9uPkNyZWF0ZWQgd2l0aCBTa2V0Y2ggKGh0dHA6Ly93d3cuYm9oZW1pYW5jb2RpbmcuY29tL3NrZXRjaCk8L2Rlc2NyaXB0aW9uPgogICAgPGRlZnM+PC9kZWZzPgogICAgPGcgaWQ9IlBhZ2UtMSIgc3Ryb2tlPSJub25lIiBzdHJva2Utd2lkdGg9IjEiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc2tldGNoOnR5cGU9Ik1TUGFnZSI+CiAgICAgICAgPHBhdGggZD0iTTAuNSwwLjUgTDAuNDk5OTk5OTM5LDIuMjUiIGlkPSJMaW5lIiBzdHJva2U9IiNCRkJGQkYiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiIHNrZXRjaDp0eXBlPSJNU1NoYXBlR3JvdXAiPjwvcGF0aD4KICAgIDwvZz4KPC9zdmc+');
 				background-repeat: repeat-y;
 				background-position: 27.5px top;
+			}
+			//adjust size of reply avatars, reply inputs, and reply headers for alignment
+			ul li, div.input-metadata {
+				&:last-child {
+					background-color: @bodyBackgroundColor;
+				}
 				a.avatar {
-					padding: 7px 0;
-					background-color: @white;
-					text-align: center;
-					width: 55px;
-					position: absolute;
-					left: 0;
-					border: 0 none;
-					display: inline-block;
+					padding: 5px 0;
 					img {
-						border-radius: 35px;
-						border: 3px solid @grayLightest;
-						width: 35px;
-						height: 35px;
+						border-radius: 25px;
+						border-width: 2px;
+						width: 25px;
+						height: 25px;
 					}
 				}
 				a.author {
-					font-size: 16px;
-					line-height: 18px;
-					font-weight: 600;
-					padding-top: 18px;
+					padding: 10px 0;
+				}
+			}
+		}
+		//target the list of action buttons
+		&.actions {
+			border-top: 0 none;
+			li {
+				padding: 0;
+				a {
+					padding-bottom: 20px;
+					padding-top: 20px;
+					padding-right: 10px;
+					padding-left: @alignmentMargin;
+					position: relative;
 					display: block;
-					padding-left: 55px;
-				}
-				p.content {
-					margin: 5px 0;
-					font-size: 13px;
-					line-height: 18px;
-					padding-left: 55px;
-				}
-				ul {
-					padding: 0;
-					margin: 0;
-					li {
-						background-image: none;
-						padding-left: 0;
-						&:last-child {
-							background-color: @white;
+					color: @grayLight;
+					&:hover {
+						color: @black;
+						&:before {
+							color: @black;
+							border-color: @black;
 						}
-						a.avatar {
-							padding: 5px 0;
-							img {
-								border-radius: 25px;
-								border-width: 2px;
-								width: 25px;
-								height: 25px;
-							}
-						}
-						a.author {
-							padding-top: 8px;
-						}
+					}
+					&:before {
+						.icon-solid();
+						position: absolute;
+						top: 10px;
+						left: 10px;
+						line-height: 31px;
+						text-indent: 8px;
+						width: 31px;
+						height: 31px;
+						display: block;
+						border: 2px solid @grayLight;
+						border-radius: 35px;
+						color: @grayLight;
+					}
+					&.add-comment:before {
+						content: "\e03b";
+					}
+					&.suggest-character:before {
+						content: "\e0ca";
+					}
+					&.connect-post:before {
+						content: "\e0bb";
 					}
 				}
 			}
+		}
+		a.start-reply {
+			background-color: @bodyBackgroundColor;
+			display: block;
+			&:before {
+				top: 10px;
+				left: @alignmentMargin;
+			}
+		}
+		// this will only be for replies because scope is within UL
+		div.input-metadata {
+			a.author {
+				padding-top: 8px;
+			}
+			p.content {
+				color: @gray;
+				&:active {
+					color: @grayDark;
+				}
+			}
+			ul li a {
+				color: @grayLight;
+				&:before {
+					border: 2px solid @grayLight;
+					color: @grayLight;
+				}
+				&:hover {
+					color: @grayDark;
+					&:before {
+						color: @grayDark;
+						border-color: @grayDark;
+					}
+				}
+			}
+		}
+	}
+	a.author {
+		font-size: 16px;
+		font-weight: 600;
+		padding: 17px 0;
+	}
+	p.content, p.approval {
+		margin: 5px 0 0;
+	}
+	p.content {
+		padding-bottom: 5px;
+	}
+	p.approval {
+		color: @grayLighter;
+		span {
+			display: block;
+			padding: 5px 0;
+			border-top: 1px solid @grayLighter;
+		}
+	}
+	a.character, a.post {
+		font-weight: bold;
+		margin: 5px 0;
+	}
+	a.character {
+		color: @charactersColor;
+	}
+	a.post {
+		color: @postsColor;
+	}
+	div.input-metadata {
+		position: relative;
+		ul {
+			display: block;
+			padding: 10px 0;
+			border-top: 1px solid @grayLightest;
+			.clearfix();
+			li {
+				display: inline-block;
+				&:first-child {
+					float: left;
+				}
+				&:last-child {
+					float: right;
+				}
+				a {
+					padding: 0 0 0 24px;
+					&:before.reply {
+						-moz-transform: scaleX(-1);
+						-o-transform: scaleX(-1);
+						-webkit-transform: scaleX(-1);
+						transform: scaleX(-1);
+						filter: FlipH;
+					}
+				}
+			}
+		}
+	}
+	// background icons for comment lists and new comment containers
+	> ul, div.action-create-metadata {
+		position: relative;
+		display: block;
+		&:after {
+			.icon-solid();
+			position: absolute;
+			top: 18px;
+			right: 13px;
+		}
+		&.comment:after {
+			content: "\e03b";
+		}
+		&.character:after {
+			content: "\e0ca";
+		}
+		&.post:after {
+			content: "\e0bb";
+		}
+	}
+	div.action-create-metadata {
+		margin-bottom: 20px;
+	}
+	a.avatar {
+		padding: 7px 0;
+		background-color: @white;
+		text-align: center;
+		width: 55px;
+		position: absolute;
+		left: 0;
+		border: 0 none;
+		display: inline-block;
+		img {
+			border-radius: 35px;
+			border: 3px solid @grayLightest;
+			width: 35px;
+			height: 35px;
+		}
+	}
+	a.reply, a.cancel {
+		display: inline-block;
+		padding: 10px 10px 10px 79px;
+		position: relative;
+		font-size: 13px;
+		line-height: 20px;
+		&:before {
+			.icon-solid();
+			top: 0;
+			left: 0;
+			width: 14px;
+			height: 14px;
+			font-size: 13px;
+			line-height: 13px;
+			border-radius: 16px;
+			border-width: 2px;
+			border-style: solid;
+		}
+	}
+	a.reply {
+		&:before {
+			content: "\e0b2";
+		}
+	}
+	a.cancel {
+		&:before {
+			content: "\e1bb";
 		}
 	}
 }

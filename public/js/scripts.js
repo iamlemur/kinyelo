@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    $("#openNav").click(function(e) {
+    $("#openNav, #fixed-nav #logo").click(function(e) {
         e.preventDefault();
         $("html").toggleClass('js-site-nav');
     });

@@ -17,4 +17,8 @@ Route::get('/login', 'LoginController@getLogin');
 Route::post('/login', 'LoginController@postLogin');
 Route::resource('/author', 'UserController');
 
-Route::resource('/post', 'PostController');
+Route::get('/posts/lists/{filter?}', 'PostController@listing');
+Route::resource('/posts', 'PostController');
+
+Route::get('/books/lists/{filter?}', 'BookController@listing');
+Route::resource('/books', 'BookController');
