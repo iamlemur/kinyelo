@@ -1,0 +1,103 @@
+/* iCheck plugin flat skin, black
+----------------------------------- */
+.icheckbox_flat,
+.iradio_flat {
+	display: inline-block;
+	*display: inline;
+	vertical-align: middle;
+	margin: 0;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+	background: url(../img/flat.png) no-repeat;
+	border: none;
+	cursor: pointer;
+}
+
+.icheckbox_flat {
+	background-position: 0 0;
+}
+.icheckbox_flat.checked {
+	background-position: -22px 0;
+}
+.icheckbox_flat.disabled {
+	background-position: -44px 0;
+	cursor: default;
+}
+.icheckbox_flat.checked.disabled {
+	background-position: -66px 0;
+}
+
+.iradio_flat {
+	background-position: -88px 0;
+}
+.iradio_flat.checked {
+	background-position: -110px 0;
+}
+.iradio_flat.disabled {
+	background-position: -132px 0;
+	cursor: default;
+}
+.iradio_flat.checked.disabled {
+	background-position: -154px 0;
+}
+
+/* Retina support */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (-moz-min-device-pixel-ratio: 1.5),
+only screen and (-o-min-device-pixel-ratio: 3/2),
+only screen and (min-device-pixel-ratio: 1.5) {
+	.icheckbox_flat,
+	.iradio_flat {
+		background-image: url(../img/flat@2x.png);
+		-webkit-background-size: 176px 22px;
+		background-size: 176px 22px;
+	}
+}
+
+
+/* iCheck plugin Flat skin, purple
+----------------------------------- */
+nav.book .icheckbox_flat,
+nav.book .iradio_flat {
+	background-image: url(../img/purple.png);
+}
+
+/* Retina support */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.5),
+only screen and (-moz-min-device-pixel-ratio: 1.5),
+only screen and (-o-min-device-pixel-ratio: 3/2),
+only screen and (min-device-pixel-ratio: 1.5) {
+	nav.book .icheckbox_flat,
+	nav.book .iradio_flat {
+		background-image: url(../img/purple@2x.png);
+	}
+}
+
+
+
+ul.status-controls {
+	padding: 0;
+	margin: 0 auto;
+	.clearfix();
+	width: 20%;
+	li {
+		display: inline-block;
+		padding: 0;
+		margin: 0;
+		font-family: @sansFontFamily;
+		label {
+			line-height: 20px;
+			font-size: 15px;
+			display: inline-block;
+			padding-left: 10px;
+			cursor: pointer;
+		}
+		&:first-child {
+			float: left;
+		}
+		&:last-child {
+			float: right;
+		}
+	}
+}

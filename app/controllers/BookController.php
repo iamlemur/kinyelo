@@ -79,7 +79,8 @@ class BookController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$this->book = Book::with('author')->findOrFail($id);
+		$this->layout->content = View::make('book/edit')->with('book', $this->book);
 	}
 
 	/**

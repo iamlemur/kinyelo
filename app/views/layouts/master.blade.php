@@ -78,6 +78,7 @@
 <script src="/js/vendor/jquery.nanoscroller.min.js"></script>
 <script src="/js/vendor/waypoints.min.js"></script>
 <script src="/js/vendor/waypoints-sticky.min.js"></script>
+<script src="/js/vendor/icheck.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
 <script src="/js/scripts.js"></script>
 </body>

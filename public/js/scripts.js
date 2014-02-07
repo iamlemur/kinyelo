@@ -14,16 +14,14 @@ $(document).ready(function() {
     $(".post-container header").waypoint('sticky', {
         context: ".outer-content-wrapper"
     });
-    /*$(".post-container header").waypoint(function(direction) {
-        if(direction == "down") {
-            $(".post-container").addClass('sticky');
-            //$(".post-container").css('padding-top', $(this).height());
-        } else if (direction == "up") {
-            $(".post-container").removeClass('sticky');
-            //$(".post-container").css('padding-top', '0');
-        }
-    }, {
-        context: ".outer-content-wrapper"
-    });*/
- //   $.waypoints('refresh');
+    $('input').iCheck({
+        checkboxClass: 'icheckbox_flat',
+        radioClass: 'iradio_flat'
+    });
+    $("ul.expandable > li > h2 > a").click(function(e) {
+        $(this).parent().parent().toggleClass('open');
+    });
+    $("div.add-post-search-results ol > li > div.item > button").click(function(e) {
+       $(this).parent().parent().toggleClass("open");
+    });
 });
