@@ -23,25 +23,26 @@
 				</form>
 				<ul>
 					<li class="personal"><a href="#"><span>joelleimer</span></a></li>
-					<li class="posts active">
+					<li class="posts<?=($context == "pb-posts" ? " active" : "")?>">
 						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
 						<ul>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "trending" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'trending')) }}"><span>trending</span></a></li>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "editor" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'editor')) }}"><span>editor's picks</span></a></li>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "recent" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'recent')) }}"><span>most recent</span></a></li>
 							<li><a href="#"><span>my reading list</span></a></li>
-							<li>
-								<a href="#"><span>my posts</span></a>
-								<ul>
-									<li><a href="#">drafts</a></li>
-									<li><a href="#">published</a></li>
-									<li><a href="#">recommended</a></li>
-								</ul>
-							</li>
-							<li class="add"><a href="#"><span>create new post</span></a></li>
+							<li><a href="#"><span>my posts</span></a></li>
+							<li class="add"><a href="{{ action('PostController@create') }}"><span>create a new post</span></a></li>
 						</ul>
 					</li>
-					<li class="books"><a href="{{ action('BookController@index') }}"><span>books</span></a></li>
+					<li class="books<?=($context == "pb-books" ? " active" : "")?>">
+						<a href="{{ action('BookController@index') }}"><span>books</span></a>
+						<ul>
+							<li <?= Route::current()->getActionName() == "BookController@listing" && Route::current()->getParameter('filter') == "yours" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'yours')) }}"><span>your books</span></a></li>
+							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "reading" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'reading')) }}"><span>your reading list</span></a></li>
+							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "recommendations" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'recommendations')) }}"><span>your recommendations</span></a></li>
+							<li class="add"><a href="{{ action('BookController@create') }}"><span>create a new book</span></a></li>
+						</ul>
+					</li>
 					<li class="characters"><a href="#"><span>characters</span></a></li>
 					<li class="authors"><a href="#"><span>authors</span></a></li>
 				</ul>
@@ -66,11 +67,7 @@
 			</div>
 		</nav>
 		<nav id="dev-nav">
-			<a href="#" id="openNav">Open Nav</a>
 			<a href="#" id="openUtils">Open Utils</a>
-			<a href="{{ action('PostController@index') }}">View all posts</a>
-			<a href="{{ action('PostController@create') }}">Create a post</a>
-			<a href="{{ action('BookController@create') }}">Create a book</a>
 			<a href="{{ action('LoginController@getLogin') }}">Login</a>
 		</nav>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>

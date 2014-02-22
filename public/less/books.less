@@ -7,16 +7,16 @@ ul.add-post-quick-filters {
 		width: 49%;
 		&:first-child {
 			margin-right: 2%;
-			a:before {
+			button:before {
 				content: "\e0b6";
 			}
 		}
 		&:last-child {
-			a:before {
+			button:before {
 				content: "\e0b5";
 			}
 		}
-		a {
+		button {
 			border: 2px solid @grayLight;
 			color: @grayLight;
 			border-radius: 5px;
@@ -26,6 +26,7 @@ ul.add-post-quick-filters {
 			font-weight: 600;
 			line-height: 35px;
 			position: relative;
+			width: 100%;
 			&:before {
 				.flaticon-solid();
 				position: absolute;
@@ -70,57 +71,26 @@ form.add-post-search {
 		.placeholder(@grayLight);
 	}
 }
-.book-edit {
-	nav.book {
-		ul.expandable li {
-
-		}
-		ol.posts li {
-			div.item {
-				&:hover {
-					background-color: @grayLightest;
-				}
-				button:before {
-					content: "\e1bb";
-				}
-			}
-		}
-	}
-}
-.book-read {
-	nav.book {
-		ul.expandable li {
-			&.open {
-				h2 {
-					background-color: @grayLightest;
-				}
-				div.details {
-					display: block;
-				}
-			}
-			div.details {
-				display: none;
-			}
-		}
-		ol.posts li {
-			button:before {
-				content: "\e1b8";
-			}
-		}
-	}
-}
-nav.book ol.posts {
-	padding: 0 0 20px 0;
-	margin: 0 0 0 50px;
+ol.posts {
 	list-style-type: decimal;
 	list-style-position: outside;
-	font-family: @sansFontFamily;
-	font-weight: bold;
+	padding: 20px 0;
+	margin: 0 0 0 @alignmentMargin;
+	&.with-details {
+		button:before {
+			.flaticon-stroke();
+			content: "\e5a0";
+		}
+	}
+	&.editable {
+		button:before {
+			.flaticon-solid();
+			content: "\e1bb";
+		}
+	}
 	li {
-		div.item {
-			position: relative;
-			padding: 10px 50px;
-			margin-left: -50px;
+		position: relative;
+		span.title {
 			display: block;
 			font-family: @serifFontFamily;
 			font-weight: normal;
@@ -135,45 +105,103 @@ nav.book ol.posts {
 			line-height: 18px;
 			color: @grayLight;
 		}
-		button {
+	}
+	button {
+		border: 0;
+		border-radius: 0;
+		background: 0 none;
+		cursor: hand;
+		width: 20px;
+		height: 20px;
+		padding: 0;
+		text-indent: 0.5px;
+		position: absolute;
+		top: 4px;
+		right: 20px;
+		&:hover:before {
+			color: @grayDark;
+			border-color: @grayDark;
+		}
+		&:before {
+			border-radius: 20px;
+			font-size: 15px;
+			line-height: 16px;
+			border: 2px solid @grayLighter;
+			color: @grayLighter;
+			display: block;
+			width: 16px;
+			height: 16px;
 			position: absolute;
-			top: 15px;
-			right: 20px;
-			border: 0;
-			border-radius: 0;
-			background: 0 none;
-			cursor: hand;
-			width: 20px;
-			height: 20px;
-			padding: 0;
-			&:hover:before {
-				color: @grayDark;
-				border-color: @grayDark;
-			}
-			&:before {
-				.flaticon-solid();
-				border-radius: 20px;
-				font-size: 15px;
-				line-height: 16px;
-				border: 2px solid @grayLighter;
-				color: @grayLighter;
+			top: 0;
+			left: 0;
+		}
+	}
+}
+ol.with-details {
+	li {
+		&.open {
+			div.details {
 				display: block;
-				width: 16px;
-				height: 16px;
-				position: absolute;
-				top: 0;
-				left: 0;
+			}
+		}
+		div.details {
+			display: none;
+			font-weight: normal;
+			p {
+				padding: 0;
+				font-size: 16px;
+				line-height: 26px;
+				font-family: @serifFontFamily;
 			}
 		}
 	}
 }
+
+ol.selectable {
+	list-style-type: none;
+	list-style-position: inside;
+	padding: 20px 20px 0;
+	margin: 0;
+	> li {
+		padding: 0 20px 20px 34px;
+		div.item {
+			input, .icheckbox_flat {
+				position: absolute;
+				top: 4px;
+				left: 0;
+			}
+			button {
+				top: 0;
+				right: 0;
+			}
+			label {
+				font-family: @serifFontFamily;
+				font-size: 20px;
+				line-height: 24px;
+				display: block;
+				cursor: pointer;
+			}
+		}
+	}
+}
+
+div.add-post-search-results {
+	p.summary {
+		padding: 20px 0 0 20px;
+		font-weight: bold;
+		margin: 0;
+		font-size: 15px;
+		line-height: 18px;
+	}
+}
+
 ul.add-post-actions {
 	margin: 0;
 	padding: 20px 20px;
 	.clearfix();
 	li {
 		display: inline-block;
-		a {
+		button {
 			display: block;
 			font-size: 15px;
 			font-weight: 600;
@@ -206,13 +234,13 @@ ul.add-post-actions {
 		}
 		&:first-child {
 			float: left;
-			a:before {
+			button:before {
 				content: "\e1b8";
 			}
 		}
 		&:last-child {
 			float: right;
-			a:before {
+			button:before {
 				content: "\e1bb";
 			}
 		}
@@ -233,89 +261,5 @@ a.delete-book {
 		display: block;
 		color: @black;
 		font-weight: normal;
-	}
-}
-
-div.add-post-search-results {
-	p.summary {
-		padding: 20px 0 0 20px;
-		font-weight: bold;
-		margin: 0;
-		font-size: 15px;
-		line-height: 18px;
-	}
-	ol {
-		padding: 20px 20px 0;
-		margin: 0;
-		> li {
-			position: relative;
-			padding: 0 20px 20px 34px;
-			div.item {
-				input, .icheckbox_flat {
-					position: absolute;
-					top: 4px;
-					left: 0;
-				}
-				button {
-					position: absolute;
-					top: 0;
-					right: 0;
-					border: 0;
-					border-radius: 0;
-					background: 0 none;
-					cursor: hand;
-					width: 20px;
-					height: 20px;
-					padding: 0;
-					&:hover:before {
-						color: @grayDark;
-						border-color: @grayDark;
-					}
-					&:before {
-						.flaticon-stroke();
-						content: "\e5a0";
-						border-radius: 20px;
-						font-size: 15px;
-						line-height: 16px;
-						border: 2px solid @grayLighter;
-						color: @grayLighter;
-						display: block;
-						width: 16px;
-						height: 16px;
-						position: absolute;
-						top: 0;
-						left: 0;
-					}
-				}
-				label {
-					font-family: @serifFontFamily;
-					font-size: 20px;
-					line-height: 24px;
-					display: block;
-					cursor: pointer;
-				}
-				small {
-					font-family: @sansFontFamily;
-					font-size: 15px;
-					line-height: 18px;
-					display: block;
-					color: @gray;
-				}
-			}
-			&.open {
-				div.details {
-					display: block;
-				}
-			}
-			div.details {
-				display: none;
-				p {
-					padding: 0;
-					font-size: 16px;
-					line-height: 26px;
-					font-family: @serifFontFamily;
-				}
-			}
-		}
 	}
 }

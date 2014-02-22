@@ -22,10 +22,12 @@
 </div>
 
 	<div class="social-actions">
-		<a href="#" class="btn-favorite"></a>
-		<a href="#" class="btn-email"></a>
-		<a href="#" class="btn-facebook"></a>
-		<a href="#" class="btn-twitter"></a>
+		<ul>
+			<li><a href="#" class="btn-favorite"></a></li>
+			<li><a href="#" class="btn-email"></a></li>
+			<li><a href="#" class="btn-facebook"></a></li>
+			<li><a href="#" class="btn-twitter"></a></li>
+		</ul>
 	</div>
 
 	<div class="tags">
@@ -104,7 +106,7 @@
 					</div>
 				</li>
 			</ul>
-			<a href="#" class="reply start-reply">reply</a>
+			<button class="reply start-reply">reply</button>
 		</li>
 	</ul>
 	<ul class="annotation-list character">
@@ -116,7 +118,7 @@
 				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
 				<p class="approval"><span>The character has been sent to the author for approval.</span></p>
 			</div>
-			<a href="#" class="reply start-reply">reply</a>
+			<button class="reply start-reply">reply</button>
 		</li>
 	</ul>
 	<ul class="annotation-list comment">
@@ -148,8 +150,8 @@
 					<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
 					<p class="content">Add a comment...</p>
 					<ul>
-						<li><a href="#" class="reply submit-reply-metadata">reply</a></li>
-						<li><a href="#" class="cancel cancel-reply-metadata">cancel</a></li>
+						<li><button class="reply submit-reply-metadata">reply</button></li>
+						<li><button class="cancel cancel-reply-metadata">cancel</button></li>
 					</ul>
 				</div>
 			</div>
@@ -163,7 +165,7 @@
 				<a href="#" title="Go to the character profile of..." class="character">Firstname Lastname</a>
 				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
 			</div>
-			<a href="#" class="reply start-reply">reply</a>
+			<button class="reply start-reply">reply</button>
 		</li>
 	</ul>
 	<ul class="annotation-list post">
@@ -174,18 +176,18 @@
 				<a href="#" title="Go to post..." class="post">Lorem ipsum dolor sit amet</a>
 				<p class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam consectetur sem ut magna laoreet, sit amet mollis leo ullamcorper.</p>
 			</div>
-			<a href="#" class="reply start-reply">reply</a>
+			<button class="reply start-reply">reply</button>
 		</li>
 	</ul>
 	<ul class="actions">
 		<li>
-			<a href="#" class="add-comment">add a comment</a>
+			<button class="add-comment">add a comment</button>
 		</li>
 		<li>
-			<a href="#" class="suggest-character">suggest a character</a>
+			<button class="suggest-character">suggest a character</button>
 		</li>
 		<li>
-			<a href="#" class="connect-post">connect a post</a>
+			<button class="connect-post">connect a post</button>
 		</li>
 	</ul>
 	<div class="action-create-metadata input-metadata comment">
@@ -194,8 +196,8 @@
 			<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
 			<p class="content">Add a comment...</p>
 			<ul>
-				<li><a href="#" class="reply submit-create-metadata">add</a></li>
-				<li><a href="#" class="cancel cancel-create-metadata">cancel</a></li>
+				<li><button class="reply submit-create-metadata">add</button></li>
+				<li><button class="cancel cancel-create-metadata">cancel</button></li>
 			</ul>
 		</div>
 	</div>
@@ -205,8 +207,8 @@
 			<a href="#" title="Go to the profile of..." class="author">iamlemur</a>
 			<p class="content">Type the character's name...</p>
 			<ul>
-				<li><a href="#" class="reply submit-create-metadata">suggest</a></li>
-				<li><a href="#" class="cancel cancel-create-metadata">cancel</a></li>
+				<li><button class="reply submit-create-metadata">suggest</button></li>
+				<li><button class="cancel cancel-create-metadata">cancel</button></li>
 			</ul>
 		</div>
 	</div>

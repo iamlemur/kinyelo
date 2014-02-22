@@ -18,10 +18,10 @@ $(document).ready(function() {
         checkboxClass: 'icheckbox_flat',
         radioClass: 'iradio_flat'
     });
-    $("ul.expandable > li > h2 > a").click(function(e) {
+    $("ul.expandable > li > h2 > button").click(function(e) {
         $(this).parent().parent().toggleClass('open');
     });
-    $("div.add-post-search-results ol > li > div.item > button").click(function(e) {
+    $("ol.with-details > li > div.item > button").click(function(e) {
        $(this).parent().parent().toggleClass("open");
     });
 });

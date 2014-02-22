@@ -1,5 +1,3 @@
-@alignmentMargin:                  55px;
-
 .annotations-container {
 	font-family: @sansFontFamily;
 	font-size: 13px;
@@ -48,7 +46,7 @@
 			border-top: 0 none;
 			li {
 				padding: 0;
-				a {
+				button {
 					padding-bottom: 20px;
 					padding-top: 20px;
 					padding-right: 10px;
@@ -89,7 +87,7 @@
 				}
 			}
 		}
-		a.start-reply {
+		button.start-reply {
 			background-color: @bodyBackgroundColor;
 			display: block;
 			&:before {
@@ -168,7 +166,7 @@
 				&:last-child {
 					float: right;
 				}
-				a {
+				button {
 					padding: 0 0 0 24px;
 					&:before.reply {
 						-moz-transform: scaleX(-1);
@@ -220,7 +218,7 @@
 			height: 35px;
 		}
 	}
-	a.reply, a.cancel {
+	button.reply, button.cancel {
 		display: inline-block;
 		padding: 10px 10px 10px 79px;
 		position: relative;
@@ -239,12 +237,12 @@
 			border-style: solid;
 		}
 	}
-	a.reply {
+	button.reply {
 		&:before {
 			content: "\e0b2";
 		}
 	}
-	a.cancel {
+	button.cancel {
 		&:before {
 			content: "\e1bb";
 		}
