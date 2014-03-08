@@ -2,7 +2,7 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready" ng-app="kinyelo"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -71,12 +71,19 @@
 			<a href="{{ action('LoginController@getLogin') }}">Login</a>
 		</nav>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+<!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
 <script src="/js/vendor/jquery.nanoscroller.min.js"></script>
 <script src="/js/vendor/waypoints.min.js"></script>
 <script src="/js/vendor/waypoints-sticky.min.js"></script>
 <script src="/js/vendor/icheck.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
 <script src="/js/scripts.js"></script>
+<script src="/js/vendor/angular.min.js" type="text/javascript"></script>
+<script src="/js/angular/app.js" type="text/javascript"></script>
+<script src="/js/angular/services.js" type="text/javascript"></script>
+<script src="/js/angular/controllers.js" type="text/javascript"></script>
+<!--script src="/js/angular/filters.js" type="text/javascript"></script-->
+<script src="/js/angular/directives.js" type="text/javascript"></script>
+<!--script src="/js/vendor/selection-functions.js" type="text/javascript"></script-->
 </body>
 </html>
