@@ -1290,7 +1290,6 @@ function setTagName(element, newName) {
 
     // "While element has children, append the first child of element as the
     // last child of replacement element, preserving ranges."
-    console.log(element.childNodes);
     while (element.childNodes.length) {
         movePreservingRanges(element.firstChild, replacementElement, replacementElement.childNodes.length);
     }
@@ -4274,7 +4273,6 @@ function blockExtend(range) {
     var newRange = startNode.ownerDocument.createRange();
     newRange.setStart(startNode, startOffset);
     newRange.setEnd(endNode, endOffset);
-
     // "Return new range."
     return newRange;
 }
@@ -6567,13 +6565,19 @@ commands["delete"] = {
     }
 };
 
+var generateHexID = function() {
+    var limit = Math.pow(16, 4);
+    var number = parseInt(Math.random()*limit);
+    return number.toString(16);
+}
+
 //@}
 ///// The formatBlock command /////
 //@{
 // "A formattable block name is "address", "dd", "div", "dt", "h1", "h2", "h3",
 // "h4", "h5", "h6", "p", or "pre"."
 var formattableBlockNames = ["address", "dd", "div", "dt", "h1", "h2", "h3",
-    "h4", "h5", "h6", "p", "pre"];
+    "h4", "h5", "h6", "p", "pre", "blockquote"];
 
 commands.formatblock = {
     preservesOverrides: true,
@@ -6606,7 +6610,7 @@ commands.formatblock = {
             return isEditable(node)
                 && (isNonListSingleLineContainer(node)
                 || isAllowedChild(node, "p")
-                || isHtmlElement(node, ["dd", "dt"]))
+                || isHtmlElement(node, ["dd", "dt", "li"]))
                 && !getDescendants(node).some(isProhibitedParagraphChild);
         });
 

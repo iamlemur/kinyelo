@@ -18,9 +18,10 @@ angular.module('kinyelo.directives', [])
                     if(!getSelection().isCollapsed) {
                         //show toolbar
                     }
+                    //on click, always check position and focus in node to avoid writing in elements like ol and section
                 });
                 $element.on('keydown', function(e) {
-                    if(e.keyCode == 13) { $scope.autoFormat(e, this); }
+                    $scope.autoFormat(e);
                 });
             },
             //scope: true,
