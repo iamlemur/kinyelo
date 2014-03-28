@@ -32,6 +32,13 @@ angular.module('kinyelo.controllers', ['kinyelo.services'])
             console.log("isWhitespaceNode", isWhitespaceNode(node));
             console.log("isCollapsedWhitespaceNode", isCollapseWhitespaceNode(node));
         };
+        $scope.enforceID = function(event) {
+            var node = editableContentService.getContainingBlockNode();
+            console.log(node);
+            if(!node.getAttribute('id') && node.nodeType == Node.ELEMENT_NODE) {
+                node.setAttribute('id', generateHexID());
+            }
+        };
         $scope.autoFormat = function(event) {
             var selection = getSelection();
             var range = null;
@@ -47,49 +54,86 @@ angular.module('kinyelo.controllers', ['kinyelo.services'])
                 var node = editableContentService.getContainingBlockNode();
                 range = getActiveRange();
                 var container = range.commonAncestorContainer;
-
-                //if(range.startContainer == range.endContainer)
-                //if you are in a text node, content is not empty
-                //if(container.nodeType != Node.TEXT_NODE) {
-                //the behavior seems to set the selection as the section when in whitespace
-                if(node.tagName.toLowerCase().trim() == "section") {
+                if(node.parentNode.childNodes[0] == node && node.parentNode.childNodes.length == 1 && node.textContent == "") {
+                    console.log('first element and only element, do not let hit enter');
                     event.preventDefault();
-                    var newSection = document.createElement('section');
-                    //now determine we do nothing/don't allow or create new section
-                    //if content follows, we insert before
-                    console.log(container);
+                    getSelection().collapse(node, 0);
+                    return true;
+                }
+                //the behavior seems to set the selection as the section when in whitespace
+                if(node.previousSibling != null && node.previousSibling.tagName.toLowerCase() == "p" && node.previousSibling.textContent.trim() == "" && node.tagName.toLowerCase() == "p") {
+                    console.log(node, node.previousSibling);
+                    event.preventDefault();
+                    console.log('1st case');
+                    var arSections = this.splitSection(node, container, false);
+                    arSections[0].parentNode.insertBefore(arSections[1], arSections[0].nextSibling);
+                    getSelection().collapse(arSections[1].childNodes[0].childNodes[0], 0);
+                    return true;
+                }
+                if(node.tagName.toLowerCase().trim() == "section") {
+                    console.log('2nd case');
+                    event.preventDefault();
+                    console.log(container, node);
+                    //now determine we don't allow(do nothing) or create new section
                     if(container == node.childNodes[0] && container.textContent.length == 0) {
                         console.log('first paragraph and is empty');
                         return true;
                     }
-                    console.log(container.nextSibling);
                     //retrieve the current section
-                    var currentSection;
-                    if(container.nextSibling && container.nextSibling.tagName.toLowerCase() != "section") { //or section?
-                        currentSection = node.parentNode;
-                    } else {
-                        currentSection = node;
-                    }
-                    console.log(currentSection);
-                    var newChildren = [];
-                    for(var i = 0; i < currentSection.childNodes.length; i++) {
-                        if(currentSection.childNodes[i] == container) {
-                            var j = i;
-                            while(i < currentSection.childNodes.length) {
-                                newChildren.push(currentSection.removeChild(currentSection.childNodes[i]));
-                            }
-                        }
-                    }
-                    for(var i = 0; i < newChildren.length; i++) {
-                        newSection.appendChild(newChildren[i]);
-                    }
-                    currentSection.parentNode.insertBefore(newSection, currentSection.nextSibling);
-                    getSelection().collapse(newChildren[0], 0);
-                } else {
+                    var arSections = this.splitSection(node, container, false);
+                    arSections[0].parentNode.insertBefore(arSections[1], null)
+                    getSelection().collapse(arSections[1].childNodes[0], 0);
+                } else if(node.textContent.length && node.previousSibling && !node.previousSibling.textContent.length) {
+                    console.log('3rd case');
+                    //however also need to detect if pressing enter at a filled child of section and if
+                    //previous child is already blank
+                    event.preventDefault();
+                    var arSections = this.splitSection(node, container, true);
+                    arSections[0].parentNode.insertBefore(arSections[1], arSections[0]);
+                    //getSelection().collapse(arSections[1].childNodes[0], 0);
+                } else if(node.textContent.length) {
+                    console.log('4th case');
+                    //node.setAttribute('id', generateHexID());
                     //this.analyze(node, container, selection);
                 }
             }
         };
+        $scope.splitSection = function(node, container, cutBefore) {
+            console.log(node, container, getSelection());
+            container = getSelection().focusNode;
+            var newSection = document.createElement('section');
+            newSection.setAttribute('id', generateHexID());
+            var currentSection;
+            if(container.nodeType == Node.TEXT_NODE) {
+                currentSection = node.parentNode;
+                container = container.parentNode;
+            } else {
+                currentSection = node;
+            }
+            console.log("currentSection is now", currentSection);
+            var newChildren = [];
+            var arChildren = [].slice.call(currentSection.childNodes).filter(function(element) { return element.nodeType == Node.ELEMENT_NODE });
+            console.log(arChildren);
+            console.log(node);
+            if(arChildren.indexOf(node)) {
+                if(cutBefore) {
+                    for(var i = 0; i < arChildren.indexOf(node); i++) {
+                        newChildren.push(currentSection.removeChild(currentSection.childNodes[i]));
+                    }
+                } else {
+                    for(var i = arChildren.indexOf(container); i < arChildren.length; i++) {
+                        if(currentSection.childNodes[i]) {
+                            newChildren.push(currentSection.removeChild(currentSection.childNodes[i]));
+                        }
+                    }
+                }
+            }
+            console.log(newChildren);
+            for(var i = 0; i < newChildren.length; i++) {
+                newSection.appendChild(newChildren[i]);
+            }
+            return [currentSection, newSection];
+        }
     }])
     .controller('rteToolbarController', ['editableContentService', '$scope', function(editableContentService, $scope) {
         $scope.changeFormat = function(format) {

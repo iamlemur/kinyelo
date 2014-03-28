@@ -23,6 +23,17 @@ angular.module('kinyelo.directives', [])
                 $element.on('keydown', function(e) {
                     $scope.autoFormat(e);
                 });
+                //if empty, initiate with blank p and section
+                var newSection = document.createElement('section');
+                var newParagraph = document.createElement('p');
+                var newTextContent = document.createTextNode('');
+                newParagraph.setAttribute('id', generateHexID());
+                newSection.setAttribute('id', generateHexID());
+                newParagraph.appendChild(newTextContent);
+                newSection.appendChild(newParagraph);
+                $element.append(newSection);
+                $element.focus();
+                getSelection().collapse(newTextContent, 0);
             },
             //scope: true,
             //controller: function ($scope, $elemt, $attrs) {},
