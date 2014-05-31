@@ -49,75 +49,143 @@ kinyelo.editor.plugins.StrongPlugin.prototype.isSupportedCommand = function(comm
 kinyelo.editor.plugins.StrongPlugin.prototype.execCommandInternal = function(command) {
 
     var range = goog.editor.range.expand(this.getFieldObject().getRange());
+    var savedRange = goog.editor.range.saveUsingNormalizedCarets(range);
+    range = savedRange.toAbstractRange();
+//    var newRange = savedRange.toAbstractRange();
 
     if(!range.isCollapsed()) {
 
-        var startNode = range.getStartNode();
-        var endNode = range.getEndNode();
-        //if the start and end are the same node
-        if(startNode == endNode) {
-            console.log('start and end node are the same');
-            //if the node is not an element (in this case, a text range)
-            if(!goog.dom.isElement(startNode)) {
-                console.log('and the node is not an element');
-                //if there are no child nodes
-                console.log(goog.dom.getChildren(startNode));
-                if(goog.isNull(goog.dom.getChildren(startNode))) {
-                    console.log('and the node does not have children');
-                }
-            }
-        }
+        var bFlatten = false;
 
         //get the deepest points of the range
         //only check for parent because otherwise, full inline element is included by expanding above
         //if toggling on, we create a new range with them in to merge adjacent same nodes, effectively
         //otherwise, we split the subtree
-        var start = goog.editor.range.getDeepEndPoint(range, true);
-        var end = goog.editor.range.getDeepEndPoint(range);
-        if(kinyelo.editor.isInlineElement(start.node.parentNode)) {
-            if(start.node.parentNode.tagName == goog.dom.TagName.STRONG) {
-                range.moveToNodes(node.parentNode, 0, range.getFocusNode(), range.getFocusOffset());
-            }
-            /*if(false)  {
-                goog.editor.node.splitDomTreeAt(range.getAnchorNode(), null, node.parentNode);
-            }*/
+        var predicateFunc = function(parentNode) {
+            return parentNode.tagName == goog.dom.TagName.STRONG;
         }
-        if(kinyelo.editor.isInlineElement(end.node.parentNode)) {
-            if(end.node.parentNode.tagName == goog.dom.TagName.STRONG) {
-                range.moveToNodes(range.getAnchorNode(), range.getAnchorOffset(), end.node, end.node.length);
+
+        var startNode = savedRange.getCaret(true);
+        var startAncestor = goog.editor.node.findHighestMatchingAncestor(startNode, predicateFunc);
+        //if start node is descendant of strong tag
+        if(!goog.isNull(startAncestor)) {
+            //split the start node's strong ancestor
+            //var node = this.getFieldDomHelper().createTextNode('');
+            //goog.dom.insertSiblingBefore(node, startNode);
+            //var startSubtree = goog.editor.node.splitDomTreeAt(node, startNode, startAncestor);
+            var startSubtree = goog.editor.node.splitDomTreeAt(startNode, startNode, startAncestor);
+            goog.dom.insertSiblingAfter(startSubtree, startAncestor);
+            range = goog.editor.range.expand(range);
+            bFlatten = true;
+        } else {
+            //if it is null, make sure we don't need to merge a neighboring sibling
+            var prevSibling = goog.editor.node.getPreviousSibling(startNode);
+            if(prevSibling.tagName == goog.dom.TagName.STRONG) {
+                var node = this.getFieldDomHelper().createTextNode('');
+                goog.dom.insertSiblingBefore(node, prevSibling);
+                range.moveToNodes(node, node.length, range.getFocusNode(), range.getFocusOffset());
+            }
+        }
+
+        var endNode = savedRange.getCaret();
+        var endAncestor = goog.editor.node.findHighestMatchingAncestor(endNode, predicateFunc);
+        //if end node is descendant of strong tag
+        if(!goog.isNull(endAncestor)) {
+            //if we are not toggling the inline format off (flattening)
+            //then we need to include the ancestor instead of splitting the ancestor to remove formatting
+            if(!bFlatten) {
+                var node = this.getFieldDomHelper().createTextNode('');
+                goog.dom.insertSiblingAfter(node, endAncestor);
+                range.moveToNodes(range.getAnchorNode(), range.getAnchorOffset(), node, node.length);
+            } else {
+                //split the end node's strong ancestor
+                var node = this.getFieldDomHelper().createTextNode('');
+                goog.dom.insertSiblingAfter(node, endNode);
+                var endSubtree = goog.editor.node.splitDomTreeAt(endNode, node, endAncestor);
+                goog.dom.insertSiblingAfter(endSubtree, endAncestor);
                 range = goog.editor.range.expand(range);
             }
-            /*if(false)  {
-                goog.editor.node.splitDomTreeAt(range.getFocusNode(), null, node.parentNode);
-            }*/
+        } else {
+            //if it is null, make sure we don't need to merge a neighboring sibling
+            var nextSibling = goog.editor.node.getNextSibling(endNode);
+            if(nextSibling.tagName == goog.dom.TagName.STRONG) {
+                var node = this.getFieldDomHelper().createTextNode('');
+                goog.dom.insertSiblingBefore(node, nextSibling);
+                range.moveToNodes(node, node.length, range.getFocusNode(), range.getFocusOffset());
+            }
         }
+        range = goog.editor.range.expand(range);
 
-        var container = range.getContainerElement();
-        goog.editor.range.normalizeNode(container);
-
-        var savedRange = goog.editor.range.saveUsingNormalizedCarets(range);
-        var newRange = savedRange.toAbstractRange();
-
-        //first, remove all the redundant strong tags
-        if(goog.editor.range.intersectsTag(newRange, goog.dom.TagName.STRONG)) {
-            var nodes = goog.dom.findNodes(container, function(node) { return goog.editor.node.isImportant(node) && newRange.containsNode(node); });
-            goog.array.forEach(nodes, function(node) {
-                if(node.tagName == goog.dom.TagName.STRONG) {
-                    goog.dom.flattenElement(node);
-                }
-            });
-        }
-
+        //flatten all strong nodes in range
+        var container = range.getContainer();
         //get block ancestor
         goog.editor.range.normalizeNode(container);
         if(!goog.editor.node.isBlockTag(container)) {
-            container = goog.editor.node.findHighestMatchingAncestor(container, goog.editor.node.isBlockTag);
+            container = goog.dom.getAncestor(container, goog.editor.node.isBlockTag);
         }
-        var formattableNodes = [];
-        formattableNodes = goog.dom.findNodes(container, kinyelo.editor.isInlineFormattable);
-        if(!formattableNodes.length) {
-            formattableNodes.push(container);
+
+        if(goog.editor.range.intersectsTag(range, goog.dom.TagName.STRONG)) {
+            var nodes = goog.dom.findNodes(container, goog.editor.node.isImportant);
+            goog.array.forEach(nodes, function(node) {
+                if(node.tagName == goog.dom.TagName.STRONG && this.containsNode(node)) {
+                    goog.dom.flattenElement(node);
+                }
+            }, range);
         }
+
+        if(!bFlatten) {
+
+            var formattableNodes = [];
+            formattableNodes = goog.dom.findNodes(container, kinyelo.editor.isInlineFormattable);
+            if(!formattableNodes.length) {
+                formattableNodes.push(container);
+            }
+
+            goog.array.forEach(formattableNodes, function(node) {
+                if(this.containsNode(node)) {
+                    //if block node is fully contained
+                    var newNode = goog.dom.createDom(goog.dom.TagName.STRONG, null, node.childNodes);
+                    goog.dom.append(node, newNode);
+                } else if(this.containsNode(node, true)) {
+                    //else if block node is partially contained
+                    //get all text ranges
+                    var textNodes = goog.dom.findNodes(node, kinyelo.editor.isTextNode);
+                    goog.array.forEach(textNodes, function(textNode) {
+                        //if the textNode is completely in the range and the parent is not
+                        if(this.containsNode(textNode) && !goog.editor.node.isBlockTag(textNode.parentNode) && !this.containsNode(textNode.parentNode)) {
+                            var newNode = goog.dom.createDom(goog.dom.TagName.STRONG);
+                            goog.dom.insertSiblingBefore(newNode, textNode);
+                            goog.dom.append(newNode, textNode);
+                        }
+                    }, this);
+
+                    var childNode = goog.editor.node.getFirstChild(node);
+                    console.log(childNode);
+                    var childNodes = [];
+                    while(!goog.isNull(childNode)) {
+                        if(this.containsNode(childNode)) {
+                            childNodes.push(childNode);
+                        }
+                        childNode = goog.editor.node.getNextSibling(childNode);
+                    }
+                    console.log(childNodes);
+                    if(!goog.array.isEmpty(childNodes)) {
+                        var newNode = goog.dom.createDom(goog.dom.TagName.STRONG);
+                        goog.dom.insertSiblingBefore(newNode, childNodes[0]);
+                        goog.dom.append(newNode, childNodes);
+                    }
+
+                }
+            }, range);
+
+        }
+
+        goog.editor.range.normalizeNode(container);
+
+        savedRange.restore().select();
+
+/*
+
         goog.array.forEach(formattableNodes, function(node) {
             if(this.containsNode(node)) {
                 //if block node is fully contained
@@ -141,7 +209,7 @@ kinyelo.editor.plugins.StrongPlugin.prototype.execCommandInternal = function(com
             }
         }, newRange);
 
-        savedRange.restore().select();
+        savedRange.restore().select();*/
     } else {
         //create a new strong element
         //insert at cursor
@@ -157,11 +225,15 @@ kinyelo.editor.isTextNode = function(node) {
     return node.nodeType == goog.dom.NodeType.TEXT;
 }
 
+kinyelo.editor.isTextyNode = function(node) {
+    return node.nodeType == goog.dom.NodeType.TEXT;
+}
+
 kinyelo.editor.isInlineFormattable = function(node) {
     return goog.array.indexOf([goog.dom.TagName.P, goog.dom.TagName.LI, goog.dom.TagName.LI], node.tagName) != -1;
 }
 kinyelo.editor.isInlineElement = function(node) {
-    return goog.array.indexOf([goog.dom.TagName.STRONG, goog.dom.TagName.STRONG], node.tagName) != -1;
+    return goog.array.indexOf([goog.dom.TagName.STRONG, goog.dom.TagName.EM], node.tagName) != -1;
 }
 kinyelo.editor.isTextOrInlineNode = function(node) {
     return (!kinyelo.editor.isInlineElement(node.parentNode) && node.nodeType == goog.dom.NodeType.TEXT) ||
