@@ -1,5 +1,5 @@
 goog.provide('kinyelo.Editor');
-goog.provide('kinyelo.editor.plugins.StrongPlugin');
+goog.provide('kinyelo.editor.plugins.InlineFormatter');
 
 goog.require('goog.dom');
 goog.require('goog.dom.NodeIterator');
@@ -18,199 +18,424 @@ goog.require('goog.editor.plugins.TagOnEnterHandler');
 goog.require('goog.ui.Toolbar');
 goog.require('goog.ui.editor.DefaultToolbar');
 goog.require('goog.ui.editor.ToolbarController');
-
+goog.require('goog.debug.Logger');
 
 /**
  * Plugin to wrap the selected text with a <strong> tag
  * @constructor
  * @extends {goog.editor.Plugin}
  */
-kinyelo.editor.plugins.StrongPlugin = function() {
+kinyelo.editor.plugins.InlineFormatter = function() {
+    this.range_ = null;
+    this.savedRange_ = null;
+    this.tag_ = null;
+    this.flatten_ = false;
     goog.editor.Plugin.call(this);
 }
-goog.inherits(kinyelo.editor.plugins.StrongPlugin, goog.editor.Plugin);
+goog.inherits(kinyelo.editor.plugins.InlineFormatter, goog.editor.Plugin);
 
-/** @inheritDoc */
-kinyelo.editor.plugins.StrongPlugin.prototype.getTrogClassId = function() {
-    return 'StrongPlugin';
+/** @override */
+kinyelo.editor.plugins.InlineFormatter.prototype.getTrogClassId = function() {
+    return 'InlineFormatter';
 }
 
-/** Command implemented by the plugin
- * @type {string}
+/**
+ * Logging object.
+ * @type {goog.debug.Logger}
+ * @protected
+ * @override
  */
-kinyelo.editor.plugins.StrongPlugin.COMMAND = 'insertStrong';
+kinyelo.editor.plugins.InlineFormatter.prototype.logger =
+    goog.debug.Logger.getLogger('kinyelo.editor.plugins.InlineFormatter');
 
-/** @inheritDoc */
-kinyelo.editor.plugins.StrongPlugin.prototype.isSupportedCommand = function(command) {
-    return command == kinyelo.editor.plugins.StrongPlugin.COMMAND;
+/**
+ * Commands implemented by this plugin.
+ * @enum {string}
+ */
+kinyelo.editor.plugins.InlineFormatter.COMMAND = {
+    STRONG: '+insertStrong',
+    EM: '+insertEm'
+};
+
+/**
+ * Tags mapped to commands in this plugin.
+ * @enum {string}
+ */
+kinyelo.editor.plugins.InlineFormatter.TAGS = {
+    STRONG: goog.dom.TagName.STRONG,
+    EM: goog.dom.TagName.EM
+};
+
+/**
+ * Inverse map of execCommand strings to
+ * {@link goog.editor.plugins.BasicTextFormatter.COMMAND} constants. Used to
+ * determine whether a string corresponds to a command this plugin
+ * handles in O(1) time.
+ * @type {Object}
+ * @private
+ */
+kinyelo.editor.plugins.InlineFormatter.SUPPORTED_COMMANDS_ =
+    goog.object.transpose(kinyelo.editor.plugins.InlineFormatter.COMMAND);
+
+
+/**
+ * Whether the string corresponds to a command this plugin handles.
+ * @param {string} command Command string to check.
+ * @return {boolean} Whether the string corresponds to a command
+ *     this plugin handles.
+ * @override
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.isSupportedCommand = function(command) {
+    return command in kinyelo.editor.plugins.InlineFormatter.SUPPORTED_COMMANDS_;
 }
 
-/** @inheritDoc */
-kinyelo.editor.plugins.StrongPlugin.prototype.execCommandInternal = function(command) {
 
-    var range = goog.editor.range.expand(this.getFieldObject().getRange());
-    var savedRange = goog.editor.range.saveUsingNormalizedCarets(range);
-    range = savedRange.toAbstractRange();
-//    var newRange = savedRange.toAbstractRange();
+/**
+ * Whether a given node matches the tag corresponding to the current command being executed.
+ * @param {!string} tag The tag to check
+ * @param {!Node} node Node to check the tag of
+ * @return {boolean} Whether the node's tag is the tag corresponding to the command being executed.
+ */
+kinyelo.editor.plugins.InlineFormatter.checkTag = function(tag, node) {
+    return node.tagName == tag;
+}
 
-    if(!range.isCollapsed()) {
+/**
+ * Flattens an element if it is completely in the current range and has the tag corresponding
+ * to the command being executed.
+ * @param {!string} tag Tag to check
+ * @param {!goog.dom.AbstractRange} range Range to check
+ * @param {!Node} node Node to check the tag of
+ */
+kinyelo.editor.plugins.InlineFormatter.flattenElements = function(tag, range, node) {
+    if(kinyelo.editor.plugins.InlineFormatter.checkTag(tag, node) && range.containsNode(node)) {
+        goog.dom.flattenElement(node);
+    }
+}
 
-        var bFlatten = false;
+/**
+ * Tags of elements that can contain inline format tags.
+ * @enum {string}
+ */
+kinyelo.editor.InlineFormattable = [
+    goog.dom.TagName.P,
+    goog.dom.TagName.LI,
+    goog.dom.TagName.LI
+];
 
-        //get the deepest points of the range
-        //only check for parent because otherwise, full inline element is included by expanding above
-        //if toggling on, we create a new range with them in to merge adjacent same nodes, effectively
-        //otherwise, we split the subtree
-        var predicateFunc = function(parentNode) {
-            return parentNode.tagName == goog.dom.TagName.STRONG;
+/**
+ * Whether a given can contain an inline format tag.
+ * @param {!Node} node Node to check for supporting inline format tags
+ * @return {boolean} Whether the node's tag is a tag that can contain an inline format tag.
+ */
+kinyelo.editor.isInlineFormattable = function(node) {
+    return goog.array.indexOf(kinyelo.editor.InlineFormattable, node.tagName) != -1;
+}
+
+/**
+ * Whether a given node is a text node.
+ * @param {!Node} node Node to check the type of
+ * @return {boolean} Whether a given node is a text node.
+ */
+kinyelo.editor.isTextNode = function(node) {
+    return node.nodeType == goog.dom.NodeType.TEXT;
+}
+
+/**
+ * @type {boolean}
+ * @private
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.flatten_ = false;
+
+/**
+ * The selected range
+ * @type {?goog.dom.AbstractRange}
+ * @private
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.range_ = null;
+
+/**
+ * Set the custom range
+ * @param {?goog.dom.AbstractRange} range The range to save
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.setCustomRange = function(range) {
+    this.range_ = range;
+}
+
+/**
+ * Get the custom range
+ * @return {goog.dom.AbstractRange} The custom range
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.getCustomRange = function() {
+    return this.range_;
+}
+
+/**
+ * Checks a given node and if the node is completely in the current range, will wrap the child nodes
+ * Otherwise, if the given node is partially contained, we will find the descendant text nodes
+ * and format them if they can be otherwise retrieve a list of all child nodes that are fully contained
+ * in the current range and move to a new inline format tag corresponding to the command being
+ * executed
+ * @param {!goog.dom.AbstractRange} range The range to check
+ * @param {!string} tag Tag to use for formatting
+ * @param {!Node} node Text node to wrap
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.formatNode = function(tag, node) {
+
+    if(this.getCustomRange().containsNode(node)) {
+        //if block node is fully contained
+        var newNode = goog.dom.createDom(tag, null, node.childNodes);
+        goog.dom.append(node, newNode);
+    } else if(this.getCustomRange().containsNode(node, true)) {
+        //else if block node is partially contained
+        //get all text ranges
+        var textNodes = goog.dom.findNodes(node, kinyelo.editor.isTextNode);
+        goog.array.forEach(textNodes, goog.partial(kinyelo.editor.formatTextNode, this.getCustomRange(), tag));
+
+
+        var childNode = goog.editor.node.getFirstChild(node);
+        var childNodes = [];
+        while(!goog.isNull(childNode)) {
+            if(this.getCustomRange().containsNode(childNode)) {
+                childNodes.push(childNode);
+            }
+            childNode = goog.editor.node.getNextSibling(childNode);
+        }
+        if(!goog.array.isEmpty(childNodes)) {
+            var newNode = goog.dom.createDom(tag);
+            goog.dom.insertSiblingBefore(newNode, childNodes[0]);
+            goog.dom.append(newNode, childNodes);
         }
 
-        var startNode = savedRange.getCaret(true);
-        var startAncestor = goog.editor.node.findHighestMatchingAncestor(startNode, predicateFunc);
-        //if start node is descendant of strong tag
-        if(!goog.isNull(startAncestor)) {
-            //split the start node's strong ancestor
-            //var node = this.getFieldDomHelper().createTextNode('');
-            //goog.dom.insertSiblingBefore(node, startNode);
-            //var startSubtree = goog.editor.node.splitDomTreeAt(node, startNode, startAncestor);
-            var startSubtree = goog.editor.node.splitDomTreeAt(startNode, startNode, startAncestor);
-            goog.dom.insertSiblingAfter(startSubtree, startAncestor);
-            range = goog.editor.range.expand(range);
-            bFlatten = true;
+    }
+}
+
+/**
+ * Checks a given node and if the node is completely in the current range, will wrap the child nodes
+ * Otherwise, if the given node is partially contained, we will find the descendant text nodes
+ * and format them if they can be otherwise retrieve a list of all child nodes that are fully contained
+ * in the current range and move to a new inline format tag corresponding to the command being
+ * executed
+ * @param {!Node} node Node to merge
+ */
+kinyelo.editor.plugins.InlineFormatter.mergeNodes = function(node) {
+    var childNode = goog.editor.node.getFirstChild(node);
+    if(goog.isNull(childNode)) { return; }
+    var childNodes = [];
+    var lastTag = childNode.tagName;
+    while(!goog.isNull(childNode)) {
+        if(!kinyelo.editor.isTextNode(childNode)) {
+            kinyelo.editor.plugins.InlineFormatter.mergeNodes(childNode);
+        }
+        if(childNode.tagName == lastTag && childNode.tagName in kinyelo.editor.plugins.InlineFormatter.TAGS) {
+            childNodes.push(childNode);
         } else {
-            //if it is null, make sure we don't need to merge a neighboring sibling
-            var prevSibling = goog.editor.node.getPreviousSibling(startNode);
-            if(prevSibling.tagName == goog.dom.TagName.STRONG) {
-                var node = this.getFieldDomHelper().createTextNode('');
-                goog.dom.insertSiblingBefore(node, prevSibling);
-                range.moveToNodes(node, node.length, range.getFocusNode(), range.getFocusOffset());
+            if(childNodes.length > 1) {
+                var newNode = goog.dom.createDom(lastTag);
+                goog.dom.insertSiblingBefore(newNode, childNodes[0]);
+                goog.dom.append(newNode, childNodes);
+                goog.array.forEach(childNodes, goog.dom.flattenElement);
             }
+            childNodes = [];
+            childNodes.push(childNode);
         }
+        lastTag = childNode.tagName;
+        childNode = goog.editor.node.getNextSibling(childNode);
+    }
+}
 
-        var endNode = savedRange.getCaret();
-        var endAncestor = goog.editor.node.findHighestMatchingAncestor(endNode, predicateFunc);
-        //if end node is descendant of strong tag
-        if(!goog.isNull(endAncestor)) {
-            //if we are not toggling the inline format off (flattening)
-            //then we need to include the ancestor instead of splitting the ancestor to remove formatting
-            if(!bFlatten) {
-                var node = this.getFieldDomHelper().createTextNode('');
-                goog.dom.insertSiblingAfter(node, endAncestor);
-                range.moveToNodes(range.getAnchorNode(), range.getAnchorOffset(), node, node.length);
-            } else {
-                //split the end node's strong ancestor
-                var node = this.getFieldDomHelper().createTextNode('');
-                goog.dom.insertSiblingAfter(node, endNode);
-                var endSubtree = goog.editor.node.splitDomTreeAt(endNode, node, endAncestor);
-                goog.dom.insertSiblingAfter(endSubtree, endAncestor);
-                range = goog.editor.range.expand(range);
-            }
-        } else {
-            //if it is null, make sure we don't need to merge a neighboring sibling
-            var nextSibling = goog.editor.node.getNextSibling(endNode);
-            if(nextSibling.tagName == goog.dom.TagName.STRONG) {
-                var node = this.getFieldDomHelper().createTextNode('');
-                goog.dom.insertSiblingBefore(node, nextSibling);
-                range.moveToNodes(node, node.length, range.getFocusNode(), range.getFocusOffset());
-            }
+
+/**
+ * Checks a given text node and if the node is completely in the current range, is not a block tag node,
+ * and its parent node is not completely in the current range, then wrap with the inline format tag
+ * corresponding to the current command being executed
+ * @param {!goog.dom.AbstractRange} range The range to check
+ * @param {!string} tag The tag to apply
+ * @param {!Node} node Text node to wrap
+ */
+kinyelo.editor.formatTextNode = function(range, tag, textNode) {
+    //if the textNode is completely in the range and the parent is not
+    if(range.containsNode(textNode)
+        && !goog.editor.node.isBlockTag(textNode.parentNode)
+        && !range.containsNode(textNode.parentNode)) {
+        var newNode = goog.dom.createDom(tag);
+        goog.dom.insertSiblingBefore(newNode, textNode);
+        goog.dom.append(newNode, textNode);
+    }
+}
+
+/**
+ * Adjusts the current range from the beginning
+ * Checks the highest ancestor matching the tag corresponding to the current command being executed
+ * If an ancestor exists, we must split the DOM at this point and indicate
+ * that since the range starts in a node matching the current requested inline format
+ * we must flatten the selection as need to toggle it off
+ * Otherwise, we also to check the previous sibling and if it matches the current tag
+ * corresponding to the current command being executed, we want to include this in the range to
+ * be formatted
+ * @param {goog.dom.SavedCaretRange} savedRange
+ * @param {string} tag
+ */
+
+kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(savedRange, tag) {
+
+    var startNode = savedRange.getCaret(true);
+    if(!goog.isNull(goog.editor.node.getNextSibling(startNode)) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, goog.editor.node.getNextSibling(startNode))) {
+        this.setFlatten(true);
+    }
+    var predicateFunc = function(node) {
+        return goog.editor.node.isEditable(node)
+            && !goog.editor.node.isBlockTag(node)
+            && node.tagName in kinyelo.editor.plugins.InlineFormatter.TAGS
+            && (goog.editor.node.isBlockTag(node.parentNode) || node.parentNode.tagName in kinyelo.editor.plugins.InlineFormatter.TAGS);
+    }
+    //var startAncestor = goog.editor.node.findHighestMatchingAncestor(startNode, predicateFunc);
+    var startAncestor = goog.dom.getAncestorByTagNameAndClass(startNode, tag);
+    //if start node is descendant of strong tag
+    if(!goog.isNull(startAncestor) && startAncestor.tagName == tag) {
+        var startSubtree = goog.editor.node.splitDomTreeAt(startNode, startNode, startAncestor);
+        goog.dom.insertSiblingAfter(startSubtree, startAncestor);
+        this.setCustomRange(goog.editor.range.expand(this.getCustomRange()));
+        this.setFlatten(true);
+    } else {
+        //if it is null, make sure we don't need to merge a neighboring sibling
+        var prevSibling = goog.editor.node.getPreviousSibling(startNode);
+        if(!goog.isNull(prevSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, prevSibling)) {
+            var node = this.getFieldDomHelper().createTextNode('');
+            goog.dom.insertSiblingBefore(node, prevSibling);
+            this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
         }
-        range = goog.editor.range.expand(range);
+    }
+}
+
+/**
+ * Adjusts the current range from the end
+ * Checks the highest ancestor matching the tag corresponding to the current command being executed
+ * If an ancestor exists, we check if we are flattening the selection based on examining the start of the range
+ * and if we are flattening, we want to insert a new marker to end the range here and include it
+ * and if we are not flattening, we want to insert a new marker after the after the caret created by
+ * the saved range for splitting and split the end node's ancestor which matches the inline format tag
+ * current being executed
+ * Otherwise, we examine the next sibling of the end of the range for inclusion if it matches the tag
+ * corresponding to the current command being executed
+ * @param {goog.dom.SavedCaretRange} savedRange
+ * @param {string} tag
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.checkEndRange = function(savedRange, tag) {
+
+    var endNode = savedRange.getCaret();
+    var predicateFunc = function(node) {
+        return goog.editor.node.isEditable(node)
+            && !goog.editor.node.isBlockTag(node)
+            && node.tagName in kinyelo.editor.plugins.InlineFormatter.TAGS
+            && (goog.editor.node.isBlockTag(node.parentNode) || node.parentNode.tagName in kinyelo.editor.plugins.InlineFormatter.TAGS);
+    }
+    //var endAncestor = goog.editor.node.findHighestMatchingAncestor(endNode, predicateFunc);
+    var endAncestor = goog.dom.getAncestorByTagNameAndClass(endNode, tag);
+    //if end node is descendant of strong tag
+    if(!goog.isNull(endAncestor) && endAncestor.tagName == tag) {
+        var node = this.getFieldDomHelper().createTextNode('');
+        if(!this.getFlatten()) {
+            goog.dom.insertSiblingAfter(node, endAncestor);
+            this.getCustomRange().moveToNodes(this.getCustomRange().getAnchorNode(), this.getCustomRange().getAnchorOffset(), node, node.length);
+        } else {
+            //split the end node's strong ancestor
+            goog.dom.insertSiblingAfter(node, endNode);
+            var endSubtree = goog.editor.node.splitDomTreeAt(endNode, node, endAncestor);
+            goog.dom.insertSiblingAfter(endSubtree, endAncestor);
+            this.setCustomRange(goog.editor.range.expand(this.getCustomRange()));
+        }
+    } else {
+        //if it is null, make sure we don't need to merge a neighboring sibling
+        var nextSibling = goog.editor.node.getNextSibling(endNode);
+        if(!goog.isNull(nextSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, nextSibling)) {
+            var node = this.getFieldDomHelper().createTextNode('');
+            goog.dom.insertSiblingBefore(node, nextSibling);
+            this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
+        }
+    }
+
+}
+
+
+/**
+ * Set whether we are flattening the current selection or not
+ * @param {boolean} flatten Whether we are flattening the current selection or not
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.setFlatten = function(flatten) {
+    this.flatten_ = flatten;
+}
+
+/**
+ * Get whether we are flattening the current selection or not
+ * @return {boolean}
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.getFlatten = function () {
+    return this.flatten_;
+}
+
+/**
+ * Execute a user-initiated command.
+ * @param {string} command Command to execute.
+ * @override
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(command) {
+
+    var tag = null;
+    this.setCustomRange(null);
+    this.setFlatten(false);
+    switch(command) {
+        case kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG:
+            tag = kinyelo.editor.plugins.InlineFormatter.TAGS.STRONG;
+            break;
+        case kinyelo.editor.plugins.InlineFormatter.COMMAND.EM:
+            tag = kinyelo.editor.plugins.InlineFormatter.TAGS.EM;
+            break;
+        default:
+            break;
+    }
+
+    this.setCustomRange(goog.editor.range.expand(this.getFieldObject().getRange()));
+
+    if(!this.getCustomRange().isCollapsed()) {
+
+        var savedRange = goog.editor.range.saveUsingNormalizedCarets(this.getCustomRange());
+        this.setCustomRange(savedRange.toAbstractRange());
+
+        this.checkStartRange(savedRange, tag);
+        this.checkEndRange(savedRange, tag);
+        this.setCustomRange(goog.editor.range.expand(this.getCustomRange()));
 
         //flatten all strong nodes in range
-        var container = range.getContainer();
+        var container = this.getCustomRange().getContainer();
         //get block ancestor
         goog.editor.range.normalizeNode(container);
         if(!goog.editor.node.isBlockTag(container)) {
             container = goog.dom.getAncestor(container, goog.editor.node.isBlockTag);
         }
 
-        if(goog.editor.range.intersectsTag(range, goog.dom.TagName.STRONG)) {
+        if(goog.editor.range.intersectsTag(this.getCustomRange(), tag)) {
             var nodes = goog.dom.findNodes(container, goog.editor.node.isImportant);
-            goog.array.forEach(nodes, function(node) {
-                if(node.tagName == goog.dom.TagName.STRONG && this.containsNode(node)) {
-                    goog.dom.flattenElement(node);
-                }
-            }, range);
+            goog.array.forEach(nodes, goog.partial(kinyelo.editor.plugins.InlineFormatter.flattenElements, tag, this.getCustomRange()));
         }
 
-        if(!bFlatten) {
-
+        if(!this.getFlatten()) {
             var formattableNodes = [];
             formattableNodes = goog.dom.findNodes(container, kinyelo.editor.isInlineFormattable);
             if(!formattableNodes.length) {
                 formattableNodes.push(container);
             }
-
-            goog.array.forEach(formattableNodes, function(node) {
-                if(this.containsNode(node)) {
-                    //if block node is fully contained
-                    var newNode = goog.dom.createDom(goog.dom.TagName.STRONG, null, node.childNodes);
-                    goog.dom.append(node, newNode);
-                } else if(this.containsNode(node, true)) {
-                    //else if block node is partially contained
-                    //get all text ranges
-                    var textNodes = goog.dom.findNodes(node, kinyelo.editor.isTextNode);
-                    goog.array.forEach(textNodes, function(textNode) {
-                        //if the textNode is completely in the range and the parent is not
-                        if(this.containsNode(textNode) && !goog.editor.node.isBlockTag(textNode.parentNode) && !this.containsNode(textNode.parentNode)) {
-                            var newNode = goog.dom.createDom(goog.dom.TagName.STRONG);
-                            goog.dom.insertSiblingBefore(newNode, textNode);
-                            goog.dom.append(newNode, textNode);
-                        }
-                    }, this);
-
-                    var childNode = goog.editor.node.getFirstChild(node);
-                    console.log(childNode);
-                    var childNodes = [];
-                    while(!goog.isNull(childNode)) {
-                        if(this.containsNode(childNode)) {
-                            childNodes.push(childNode);
-                        }
-                        childNode = goog.editor.node.getNextSibling(childNode);
-                    }
-                    console.log(childNodes);
-                    if(!goog.array.isEmpty(childNodes)) {
-                        var newNode = goog.dom.createDom(goog.dom.TagName.STRONG);
-                        goog.dom.insertSiblingBefore(newNode, childNodes[0]);
-                        goog.dom.append(newNode, childNodes);
-                    }
-
-                }
-            }, range);
-
+            goog.array.forEach(formattableNodes, goog.bind(this.formatNode, this, tag));
+            goog.array.forEach(formattableNodes, kinyelo.editor.plugins.InlineFormatter.mergeNodes);
         }
 
         goog.editor.range.normalizeNode(container);
-
         savedRange.restore().select();
 
-/*
 
-        goog.array.forEach(formattableNodes, function(node) {
-            if(this.containsNode(node)) {
-                //if block node is fully contained
-                var newNode = goog.dom.createDom(goog.dom.TagName.STRONG, null, node.getChildren());
-                goog.dom.replaceNode(newNode, node);
-            } else if(this.containsNode(node, true)) {
-                //else if block node is partially contained
-                //right now wrapping text ranges, but need to wrap the full partial (docfrag?) bc might contain em
-
-                var textNodes = goog.dom.findNodes(node, kinyelo.editor.isTextNode);
-                goog.array.forEach(textNodes, function(textNode) {
-                    if(newRange.containsNode(textNode)) {
-                        var index = goog.editor.node.findInChildren(textNode.parentNode, function(node) { return node == textNode; });
-                        var parentNode = textNode.parentNode;
-                        if(!goog.isNull(index)) {
-                            var newNode = goog.dom.createDom(goog.dom.TagName.STRONG, null, textNode);
-                            goog.dom.insertChildAt(parentNode, newNode, index);
-                        }
-                    }
-                });
-            }
-        }, newRange);
-
-        savedRange.restore().select();*/
     } else {
+        var newNode = goog.dom.createDom(tag);
+        this.getCustomRange().insertNode(newNode);
         //create a new strong element
         //insert at cursor
         //place cursor inside
@@ -219,45 +444,21 @@ kinyelo.editor.plugins.StrongPlugin.prototype.execCommandInternal = function(com
 
 }
 
-//subclass the contenteditablefield so we can store range to use in instance methods
-
-kinyelo.editor.isTextNode = function(node) {
-    return node.nodeType == goog.dom.NodeType.TEXT;
-}
-
-kinyelo.editor.isTextyNode = function(node) {
-    return node.nodeType == goog.dom.NodeType.TEXT;
-}
-
-kinyelo.editor.isInlineFormattable = function(node) {
-    return goog.array.indexOf([goog.dom.TagName.P, goog.dom.TagName.LI, goog.dom.TagName.LI], node.tagName) != -1;
-}
-kinyelo.editor.isInlineElement = function(node) {
-    return goog.array.indexOf([goog.dom.TagName.STRONG, goog.dom.TagName.EM], node.tagName) != -1;
-}
-kinyelo.editor.isTextOrInlineNode = function(node) {
-    return (!kinyelo.editor.isInlineElement(node.parentNode) && node.nodeType == goog.dom.NodeType.TEXT) ||
-        kinyelo.editor.isInlineElement(node);
-}
-kinyelo.editor.isTranferrableNode = function(node) {
-    //only fully contained text nodes and partially contained element nodes, which will need to be recreated
-    return goog.editor.node.isImportant(node) &&
-        !goog.editor.node.isBlockTag(node) &&
-        (node.nodeType == goog.dom.NodeType.ELEMENT && this.containsNode(node, true)) &&
-        (node.nodeType == goog.dom.NodeType.TEXT && this.containsNode(node));
-}
-
 /** @inheritDoc */
-kinyelo.editor.plugins.StrongPlugin.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
+kinyelo.editor.plugins.InlineFormatter.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
     if(isModifierPressed && key == 'b') {
-        this.getFieldObject().execCommand(kinyelo.editor.plugins.StrongPlugin.COMMAND);
+        this.getFieldObject().execCommand(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG);
+        return true;
+    }
+    if(isModifierPressed && key == 'i') {
+        this.getFieldObject().execCommand(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM);
         return true;
     }
     return false;
 }
 
 /** @inheritDoc */
-kinyelo.editor.plugins.StrongPlugin.prototype.queryCommandValue = function(command) {
+kinyelo.editor.plugins.InlineFormatter.prototype.queryCommandValue = function(command) {
     var range = this.getFieldObject().getRange();
     var container = range && range.getContainer();
     var ancestor = goog.dom.getAncestorByTagNameAndClass(container, goog.dom.TagName.STRONG);
@@ -271,8 +472,10 @@ kinyelo.editor.plugins.StrongPlugin.prototype.queryCommandValue = function(comma
  */
 kinyelo.Editor = function() {
 
-    var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.StrongPlugin.COMMAND, 'Bold', 'Bold');
+    var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Bold', 'Bold');
+    var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italic', 'Italic');
     strongButton.queryable = true;
+    emButton.queryable = true;
 
     /**
      * Array of editor plugins
@@ -280,7 +483,8 @@ kinyelo.Editor = function() {
      * @private
      */
     this.buttons_ = [
-        strongButton
+        strongButton,
+        emButton
     ];
 
 
@@ -295,7 +499,7 @@ kinyelo.Editor = function() {
 
     /**
      * Element of the main editable body
-      * @type {!Element}
+     * @type {!Element}
      * @private
      */
     this.editableElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.Editor.POST_CONTAINER_ID_});
@@ -313,10 +517,10 @@ kinyelo.Editor = function() {
      * @protected
      */
     this.toolbar = goog.ui.editor.DefaultToolbar.makeToolbar(this.buttons_, this.toolbarElement_);
-/*
-    var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
-    this.toolbar.setRenderer(customRenderer);
-*/
+    /*
+     var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
+     this.toolbar.setRenderer(customRenderer);
+     */
     this.parentElement_.appendChild(this.editableElement_);
     this.parentElement_.appendChild(this.toolbarElement_);
 
@@ -364,7 +568,7 @@ kinyelo.Editor.TOOLBAR_CONTAINER_ID_ = 'rte-toolbar';
  */
 
 kinyelo.Editor.prototype.initEditor_ = function() {
-    this.opus.registerPlugin(new kinyelo.editor.plugins.StrongPlugin());
+    this.opus.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
     //this.opus.registerPlugin(new goog.editor.plugins.BasicTextFormatter());
     this.opus.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     this.opus.registerPlugin(new goog.editor.plugins.UndoRedo());
@@ -382,276 +586,3 @@ kinyelo.Editor.prototype.initEditor_ = function() {
     var rte = new kinyelo.Editor();
 })();
 
-
-
-
-
-
-/*
-
-
-
- kinyelo.editor.isCharacterDataNode = function(node) {
- var t = node.nodeType;
- return t == 3 || t == 4 || t == 8 ; // Text, CDataSection or Comment
- }
-
- kinyelo.editor.splitDataNode = function(node, index) {
- var newNode = node.cloneNode(false);
- newNode.deleteData(0, index);
- node.deleteData(index, node.length - index);
- goog.dom.insertSiblingAfter(newNode, node);
- return newNode;
- }
-
- kinyelo.editor.getNodeIndex = function(node) {
- var i = 0;
- while( (node = node.previousSibling) ) {
- i++;
- }
- return i;
- }
- kinyelo.editor.splitBoundaries = function(range) {
- var sc = range.getStartNode(), so = range.getStartOffset(), ec = range.getEndNode(), eo = range.getEndOffset();
- var startEndSame = (sc === ec);
-
- if (kinyelo.editor.isCharacterDataNode(ec) && eo > 0 && eo < ec.length) {
- kinyelo.editor.splitDataNode(ec, eo);
-
- }
-
- if (kinyelo.editor.isCharacterDataNode(sc) && so > 0 && so < sc.length) {
-
- sc = kinyelo.editor.splitDataNode(sc, so);
- if (startEndSame) {
- eo -= so;
- ec = sc;
- } else if (ec == sc.parentNode && eo >= kinyelo.editor.getNodeIndex(sc)) {
- eo++;
- }
- so = 0;
-
- }
- return goog.dom.Range.createFromNodes(sc, so, ec, eo);
- }
-
-
-
- kinyelo.editor.isFormattableNode = function(node) {
- return goog.editor.node.isEditable(node)
- && !goog.isNull(goog.style.getVisibleRectForElement(node))
- && (node.nodeType == Node.TEXT_NODE
- || (node.tagName == goog.node.TagName.IMG || node.TagName == goog.node.TagName.BR));
- }
-
- kinyelo.editor.setSelectionValue = function(command, newValue) {
- if(!goog.array.some(kinyelo.editor.getAllEffectivelyContainedNodes(this.getFieldObject().getRange()), kinyelo.editor.isFormattableNode)) {
-
- }
- }
-
- kinyelo.editor.isBefore = function(node1, node2) {
- return Boolean(node1.compareDocumentPosition(node2) & Node.DOCUMENT_POSITION_FOLLOWING);
- }
-
- kinyelo.editor.nextNode = function(node) {
- if (node.hasChildNodes()) {
- return node.firstChild;
- }
- return kinyelo.editor.nextNodeDescendants(node);
- }
-
- kinyelo.editor.nextNodeDescendants = function(node) {
- while (node && !node.nextSibling) {
- node = node.parentNode;
- }
- if (!node) {
- return null;
- }
- return node.nextSibling;
- }
-
- kinyelo.editor.getAllEffectivelyContainedNodes = function(range, condition) {
- if (!goog.isDef(condition)) {
- condition = goog.functions.TRUE;
- }
- var node = range.getContainer();
-
- var stop = goog.editor.node.getNextSibling(node);
-
- var nodeList = [];
- while (isBefore(node, stop)) {
- if (isEffectivelyContained(node, range)
- && condition(node)) {
- nodeList.push(node);
- }
- node = nextNode(node);
- }
- return nodeList;
- }
-
- kinyelo.editor.getPosition = function(nodeA, offsetA, nodeB, offsetB) {
- // "If node A is the same as node B, return equal if offset A equals offset
- // B, before if offset A is less than offset B, and after if offset A is
- // greater than offset B."
- var order = goog.dom.compareNodeOrder(nodeA, nodeB);
- if (order == 0) {
- if (offsetA == offsetB) {
- return 0;
- }
- if (offsetA < offsetB) {
- return -1;
- }
- if (offsetA > offsetB) {
- return 1;
- }
- }
- return order;
-
- }
-
- kinyelo.editor.getNodeLength = function(node) {
- switch (node.nodeType) {
- case Node.PROCESSING_INSTRUCTION_NODE:
- case Node.DOCUMENT_TYPE_NODE:
- return 0;
-
- case Node.TEXT_NODE:
- case Node.COMMENT_NODE:
- return node.length;
-
- default:
- return node.childNodes.length;
- }
- }
-
- kinyelo.editor.isEffectivelyContained = function(node, range) {
- if (range.isCollapsed()) {
- return false;
- }
-
- // "node is contained in range."
- if (range.containsNode(node)) {
- return true;
- }
-
- // "node is range's start node, it is a Text node, and its length is
- // different from range's start offset."
- if (node == range.getAnchorNode()
- && node.nodeType == Node.TEXT_NODE
- && kinyelo.editor.getNodeLength(node) != range.getAnchorOffset()) {
- return true;
- }
-
- // "node is range's end node, it is a Text node, and range's end offset is
- // not 0."
- if (node == range.getFocusNode()
- && node.nodeType == Node.TEXT_NODE
- && range.getFocusOffset() != 0) {
- return true;
- }
-
- // "node has at least one child; and all its children are effectively
- // contained in range; and either range's start node is not a descendant of
- // node or is not a Text node or range's start offset is zero; and either
- // range's end node is not a descendant of node or is not a Text node or
- // range's end offset is its end node's length."
- if (node.hasChildNodes()
- && [].every.call(node.childNodes, function(child) { return kinyelo.editor.isEffectivelyContained(child, range) })
- && (!goog.dom.contains(node, range.getAnchorNode())
- || range.getAnchorNode().nodeType != Node.TEXT_NODE
- || range.getAnchorOffset() == 0)
- && (!goog.dom.containes(node, range.getFocusNode())
- || range.getFocusNode().nodeType != Node.TEXT_NODE
- || range.getFocusOffset() == kinyelo.editor.getNodeLength(range.getFocusNode()))) {
- return true;
- }
-
- return false;
- }*/
-
-
-/*
-
- kinyelo.editor.getNodeIndex = function(node) {
- var i = 0;
- while( (node = node.previousSibling) ) {
- i++;
- }
- return i;
- }
-
- kinyelo.editor.splitBoundaries = function(range) {
- //assertRangeValid(this);
-
- var sc = range.getAnchorNode(), so = range.getAnchorOffset(), ec = range.getFocusNode(), eo = range.getFocusOffset();
- var startEndSame = (sc === ec);
-
- if (kinyelo.editor.isCharacterDataNode(ec) && eo > 0 && eo < ec.length) {
- kinyelo.editor.splitDataNode(ec, eo);
- }
-
- if (dom.isCharacterDataNode(sc) && so > 0 && so < sc.length) {
-
- sc = kinyelo.editor.splitDataNode(sc, so);
- if (startEndSame) {
- eo -= so;
- ec = sc;
- } else if (ec == sc.parentNode && eo >= kinyelo.editor.getNodeIndex(sc)) {
- eo++;
- }
- so = 0;
-
- }
- boundaryUpdater(this, sc, so, ec, eo);
- }
-
- kinyelo.editor.applyToTextNode = function(textNode, tag) {
- var parent = textNode.parentNode;
- if (!(parent.childNodes.length == 1 && rangy.dom.arrayContains([tag], parent.tagName.toLowerCase()))) {
- var el = kinyelo.editor.createContainer(textNode);
- textNode.parentNode.insertBefore(el, textNode);
- el.appendChild(textNode);
- }
- }
-
- kinyelo.editor.createContainer = function(node, tag) {
- var domHelper = goog.dom.getDomHelper(node);
- var el = domHelper.createElement(tag);
- return el;
- }
-
- kinyelo.editor.applyToRange = function(range) {
- var textNodes = range.getNodes([wysihtml5.TEXT_NODE]);
- if (!textNodes.length) {
- try {
- var node = this.createContainer(range.endContainer.ownerDocument);
- range.surroundContents(node);
- this.selectNode(range, node);
- return;
- } catch(e) {}
- }
-
- range.splitBoundaries();
- textNodes = range.getNodes([wysihtml5.TEXT_NODE]);
-
- if (textNodes.length) {
- var textNode;
-
- for (var i = 0, len = textNodes.length; i < len; ++i) {
- textNode = textNodes[i];
- if (!this.getAncestorWithClass(textNode)) {
- this.applyToTextNode(textNode);
- }
- }
-
- range.setStart(textNodes[0], 0);
- textNode = textNodes[textNodes.length - 1];
- range.setEnd(textNode, textNode.length);
-
- if (this.normalize) {
- this.postApply(textNodes, range);
- }
- }
- }
- */
