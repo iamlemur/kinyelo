@@ -82,7 +82,15 @@ kinyelo.editor.plugins.HeadingFormatter.prototype.execCommandInternal = function
 
 /** @inheritDoc */
 kinyelo.editor.plugins.HeadingFormatter.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
-
+    if(isModifierPressed && key == '1') {
+        this.getFieldObject().execCommand(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H2);
+        return true;
+    }
+    if(isModifierPressed && key == '2') {
+        this.getFieldObject().execCommand(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H2);
+        return true;
+    }
+    return false;
 }
 
 /** @inheritDoc */

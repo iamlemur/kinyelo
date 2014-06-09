@@ -169,8 +169,6 @@ kinyelo.editor.Field.prototype.setDelayedCommand = function(command) {
     if(command.getRange().isCollapsed()) {
         this.delayedCommand_  = command;
         //add a listener to execute the command after interaction
-        console.log(command);
-        console.log('adding listeners');
         this.keyEvent_ = goog.events.listen(this.field, goog.events.EventType.KEYPRESS, this.onInteraction, false, this);
         this.clickEvent_ = goog.events.listen(this.field, goog.events.EventType.CLICK, this.onInteraction, false, this);
     }

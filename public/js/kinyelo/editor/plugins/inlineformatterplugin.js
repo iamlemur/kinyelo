@@ -114,6 +114,14 @@ kinyelo.editor.plugins.InlineFormatter.isInlineFormattable = function(node) {
  */
 kinyelo.editor.plugins.InlineFormatter.prototype.flatten_ = false;
 
+
+/**
+ * @type {string}
+ * @private
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.tag_ = null;
+
+
 /**
  * The selected range
  * @type {?goog.dom.AbstractRange}
@@ -143,21 +151,19 @@ kinyelo.editor.plugins.InlineFormatter.prototype.getCustomRange = function() {
  * and format them if they can be otherwise retrieve a list of all child nodes that are fully contained
  * in the current range and move to a new inline format tag corresponding to the command being
  * executed
- * @param {!goog.dom.AbstractRange} range The range to check
- * @param {!string} tag Tag to use for formatting
  * @param {!Node} node Text node to wrap
  */
-kinyelo.editor.plugins.InlineFormatter.prototype.formatNode = function(tag, node) {
+kinyelo.editor.plugins.InlineFormatter.prototype.formatNode = function(node) {
 
     if(this.getCustomRange().containsNode(node)) {
         //if block node is fully contained
-        var newNode = goog.dom.createDom(tag, null, node.childNodes);
+        var newNode = goog.dom.createDom(this.getTag(), null, node.childNodes);
         goog.dom.append(node, newNode);
     } else if(this.getCustomRange().containsNode(node, true)) {
         //else if block node is partially contained
         //get all text ranges
         var textNodes = goog.dom.findNodes(node, kinyelo.editor.isTextNode);
-        goog.array.forEach(textNodes, goog.partial(kinyelo.editor.formatTextNode, this.getCustomRange(), tag));
+        goog.array.forEach(textNodes, goog.partial(kinyelo.editor.formatTextNode, this.getCustomRange(), this.getTag()));
 
 
         var childNode = goog.editor.node.getFirstChild(node);
@@ -169,7 +175,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.formatNode = function(tag, node
             childNode = goog.editor.node.getNextSibling(childNode);
         }
         if(!goog.array.isEmpty(childNodes)) {
-            var newNode = goog.dom.createDom(tag);
+            var newNode = goog.dom.createDom(this.getTag());
             goog.dom.insertSiblingBefore(newNode, childNodes[0]);
             goog.dom.append(newNode, childNodes);
         }
@@ -241,18 +247,17 @@ kinyelo.editor.formatTextNode = function(range, tag, textNode) {
  * corresponding to the current command being executed, we want to include this in the range to
  * be formatted
  * @param {goog.dom.SavedCaretRange} savedRange
- * @param {string} tag
  */
 
-kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(savedRange, tag) {
+kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(savedRange) {
 
     var startNode = savedRange.getCaret(true);
-    if(!goog.isNull(goog.editor.node.getNextSibling(startNode)) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, goog.editor.node.getNextSibling(startNode))) {
+    if(!goog.isNull(goog.editor.node.getNextSibling(startNode)) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), goog.editor.node.getNextSibling(startNode))) {
         this.setFlatten(true);
     }
-    var startAncestor = goog.dom.getAncestorByTagNameAndClass(startNode, tag);
+    var startAncestor = goog.dom.getAncestorByTagNameAndClass(startNode, this.getTag());
     //if start node is descendant of strong tag
-    if(!goog.isNull(startAncestor) && startAncestor.tagName == tag) {
+    if(!goog.isNull(startAncestor) && startAncestor.tagName == this.getTag()) {
         var startSubtree = goog.editor.node.splitDomTreeAt(startNode, startNode, startAncestor);
         goog.dom.insertSiblingAfter(startSubtree, startAncestor);
         this.setCustomRange(goog.editor.range.expand(this.getCustomRange()));
@@ -260,7 +265,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(save
     } else {
         //if it is null, make sure we don't need to merge a neighboring sibling
         var prevSibling = goog.editor.node.getPreviousSibling(startNode);
-        if(!goog.isNull(prevSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, prevSibling)) {
+        if(!goog.isNull(prevSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), prevSibling)) {
             var node = this.getFieldDomHelper().createTextNode('');
             goog.dom.insertSiblingBefore(node, prevSibling);
             this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
@@ -279,14 +284,13 @@ kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(save
  * Otherwise, we examine the next sibling of the end of the range for inclusion if it matches the tag
  * corresponding to the current command being executed
  * @param {goog.dom.SavedCaretRange} savedRange
- * @param {string} tag
  */
-kinyelo.editor.plugins.InlineFormatter.prototype.checkEndRange = function(savedRange, tag) {
+kinyelo.editor.plugins.InlineFormatter.prototype.checkEndRange = function(savedRange) {
 
     var endNode = savedRange.getCaret();
-    var endAncestor = goog.dom.getAncestorByTagNameAndClass(endNode, tag);
+    var endAncestor = goog.dom.getAncestorByTagNameAndClass(endNode, this.getTag());
     //if end node is descendant of strong tag
-    if(!goog.isNull(endAncestor) && endAncestor.tagName == tag) {
+    if(!goog.isNull(endAncestor) && endAncestor.tagName == this.getTag()) {
         var node = this.getFieldDomHelper().createTextNode('');
         if(!this.getFlatten()) {
             goog.dom.insertSiblingAfter(node, endAncestor);
@@ -301,7 +305,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.checkEndRange = function(savedR
     } else {
         //if it is null, make sure we don't need to merge a neighboring sibling
         var nextSibling = goog.editor.node.getNextSibling(endNode);
-        if(!goog.isNull(nextSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(tag, nextSibling)) {
+        if(!goog.isNull(nextSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), nextSibling)) {
             var node = this.getFieldDomHelper().createTextNode('');
             goog.dom.insertSiblingBefore(node, nextSibling);
             this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
@@ -328,25 +332,40 @@ kinyelo.editor.plugins.InlineFormatter.prototype.getFlatten = function () {
 }
 
 /**
+ * Set the tag we are using to execute the requested command
+ * @param {string} command The command corresponding to the tag
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.setTag = function(command) {
+    switch(command) {
+        case kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG:
+            this.tag_ = kinyelo.editor.plugins.InlineFormatter.TAGS.STRONG;
+            break;
+        case kinyelo.editor.plugins.InlineFormatter.COMMAND.EM:
+            this.tag_ = kinyelo.editor.plugins.InlineFormatter.TAGS.EM;
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ * Get the tag we are using to execute the requested command
+ * @return {string}
+ */
+kinyelo.editor.plugins.InlineFormatter.prototype.getTag = function () {
+    return this.tag_;
+}
+
+/**
  * Execute a user-initiated command.
  * @param {string} command Command to execute.
  * @override
  */
 kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(command) {
 
-    var tag = null;
     this.setCustomRange(null);
     this.setFlatten(false);
-    switch(command) {
-        case kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG:
-            tag = kinyelo.editor.plugins.InlineFormatter.TAGS.STRONG;
-            break;
-        case kinyelo.editor.plugins.InlineFormatter.COMMAND.EM:
-            tag = kinyelo.editor.plugins.InlineFormatter.TAGS.EM;
-            break;
-        default:
-            break;
-    }
+    this.setTag(command);
 
     this.setCustomRange(goog.editor.range.expand(this.getFieldObject().getRange()));
 
@@ -355,8 +374,8 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
         var savedRange = goog.editor.range.saveUsingNormalizedCarets(this.getCustomRange());
         this.setCustomRange(savedRange.toAbstractRange());
 
-        this.checkStartRange(savedRange, tag);
-        this.checkEndRange(savedRange, tag);
+        this.checkStartRange(savedRange);
+        this.checkEndRange(savedRange);
         this.setCustomRange(goog.editor.range.expand(this.getCustomRange()));
 
         //flatten all strong nodes in range
@@ -367,9 +386,9 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
             container = goog.dom.getAncestor(container, goog.editor.node.isBlockTag);
         }
 
-        if(goog.editor.range.intersectsTag(this.getCustomRange(), tag)) {
+        if(goog.editor.range.intersectsTag(this.getCustomRange(), this.getTag())) {
             var nodes = goog.dom.findNodes(container, goog.editor.node.isImportant);
-            goog.array.forEach(nodes, goog.partial(kinyelo.editor.plugins.InlineFormatter.flattenElements, tag, this.getCustomRange()));
+            goog.array.forEach(nodes, goog.partial(kinyelo.editor.plugins.InlineFormatter.flattenElements, this.getTag(), this.getCustomRange()));
         }
 
         if(!this.getFlatten()) {
@@ -378,7 +397,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
             if(!formattableNodes.length) {
                 formattableNodes.push(container);
             }
-            goog.array.forEach(formattableNodes, goog.bind(this.formatNode, this, tag));
+            goog.array.forEach(formattableNodes, goog.bind(this.formatNode, this));
             goog.array.forEach(formattableNodes, kinyelo.editor.plugins.InlineFormatter.mergeNodes);
         }
 
@@ -392,7 +411,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
             //and the inline format is not active for the collapsed range
             var delayedCommand = this.getFieldObject().getDelayedCommand();
             if(!goog.isNull(delayedCommand)) {
-                var newNode = goog.dom.createDom(tag);
+                var newNode = goog.dom.createDom(this.getTag());
                 newNode = this.getCustomRange().insertNode(newNode);
                 var newRange = goog.dom.TextRange.createFromNodeContents(newNode);
                 newRange.select();
@@ -422,8 +441,14 @@ kinyelo.editor.plugins.InlineFormatter.prototype.handleKeyboardShortcut = functi
 
 /** @inheritDoc */
 kinyelo.editor.plugins.InlineFormatter.prototype.queryCommandValue = function(command) {
+
+    if(!goog.isNull(this.getFieldObject().getDelayedCommand())) {
+        return true;
+    }
+
+    this.setTag(command);
     var range = this.getFieldObject().getRange();
     var container = range && range.getContainer();
-    var ancestor = goog.dom.getAncestorByTagNameAndClass(container, goog.dom.TagName.STRONG);
+    var ancestor = goog.dom.getAncestorByTagNameAndClass(container, this.getTag());
     return !!ancestor;
 }
