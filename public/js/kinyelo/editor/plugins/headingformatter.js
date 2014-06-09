@@ -76,16 +76,16 @@ kinyelo.editor.plugins.HeadingFormatter.prototype.isSupportedCommand = function(
  * @param {string} command Command to execute.
  * @override
  */
-kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(command) {
+kinyelo.editor.plugins.HeadingFormatter.prototype.execCommandInternal = function(command) {
 
 }
 
 /** @inheritDoc */
-kinyelo.editor.plugins.InlineFormatter.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
+kinyelo.editor.plugins.HeadingFormatter.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
 
 }
 
 /** @inheritDoc */
-kinyelo.editor.plugins.InlineFormatter.prototype.queryCommandValue = function(command) {
+kinyelo.editor.plugins.HeadingFormatter.prototype.queryCommandValue = function(command) {
 
 }

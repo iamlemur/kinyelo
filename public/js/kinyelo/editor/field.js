@@ -1,6 +1,7 @@
 goog.provide('kinyelo.editor.Field');
 
 goog.require('goog.dom');
+goog.require('goog.events');
 goog.require('goog.editor.ContentEditableField');
 goog.require('goog.editor.plugins.EnterHandler');
 goog.require('goog.editor.plugins.ListTabHandler');
@@ -15,7 +16,8 @@ goog.require('goog.ui.editor.ToolbarController');
 goog.require('goog.debug.Logger');
 
 goog.require('kinyelo.editor.plugins.InlineFormatter');
-goog.require('kinyelo.editor.plugins.HeaderFormatter');
+goog.require('kinyelo.editor.plugins.HeadingFormatter');
+goog.require('kinyelo.editor.DelayedCommand');
 
 /**
  * @constructor
@@ -26,8 +28,12 @@ kinyelo.editor.Field = function(id, opt_doc) {
     this.parentElement_ = /** @type {!Element} */ (goog.dom.getElement(kinyelo.editor.Field.CONTAINER_ID_));
     var dom = goog.dom.getDomHelper(this.parentElement_);
     this.editableElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.Field.POST_CONTAINER_ID});
+    this.parentElement_.appendChild(this.editableElement_);
+
+    this.createToolbar_();
     goog.editor.ContentEditableField.call(this, this.editableElement_, opt_doc);
-    this.initEditor_();
+    this.initToolbar_();
+    this.makeEditable();
 
 }
 goog.inherits(kinyelo.editor.Field, goog.editor.ContentEditableField);
@@ -35,42 +41,13 @@ goog.exportSymbol('kinyelo.editor.Field.POST_CONTAINER_ID', kinyelo.editor.Field
 goog.exportSymbol('kinyelo.editor.Field', kinyelo.editor.Field);
 
 /**
- * Initialize the editing interface
+ * Create the toolbar
  * @private
  */
-kinyelo.editor.Field.prototype.initEditor_ = function() {
+kinyelo.editor.Field.prototype.createToolbar_ = function() {
 
     var dom = goog.dom.getDomHelper(this.parentElement_);
     this.toolbarElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.Field.TOOLBAR_CONTAINER_ID_});
-
-    this.initToolbar_();
-
-    this.parentElement_.appendChild(this.editableElement_);
-    this.parentElement_.appendChild(this.toolbarElement_);
-
-    this.toolbarController_ = new goog.ui.editor.ToolbarController(this, this.toolbar_);
-
-    /*
-     var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
-     this.toolbar.setRenderer(customRenderer);
-     */
-
-    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
-    this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
-    this.registerPlugin(new goog.editor.plugins.UndoRedo());
-    this.registerPlugin(new goog.editor.plugins.ListTabHandler());
-    this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
-    this.registerPlugin(new goog.editor.plugins.EnterHandler());
-    this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
-    this.registerPlugin(new goog.editor.plugins.LoremIpsum('Click here to edit'));
-    this.makeEditable();
-}
-
-/**
- * Initialize the toolbar
- * @private
- */
-kinyelo.editor.Field.prototype.initToolbar_ = function() {
 
     var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Bold', 'Bold');
     var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italic', 'Italic');
@@ -82,8 +59,33 @@ kinyelo.editor.Field.prototype.initToolbar_ = function() {
         emButton
     ];
 
-
     this.toolbar_ = goog.ui.editor.DefaultToolbar.makeToolbar(this.buttons_, this.toolbarElement_);
+
+    /*
+     var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
+     this.toolbar.setRenderer(customRenderer);
+     */
+
+    this.parentElement_.appendChild(this.toolbarElement_);
+
+}
+
+/**
+ * Initialize the toolbar
+ * @private
+ */
+kinyelo.editor.Field.prototype.initToolbar_ = function() {
+
+    this.toolbarController_ = new goog.ui.editor.ToolbarController(this, this.toolbar_);
+
+    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+    this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
+    this.registerPlugin(new goog.editor.plugins.UndoRedo());
+    this.registerPlugin(new goog.editor.plugins.ListTabHandler());
+    this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
+    this.registerPlugin(new goog.editor.plugins.EnterHandler());
+    this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
+    this.registerPlugin(new goog.editor.plugins.LoremIpsum('Click here to edit'));
 
 
 }
@@ -151,41 +153,58 @@ kinyelo.editor.Field.prototype.toolbarElement_ = null;
  */
 kinyelo.editor.Field.prototype.toolbar_ =  null;
 
-
 /**
- * @type {goog.dom.SavedRange}
+ * A saved command for insertion depending on subsequent user interaction
+ * @type {kinyelo.editor.DelayedCommand}
  * @private
  */
-kinyelo.editor.Field.prototype.insertRange_ = null;
+kinyelo.editor.Field.prototype.delayedCommand_ = null;
 
 /**
- * Save a range to insert an inline format later if the user types in the same position
- * after requesting a new format
- * @param {!goog.dom.SavedRange} savedRange The range to save
+ * Save a range and command to insert an inline format later if the user types in the same
+ * position after requesting a new format
+ * @param {kinyelo.editor.DelayedCommand} command The delayed command to save
  */
-kinyelo.editor.Field.prototype.setInsertRange = function(savedRange) {
-    if(savedRange.isCollapsed()) {
-        this.insertRange_ = savedRange;
+kinyelo.editor.Field.prototype.setDelayedCommand = function(command) {
+    if(command.getRange().isCollapsed()) {
+        this.delayedCommand_  = command;
+        //add a listener to execute the command after interaction
+        console.log(command);
+        console.log('adding listeners');
+        this.keyEvent_ = goog.events.listen(this.field, goog.events.EventType.KEYPRESS, this.onInteraction, false, this);
+        this.clickEvent_ = goog.events.listen(this.field, goog.events.EventType.CLICK, this.onInteraction, false, this);
+    }
+}
+
+/**
+ *
+ * @returns {kinyelo.editor.DelayedCommand}
+ */
+kinyelo.editor.Field.prototype.getDelayedCommand = function() {
+    return this.delayedCommand_;
+}
+
+
+
+/**
+ * The method for a key press
+ * @param {!goog.events.Event} e The event
+ */
+kinyelo.editor.Field.prototype.onInteraction = function(e) {
+    if(!goog.isNull(this.delayedCommand_)) {
+        var currentRange = this.getRange();
+        var delayedRange = this.delayedCommand_.getRange();
+        if(kinyelo.editor.isEqualRanges(currentRange, delayedRange) && e.getBrowserEvent().which != 0) {
+            this.execCommand(this.delayedCommand_.getCommand());
+        }
+
+        this.delayedCommand_ = null;
+
+        //set the command to null and remove listener
+        goog.events.unlistenByKey(this.keyEvent_);
+        goog.events.unlistenByKey(this.clickEvent_);
     }
 }
 
 
-
-/**
- * Tags of elements that can contain inline format tags.
- * @enum {string}
- */
-kinyelo.editor.BlockFormats = [
-    goog.dom.TagName.P,
-    goog.dom.TagName.LI
-];
-
-/**
- * Whether a given node is a text node.
- * @param {!Node} node Node to check the type of
- * @return {boolean} Whether a given node is a text node.
- */
-kinyelo.editor.isTextNode = function(node) {
-    return node.nodeType == goog.dom.NodeType.TEXT;
-}
 

@@ -1,6 +1,7 @@
 goog.provide('kinyelo.editor.plugins.InlineFormatter');
 
 goog.require('kinyelo.editor');
+goog.require('kinyelo.editor.DelayedCommand');
 goog.require('goog.editor.node');
 goog.require('goog.debug.Logger');
 
@@ -386,18 +387,21 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
 
 
     } else {
+        //if the range is collapsed
         if(!this.getFieldObject().queryCommandValue(command)) {
-            var savedRange = this.getCustomRange().saveUsingDom();
-            this.getFieldObject().setInsertRange(savedRange);
+            //and the inline format is not active for the collapsed range
+            var delayedCommand = this.getFieldObject().getDelayedCommand();
+            if(!goog.isNull(delayedCommand)) {
+                var newNode = goog.dom.createDom(tag);
+                newNode = this.getCustomRange().insertNode(newNode);
+                var newRange = goog.dom.TextRange.createFromNodeContents(newNode);
+                newRange.select();
+            } else {
+                var savedRange = this.getCustomRange();
+                var delayedCommand = new kinyelo.editor.DelayedCommand(command, savedRange);
+                this.getFieldObject().setDelayedCommand(delayedCommand);
+            }
         }
-        /*if(!this.queryCommandValue(command)) {
-         var newNode = goog.dom.createDom(tag);
-         this.getCustomRange().insertNode(newNode);
-         goog.editor.range.selectNodeStart(newNode);
-         }*/
-        //create a new strong element
-        //insert at cursor
-        //place cursor inside
     }
 
 
