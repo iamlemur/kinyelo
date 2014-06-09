@@ -1,3 +1,4 @@
+
 $(document).ready(function() {
     $("#openNav, #fixed-nav #logo").click(function(e) {
         e.preventDefault();

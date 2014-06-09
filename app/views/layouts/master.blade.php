@@ -2,11 +2,11 @@
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready" ng-app="kinyelo"> <!--<![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js screen-scroll js-ready"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Postbook</title>
+	<title>Kinyelo</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -72,12 +72,14 @@
 		</nav>
 
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
-<script src="/js/vendor/jquery-1.10.2.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
 <script src="/js/vendor/jquery.nanoscroller.min.js"></script>
 <script src="/js/vendor/waypoints.min.js"></script>
 <script src="/js/vendor/waypoints-sticky.min.js"></script>
 <script src="/js/vendor/icheck.min.js"></script>
+<script src="/js/vendor/rangy-core.js"></script>
 <!--script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script-->
+<script src="http://localhost:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script>
 <script src="/js/scripts.js" type="text/javascript"></script>
 </body>
 </html>
