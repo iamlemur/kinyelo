@@ -53,10 +53,16 @@ kinyelo.editor.Field.prototype.createToolbar_ = function() {
     var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italic', 'Italic');
     strongButton.queryable = true;
     emButton.queryable = true;
+    var h1Button = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H1, 'H1', 'H1');
+    var h2Button = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H2, 'H2', 'H2');
+    h1Button.queryable = true;
+    h2Button.queryable = true;
 
     this.buttons_ = [
         strongButton,
-        emButton
+        emButton,
+        h1Button,
+        h2Button
     ];
 
     this.toolbar_ = goog.ui.editor.DefaultToolbar.makeToolbar(this.buttons_, this.toolbarElement_);
@@ -79,6 +85,7 @@ kinyelo.editor.Field.prototype.initToolbar_ = function() {
     this.toolbarController_ = new goog.ui.editor.ToolbarController(this, this.toolbar_);
 
     this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
     this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     this.registerPlugin(new goog.editor.plugins.UndoRedo());
     this.registerPlugin(new goog.editor.plugins.ListTabHandler());

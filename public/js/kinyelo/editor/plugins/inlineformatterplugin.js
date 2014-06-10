@@ -75,30 +75,6 @@ kinyelo.editor.plugins.InlineFormatter.prototype.isSupportedCommand = function(c
     return command in kinyelo.editor.plugins.InlineFormatter.SUPPORTED_COMMANDS_;
 }
 
-
-/**
- * Whether a given node matches the tag corresponding to the current command being executed.
- * @param {!string} tag The tag to check
- * @param {!Node} node Node to check the tag of
- * @return {boolean} Whether the node's tag is the tag corresponding to the command being executed.
- */
-kinyelo.editor.plugins.InlineFormatter.checkTag = function(tag, node) {
-    return node.tagName == tag;
-}
-
-/**
- * Flattens an element if it is completely in the current range and has the tag corresponding
- * to the command being executed.
- * @param {!string} tag Tag to check
- * @param {!goog.dom.AbstractRange} range Range to check
- * @param {!Node} node Node to check the tag of
- */
-kinyelo.editor.plugins.InlineFormatter.flattenElements = function(tag, range, node) {
-    if(kinyelo.editor.plugins.InlineFormatter.checkTag(tag, node) && range.containsNode(node)) {
-        goog.dom.flattenElement(node);
-    }
-}
-
 /**
  * Whether a given can contain an inline format tag.
  * @param {!Node} node Node to check for supporting inline format tags
@@ -252,7 +228,7 @@ kinyelo.editor.formatTextNode = function(range, tag, textNode) {
 kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(savedRange) {
 
     var startNode = savedRange.getCaret(true);
-    if(!goog.isNull(goog.editor.node.getNextSibling(startNode)) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), goog.editor.node.getNextSibling(startNode))) {
+    if(!goog.isNull(goog.editor.node.getNextSibling(startNode)) && kinyelo.editor.checkTag(this.getTag(), goog.editor.node.getNextSibling(startNode))) {
         this.setFlatten(true);
     }
     var startAncestor = goog.dom.getAncestorByTagNameAndClass(startNode, this.getTag());
@@ -265,7 +241,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.checkStartRange = function(save
     } else {
         //if it is null, make sure we don't need to merge a neighboring sibling
         var prevSibling = goog.editor.node.getPreviousSibling(startNode);
-        if(!goog.isNull(prevSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), prevSibling)) {
+        if(!goog.isNull(prevSibling) && kinyelo.editor.checkTag(this.getTag(), prevSibling)) {
             var node = this.getFieldDomHelper().createTextNode('');
             goog.dom.insertSiblingBefore(node, prevSibling);
             this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
@@ -305,7 +281,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.checkEndRange = function(savedR
     } else {
         //if it is null, make sure we don't need to merge a neighboring sibling
         var nextSibling = goog.editor.node.getNextSibling(endNode);
-        if(!goog.isNull(nextSibling) && kinyelo.editor.plugins.InlineFormatter.checkTag(this.getTag(), nextSibling)) {
+        if(!goog.isNull(nextSibling) && kinyelo.editor.checkTag(this.getTag(), nextSibling)) {
             var node = this.getFieldDomHelper().createTextNode('');
             goog.dom.insertSiblingBefore(node, nextSibling);
             this.getCustomRange().moveToNodes(node, node.length, this.getCustomRange().getFocusNode(), this.getCustomRange().getFocusOffset());
@@ -388,7 +364,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
 
         if(goog.editor.range.intersectsTag(this.getCustomRange(), this.getTag())) {
             var nodes = goog.dom.findNodes(container, goog.editor.node.isImportant);
-            goog.array.forEach(nodes, goog.partial(kinyelo.editor.plugins.InlineFormatter.flattenElements, this.getTag(), this.getCustomRange()));
+            goog.array.forEach(nodes, goog.partial(kinyelo.editor.flattenElements, this.getTag(), this.getCustomRange()));
         }
 
         if(!this.getFlatten()) {
