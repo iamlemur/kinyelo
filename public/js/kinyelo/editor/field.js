@@ -4,6 +4,7 @@ goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.editor.ContentEditableField');
 goog.require('goog.editor.plugins.EnterHandler');
+goog.require('kinyelo.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.ListTabHandler');
 goog.require('goog.editor.plugins.LoremIpsum');
 goog.require('goog.editor.plugins.RemoveFormatting');
@@ -48,7 +49,7 @@ kinyelo.editor.Field.prototype.createToolbar_ = function() {
 
     var dom = goog.dom.getDomHelper(this.parentElement_);
     this.toolbarElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.Field.TOOLBAR_CONTAINER_ID_});
-
+/*
     var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Bold', 'Bold');
     var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italic', 'Italic');
     strongButton.queryable = true;
@@ -63,6 +64,11 @@ kinyelo.editor.Field.prototype.createToolbar_ = function() {
         emButton,
         h1Button,
         h2Button
+    ];*/
+
+    this.buttons_ = [
+        goog.editor.Command.BOLD,
+        goog.editor.Command.ITALIC
     ];
 
     this.toolbar_ = goog.ui.editor.DefaultToolbar.makeToolbar(this.buttons_, this.toolbarElement_);
@@ -84,8 +90,9 @@ kinyelo.editor.Field.prototype.initToolbar_ = function() {
 
     this.toolbarController_ = new goog.ui.editor.ToolbarController(this, this.toolbar_);
 
-    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
-    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
+//    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+//    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.BasicTextFormatter());
     this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     this.registerPlugin(new goog.editor.plugins.UndoRedo());
     this.registerPlugin(new goog.editor.plugins.ListTabHandler());
