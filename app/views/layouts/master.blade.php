@@ -17,12 +17,22 @@
 
 		<nav class="site-nav" role="navigation">
 			<div class="site-nav-scrollable-container">
-				<h1>postbook.</h1>
+				<h1>kinyelo.</h1>
 				<form role="search" method="get" action="/search">
 					<input type="text" name="q" placeholder="search" />
 				</form>
 				<ul>
-					<li class="personal"><a href="#"><span>joelleimer</span></a></li>
+					@if(Auth::check())
+						<li class="personal<?=($context == "pb-user" ? " active" : "")?>">
+							<a href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
+							<ul>
+								<li><a href="{{ action('UserController@edit') }}"><span>edit</span></a></li>
+								<li><a href="{{ action('UserController@logout') }}"><span>log out</span></a></li>
+							</ul>
+						</li>
+					@else
+						<li class="personal"><a href="{{ action('UserController@getLogin') }}"><span>log in</span></a></li>
+					@endif
 					<li class="posts<?=($context == "pb-posts" ? " active" : "")?>">
 						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
 						<ul>
@@ -68,7 +78,7 @@
 		</nav>
 		<nav id="dev-nav">
 			<a href="#" id="openUtils">Open Utils</a>
-			<a href="{{ action('LoginController@getLogin') }}">Login</a>
+			<a href="{{ action('UserController@getLogin') }}">Login</a>
 		</nav>
 
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->

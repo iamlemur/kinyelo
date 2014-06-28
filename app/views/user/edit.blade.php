@@ -1,10 +1,16 @@
 @section('content')
-<?
-print_r($errors);
-echo Session::get('message');
-?>
 
-{{ Form::model($user, array('action' => array('UserController@store'), 'method' => 'POST')) }}
+@if(isset($message))
+<p>{{$message}}</p>
+@endif
+
+{{ Form::model($user, array('action' => array('UserController@update'), 'method' => 'POST')) }}
+
+@if(count($errors->all()) > 0)
+	@foreach ($errors->all('<li>:message</li>') as $message)
+		{{$message}}
+	@endforeach
+@endif
 
 {{ Form::label('email', 'E-Mail Address') }}
 {{ Form::text('email') }}
@@ -24,9 +30,8 @@ echo Session::get('message');
 {{ Form::label('password_confirmation', 'Password Confirmation') }}
 {{ Form::password('password_confirmation') }}
 
-{{ Form::submit('Register') }}
+{{ Form::submit('Edit') }}
 
 {{ Form::close() }}
 
-<p>Already registered? <a href="{{ action('LoginController@getLogin') }}">Log in.</a></p>
 @stop

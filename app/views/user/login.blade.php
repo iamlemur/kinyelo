@@ -1,15 +1,19 @@
 @section('content')
-<?
-print_r($errors);
-?>
 
-{{ Form::model($user, array('action' => array('LoginController@postLogin'), 'method' => 'POST')) }}
+{{ Form::model($user, array('action' => array('UserController@postLogin'), 'method' => 'POST')) }}
+
 {{ Session::get('error') }}
+
+{{ Form::token() }}
+
 {{ Form::label('username', 'Username') }}
 {{ Form::text('username') }}
 
 {{ Form::label('password', 'Password') }}
 {{ Form::password('password') }}
+
+{{ Form::checkbox('remember') }}
+{{ Form::label('remember', 'Remember me') }}
 
 {{ Form::submit('Login') }}
 

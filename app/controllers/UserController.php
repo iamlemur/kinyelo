@@ -7,18 +7,9 @@ class UserController extends \BaseController {
 
 	public function __construct(User $user) {
 		$this->user = $user;
-		$this->beforeFilter('auth', array('except' => array('create', 'store')));
-		View::share('context', null);
-	}
-
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return Response
-	 */
-	public function index()
-	{
-		//
+		$this->beforeFilter('auth', array('except' => array('create', 'store', 'getLogin', 'postLogin')));
+		$this->beforeFilter('csrf', array('on' => 'post'));
+		View::share('context', 'pb-user');
 	}
 
 	/**
@@ -28,7 +19,7 @@ class UserController extends \BaseController {
 	 */
 	public function create()
 	{
-		$this->layout->content = View::make('author/create')->with('user', $this->user);
+		$this->layout->content = View::make('user/create')->with('user', $this->user);
 	}
 
 	/**
@@ -39,44 +30,70 @@ class UserController extends \BaseController {
 	public function store()
 	{
 		$this->user = new User;
-		if ( $this->user->save() ) {
-			return Redirect::to( '/author/create' )->with( 'message', 'Thanks for registering!' );
-		} else {
-			return Redirect::to( '/author/create' )->withErrors( $this->user->errors() );
-		}
-	}
+		$this->user->email = Input::get('email');
+		$this->user->username = Input::get('username');
+		$this->user->first_name = Input::get('first_name');
+		$this->user->last_name = Input::get('last_name');
+		$this->user->password = Hash::make(Input::get('password'));
+		$this->user->confirmation_code = md5(uniqid(mt_rand(), true));
 
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		//
+		$validator = Validator::make(Input::all(), $this->user->createRules);
+
+		if($validator->passes()) {
+			if($this->user->save()) {
+				Auth::loginUsingId($this->user->id);
+				$this->layout->content = View::make('user/message')->with('user', $this->user)->with('message', 'Thanks for registering!');
+			} else {
+				$this->layout->content = View::make('user/message')->with('user', $this->user)->with('message', 'Your account could not be created.');
+			}
+		} else {
+			$this->layout->content = View::make('user/create')->with('user', $this->user)->withErrors($validator);
+		}
 	}
 
 	/**
 	 * Show the form for editing the specified resource.
 	 *
-	 * @param  int  $id
 	 * @return Response
 	 */
-	public function edit($id)
+	public function edit()
 	{
-		//
+		$this->user = Auth::user();
+		$this->layout->content = View::make('user/edit')->with('user', $this->user);
 	}
 
 	/**
 	 * Update the specified resource in storage.
 	 *
-	 * @param  int  $id
 	 * @return Response
 	 */
-	public function update($id)
+	public function update()
 	{
-		//
+		$this->user = Auth::user();
+		$this->user->email = Input::get('email');
+		$this->user->username = Input::get('username');
+		$this->user->first_name = Input::get('first_name');
+		$this->user->last_name = Input::get('last_name');
+		if(Input::has('password')) {
+			$this->user->password = Hash::make(Input::get('password'));
+		}
+
+		$this->user->updateRules['email'] .= ",email," . $this->user->id;
+		$this->user->updateRules['username'] .= ",username," . $this->user->id;
+
+		$validator = Validator::make(Input::all(), $this->user->updateRules);
+
+		if($validator->passes()) {
+			if($this->user->save()) {
+				$this->layout->content = View::make('user/edit')->with('user', $this->user)->with('message', 'Your account has been updated.');
+			} else {
+				$this->layout->content = View::make('user/edit')->with('user', $this->user)->with('message', 'Your account could not be updated.');
+			}
+		} else {
+			return Redirect::action('UserController@edit')->withInput(Input::all())->withErrors($validator);
+		}
+
+
 	}
 
 	/**
@@ -91,7 +108,43 @@ class UserController extends \BaseController {
 	}
 
 	public function getLogin() {
-		$this->layout->content = View::make('author/login')->with('user', $this->user);
+		$this->user = Auth::user();
+		if(!empty($this->user->id)){
+			return Redirect::intended('/dashboard');
+		}
+		$this->layout->content = View::make('user/login')->with('user', $this->user);
+	}
+
+	public function postLogin() {
+
+		$rules = array(
+			'username' => array('required'),
+			'password' => array('required')
+		);
+
+		$validator = Validator::make(Input::all(), $rules);
+		if ($validator->fails()) {
+			return Redirect::action('UserController@getLogin')->withErrors($validator)->withInput(Input::except('password'));
+		}
+
+		if (Auth::attempt(array('username' => Input::get('username'), 'password' => Input::get('password')), Input::get('remember'))){
+			return Redirect::intended('/dashboard');
+		} else {
+			return Redirect::action('UserController@getLogin')->withInput(Input::except('password'))->with('error', 'The username or password was incorrect.');
+		}
+	}
+
+	public function dashboard() {
+		$this->layout->content = View::make('user/dashboard')->with('user', $this->user);
+	}
+
+	public function show() {
+		$this->layout->content = View::make('user/show')->with('user', $this->user);
+	}
+
+	public function logout() {
+		Auth::logout();
+		$this->layout->content = View::make('user/message')->with('user', $this->user)->with('message', 'You have been logged out.');
 	}
 
 }

@@ -1,15 +1,18 @@
 <?php
 
+use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableInterface;
-use LaravelBook\Ardent\Ardent;
+use Illuminate\Auth\Reminders\RemindableTrait;
 
-class User extends Ardent implements UserInterface, RemindableInterface {
+class User extends Eloquent implements UserInterface, RemindableInterface {
+
+	use UserTrait, RemindableTrait;
 
 	protected $table = 'users';
-	protected $hidden = array('password');
-	protected $guarded = array('id', 'updated_at', 'created_at', 'confirmation_code', 'confirmed', 'deleted_at');
-	public static $rules = array(
+	protected $hidden = array('password', 'remember_token');
+	protected $guarded = array('id', 'updated_at', 'created_at', 'confirmation_code', 'confirmed', 'deleted_at', 'password');
+	public $createRules = array(
 		'first_name' => 'required|between:2,32',
 		'last_name' => 'required|between:2,32',
 		'email' => 'required|email|unique:users',
@@ -17,38 +20,15 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 		'password' => 'required|between:8,64|confirmed',
 		'password_confirmation' => 'required|between:8,64',
 	);
-	public $autoHydrateEntityFromInput = true;
-	public $autoPurgeRedundantAttributes = true;
-	public static $passwordAttributes = array('password');
-	public $autoHashPasswordAttributes = true;
 
-/*	public function beforeSave( $forced )
-	{
-		// if there's a new password, hash it
-		if($this->changed('password'))
-		{
-			$this->password = Hash::make($this->password);
-		}
-		return true;
-	}*/
-
-	/**
-	 * Ardent method overloading:
-	 * Before save the user. Generate a confirmation
-	 * code if is a new user.
-	 *
-	 * @param bool $forced Indicates whether the user is being saved forcefully
-	 * @return bool
-	 */
-	public function beforeSave( $forced = false )
-	{
-		if ( empty($this->id) )
-		{
-			$this->confirmation_code = md5( uniqid(mt_rand(), true) );
-		}
-
-		return true;
-	}
+	public $updateRules = array(
+		'first_name' => 'required|between:2,32',
+		'last_name' => 'required|between:2,32',
+		'email' => 'required|email|unique:users',
+		'username' => 'required|unique:users',
+		'password' => 'between:8,64|confirmed',
+		'password_confirmation' => 'between:8,64',
+	);
 
 	public function getAuthIdentifier()
 	{
@@ -68,5 +48,17 @@ class User extends Ardent implements UserInterface, RemindableInterface {
 	public function posts() {
 		return $this->hasMany('Post');
 	}
+/*
+	public function getRememberToken() {
 
+	}
+
+	public function setRememberToken($value) {
+
+	}
+
+	public function getRememberTokenName() {
+
+	}
+*/
 }

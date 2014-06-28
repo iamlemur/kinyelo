@@ -13,9 +13,17 @@
 
 Route::get('/', 'HomeController@showWelcome');
 
-Route::get('/login', 'LoginController@getLogin');
-Route::post('/login', 'LoginController@postLogin');
-Route::resource('/author', 'UserController');
+Route::get('/dashboard', 'UserController@dashboard');
+Route::get('/user', 'UserController@show');
+
+Route::get('/login', 'UserController@getLogin');
+Route::post('/login', 'UserController@postLogin');
+Route::get('/logout', 'UserController@logout');
+
+Route::get('/signup', 'UserController@create');
+Route::post('/signup', 'UserController@store');
+Route::get('/user/edit', 'UserController@edit');
+Route::post('/user/edit', 'UserController@update');
 
 Route::get('/posts/lists/{filter?}', 'PostController@listing');
 Route::resource('/posts', 'PostController');
