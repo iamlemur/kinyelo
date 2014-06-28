@@ -1,8 +1,8 @@
 <?
 
-use LaravelBook\Ardent\Ardent;
+use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
-class Book extends Ardent {
+class Book extends Eloquent {
 
 	use SoftDeletingTrait;
 
