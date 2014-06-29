@@ -26,4 +26,8 @@ class HomeController extends BaseController {
 		$this->layout->content = View::make('welcome');
 	}
 
+	public function log() {
+		Log::info(Input::all());
+	}
+
 }

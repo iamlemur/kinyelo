@@ -34,7 +34,7 @@ class PostController extends \BaseController {
 	 */
 	public function create()
 	{
-		$this->layout->content = View::make('post/create')->with('post', $this->post);
+		$this->layout->content = View::make('post/create_edit')->with('post', $this->post);
 	}
 
 	/**
@@ -44,6 +44,7 @@ class PostController extends \BaseController {
 	 */
 	public function store()
 	{
+		Log::info(Input::all());
 		$this->post = new Post;
 		$this->post->title = Input::get('title');
 		$this->post->content = Input::get('content');
@@ -53,9 +54,9 @@ class PostController extends \BaseController {
 		}
 		$this->post->user_id = Auth::user()->id;
 		if ( $this->post->save() ) {
-			return Redirect::to('/')->with( 'message', 'Thanks for posting!' );
+			return Response::json(array('response' => 1, 'payload' => array('id' => $this->post->id, 'title' => $this->post->title)));
 		} else {
-			return Redirect::action('PostController@create')->withErrors( $this->post->errors() );
+			return Response::json(array('response' => 0, 'payload' => array()));
 		}
 	}
 
@@ -79,7 +80,8 @@ class PostController extends \BaseController {
 	 */
 	public function edit($id)
 	{
-		//
+		$this->post = Post::with('author')->findOrFail($id);
+		$this->layout->content = View::make('post/create_edit')->with('post', $this->post)->with('jsonPost', $this->post->toJson());
 	}
 
 	/**
@@ -90,7 +92,20 @@ class PostController extends \BaseController {
 	 */
 	public function update($id)
 	{
-		//
+		$this->post = Post::findOrFail($id);
+		if($this->post->user_id == Auth::user()->id) {
+			$this->post->title = Input::get('title');
+			$this->post->content = Input::get('content');
+			$this->post->status = Input::get('status');
+			if(Input::get('status') == "published") {
+				$this->post->published_at = Carbon\Carbon::now();
+			}
+			if ( $this->post->save() ) {
+				return Response::json(array('response' => 1, 'payload' => array('id' => $this->post->id, 'title' => $this->post->title)));
+			}
+		}
+		return Response::json(array('response' => 0, 'payload' => array()));
+
 	}
 
 	/**

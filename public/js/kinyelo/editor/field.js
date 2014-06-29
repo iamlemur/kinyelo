@@ -2,6 +2,7 @@ goog.provide('kinyelo.editor.Field');
 
 goog.require('goog.dom');
 goog.require('goog.events');
+goog.require('goog.editor.Field');
 goog.require('goog.editor.ContentEditableField');
 goog.require('goog.editor.plugins.EnterHandler');
 goog.require('kinyelo.editor.plugins.BasicTextFormatter');
@@ -15,6 +16,10 @@ goog.require('goog.ui.Toolbar');
 goog.require('goog.ui.editor.DefaultToolbar');
 goog.require('goog.ui.editor.ToolbarController');
 goog.require('goog.debug.Logger');
+goog.require('goog.net.XmlHttp');
+goog.require('goog.net.XhrIo');
+goog.require('goog.structs.Map');
+goog.require('goog.Uri.QueryData');
 
 goog.require('kinyelo.editor.plugins.InlineFormatter');
 goog.require('kinyelo.editor.plugins.HeadingFormatter');
@@ -36,9 +41,6 @@ kinyelo.editor.Field = function(id, opt_doc) {
     this.initToolbar_();
     this.makeEditable();
 
-    goog.events.listen(this, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_, false, this);
-    goog.events.listen(window, 'beforeunload', this.handleUnload_, false, this);
-
 }
 goog.inherits(kinyelo.editor.Field, goog.editor.ContentEditableField);
 goog.exportSymbol('kinyelo.editor.Field.POST_CONTAINER_ID', kinyelo.editor.Field.POST_CONTAINER_ID);
@@ -47,19 +49,9 @@ goog.exportSymbol('kinyelo.editor.Field', kinyelo.editor.Field);
 
 
 /** @override */
-goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 10000;
+goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 1000;
 
 
-kinyelo.editor.Field.prototype.handleDelayedChange_ = function() {
-    console.log('change happened');
-}
-
-kinyelo.editor.Field.prototype.handleUnload_ = function() {
-    if(this.isModified()) {
-        console.log('modified');
-        return goog.getMsg('You have unsaved changes. Click cancel to return to the page and save them or click OK to discard');
-    }
-}
 
 /**
  * Create the toolbar
