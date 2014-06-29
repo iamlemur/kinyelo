@@ -13,6 +13,7 @@
 
 Route::get('/', 'HomeController@showWelcome');
 Route::post('/log', 'HomeController@log');
+Route::get('/policies/terms', 'PolicyController@terms');
 
 Route::get('/dashboard', 'UserController@dashboard');
 Route::get('/user', 'UserController@show');

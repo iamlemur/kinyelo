@@ -20,6 +20,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'username' => 'required|unique:users',
 		'password' => 'required|between:8,64|confirmed',
 		'password_confirmation' => 'required|between:8,64',
+		'agree' => 'required',
 	);
 
 	public $updateRules = array(

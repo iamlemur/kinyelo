@@ -30,6 +30,11 @@
 {{ Form::label('password_confirmation', 'Password Confirmation') }}
 {{ Form::password('password_confirmation') }}
 
+<p><a href="{{ action('PolicyController@terms') }}">Terms of Service</a></p>
+
+{{ Form::checkbox('agree') }}
+{{ Form::label('agree', 'Agree to the terms of service') }}
+
 {{ Form::submit('Register') }}
 
 {{ Form::close() }}
