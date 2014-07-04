@@ -1,6 +1,6 @@
 goog.provide('kinyelo.EditorApp');
 
-goog.require('kinyelo.editor.Field');
+goog.require('kinyelo.editor.AdvancedField');
 goog.require('goog.events.EventHandler');
 goog.require('goog.dom');
 goog.require('goog.editor.Command');
@@ -12,10 +12,10 @@ goog.require('goog.editor.Command');
  * @constructor
  */
 kinyelo.EditorApp = function() {
-    this.rte_ = new kinyelo.editor.Field(kinyelo.editor.Field.POST_CONTAINER_ID);
-    this.eventHandler_ = new goog.events.EventHandler(this);
-    this.eventHandler_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
-    this.eventHandler_.listen(window, 'beforeunload', this.handleUnload_);
+    this.rte_ = new kinyelo.editor.EdvancedField(kinyelo.editor.AdvancedField.POST_CONTAINER_ID);
+    this.eventRegister_ = new goog.events.EventHandler(this);
+    this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
+    this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
     this.title_ = goog.dom.getElement(kinyelo.EditorApp.POST_TITLE_ID);
 }
 
@@ -23,7 +23,7 @@ kinyelo.EditorApp = function() {
  * @type {goog.events.EventHandler=}
  * @private
  */
-kinyelo.EditorApp.prototype.eventHandler_ = null;
+kinyelo.EditorApp.prototype.eventRegister_ = null;
 
 /**
  * @type {kinyelo.editor.Field=}
@@ -56,6 +56,7 @@ kinyelo.EditorApp.postHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE
 kinyelo.EditorApp.prototype.post_id_ = null;
 
 kinyelo.EditorApp.prototype.handleDelayedChange_ = function() {
+    //TODO: fix these hard-coded urls
     var url = "/posts";
     var callback = null;
     var postMap = new goog.structs.Map();
@@ -93,6 +94,7 @@ kinyelo.EditorApp.prototype.handleCreateResponse_ = function(e) {
         var response = xhr.getResponseJson();
         console.log(response);
         this.post_id_ = response.payload.id;
+        //TODO: fix these hard-coded urls
         history.replaceState(response.payload.id, response.payload.title, '/posts/' + response.payload.id + '/edit');
     }
 }
