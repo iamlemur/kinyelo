@@ -1,12 +1,8 @@
 @section('content')
 
 <div id="opus">
-<h1 itemprop="title" id="post-title" name="title" contenteditable="true">{{{ $post->title or 'Type your title' }}}</h1>
+	<h1 itemprop="title" id="post-title" name="title" contenteditable="true" data-default-value="Type your title">{{{ $post->title }}}</h1>
+	<div id="post-body" contenteditable="true" data-default-value="Write your story">{{{ $post->content }}}</div>
 </div>
-@if(isset($jsonPost))
-<script type="text/javascript">
-	var post = {{$jsonPost}};
-</script>
-@endif
 
 @stop

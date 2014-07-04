@@ -2,23 +2,9 @@
 
 {{ Session::get('message') }}
 <div class="post-form">
-<h1 itemprop="title" name="title" contenteditable="true">Type your title</h1>
+	<h1 itemprop="title" name="title" contenteditable="true" id="book-title" data-default-value="Type your title"></h1>
+	<div id="book-summary" name="summary" contenteditable="true" data-default-value="Type your summary"></div>
 </div>
 
 
-{{ Form::model($book, array('action' => array('BookController@store'), 'method' => 'POST')) }}
-
-{{ Form::label('title', 'Title') }}
-{{ Form::text('title') }}
-
-{{ Form::label('summary', 'Summary') }}
-{{ Form::textarea('summary') }}
-
-{{ Form::label('status', 'Status') }}
-{{ Form::select('status', Book::$statuses) }}
-
-
-{{ Form::submit('Create Book') }}
-
-{{ Form::close() }}
 @stop

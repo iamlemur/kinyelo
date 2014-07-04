@@ -1,6 +1,7 @@
-goog.provide('kinyelo.editor.Field');
+goog.provide('kinyelo.editor.AdvancedField');
 
 goog.require('goog.dom');
+goog.require('goog.dom.dataset');
 goog.require('goog.events');
 goog.require('goog.editor.Field');
 goog.require('goog.editor.ContentEditableField');
@@ -8,6 +9,7 @@ goog.require('goog.editor.plugins.EnterHandler');
 goog.require('kinyelo.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.ListTabHandler');
 goog.require('goog.editor.plugins.LoremIpsum');
+goog.require('kinyelo.editor.plugins.LoremIpsum');
 goog.require('goog.editor.plugins.RemoveFormatting');
 goog.require('goog.editor.plugins.SpacesTabHandler');
 goog.require('goog.editor.plugins.UndoRedo');
@@ -21,29 +23,27 @@ goog.require('goog.net.XhrIo');
 goog.require('goog.structs.Map');
 goog.require('goog.Uri.QueryData');
 
+goog.require('kinyelo.editor.Field');
 goog.require('kinyelo.editor.plugins.InlineFormatter');
 goog.require('kinyelo.editor.plugins.HeadingFormatter');
 goog.require('kinyelo.editor.DelayedCommand');
 
 /**
  * @constructor
- * @extends {goog.editor.ContentEditableField}
+ * @extends {kinyelo.editor.Field}
  */
 kinyelo.editor.AdvancedField = function(id, opt_doc) {
 
-    this.parentElement_ = /** @type {!Element} */ (goog.dom.getElement(kinyelo.editor.AdvancedField.CONTAINER_ID_));
-    var dom = goog.dom.getDomHelper(this.parentElement_);
-    this.editableElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.AdvancedField.POST_CONTAINER_ID});
-    this.parentElement_.appendChild(this.editableElement_);
+    kinyelo.editor.Field.call(this, id, opt_doc);
+    this.parentElement_ = /** @type {!Element} */ goog.dom.getParentElement(this.editableElement_);
 
     this.createToolbar_();
-    goog.editor.ContentEditableField.call(this, this.editableElement_, opt_doc);
+
     this.initToolbar_();
     this.makeEditable();
 
 }
-goog.inherits(kinyelo.editor.AdvancedField, goog.editor.ContentEditableField);
-goog.exportSymbol('kinyelo.editor.AdvancedField.POST_CONTAINER_ID', kinyelo.editor.AdvancedField.POST_CONTAINER_ID);
+goog.inherits(kinyelo.editor.AdvancedField, kinyelo.editor.Field);
 goog.exportSymbol('kinyelo.editor.AdvancedField', kinyelo.editor.AdvancedField);
 
 
@@ -51,6 +51,18 @@ goog.exportSymbol('kinyelo.editor.AdvancedField', kinyelo.editor.AdvancedField);
 /** @override */
 goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 1000;
 
+kinyelo.editor.AdvancedField.prototype.registerPlugins = function() {
+//    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+//    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.BasicTextFormatter());
+    this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
+    this.registerPlugin(new goog.editor.plugins.UndoRedo());
+    this.registerPlugin(new goog.editor.plugins.ListTabHandler());
+    this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
+    this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
+    this.registerPlugin(new kinyelo.editor.plugins.LoremIpsum(''));
+    goog.base(this, 'registerPlugins');
+}
 
 
 /**
@@ -102,18 +114,6 @@ kinyelo.editor.AdvancedField.prototype.initToolbar_ = function() {
 
     this.toolbarController_ = new goog.ui.editor.ToolbarController(this, this.toolbar_);
 
-//    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
-//    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
-    this.registerPlugin(new kinyelo.editor.plugins.BasicTextFormatter());
-    this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
-    this.registerPlugin(new goog.editor.plugins.UndoRedo());
-    this.registerPlugin(new goog.editor.plugins.ListTabHandler());
-    this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
-    this.registerPlugin(new goog.editor.plugins.EnterHandler());
-    this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
-    this.registerPlugin(new goog.editor.plugins.LoremIpsum('Click here to edit'));
-
-
 }
 
 /**
@@ -143,27 +143,8 @@ kinyelo.editor.AdvancedField.prototype.parentElement_ = null;
  * @const
  * @private
  */
-kinyelo.editor.AdvancedField.CONTAINER_ID_ = 'opus';
-
-/**
- * @type {string}
- * @const
- */
-kinyelo.editor.AdvancedField.POST_CONTAINER_ID = 'post-body';
-
-/**
- * @type {string}
- * @const
- * @private
- */
 kinyelo.editor.AdvancedField.TOOLBAR_CONTAINER_ID_ = 'rte-toolbar';
 
-/**
- * Element of the main editable body
- * @type {Element}
- * @private
- */
-kinyelo.editor.AdvancedField.prototype.editableElement_ = null;
 
 /**
  * the toolbar element

@@ -1,9 +1,6 @@
-goog.require('kinyelo.EditorApp');
+goog.require('kinyelo.App');
 
 (function() {
-    var editor = new kinyelo.EditorApp();
-    if(goog.isDefAndNotNull(post)) {
-        editor.loadPost(post);
-    }
+    var app = new kinyelo.App();
 })();
 
