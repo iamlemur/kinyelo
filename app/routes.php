@@ -13,6 +13,7 @@
 
 Route::get('/', 'HomeController@showWelcome');
 Route::post('/log', 'HomeController@log');
+Route::get('/log', 'HomeController@log');
 Route::get('/policies/terms', 'PolicyController@terms');
 
 Route::get('/dashboard', 'UserController@dashboard');
@@ -27,6 +28,7 @@ Route::post('/signup', 'UserController@store');
 Route::get('/user/edit', 'UserController@edit');
 Route::post('/user/edit', 'UserController@update');
 
+Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
 Route::get('/posts/lists/{filter?}', 'PostController@listing');
 Route::resource('/posts', 'PostController');
 

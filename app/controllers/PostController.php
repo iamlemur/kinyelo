@@ -119,4 +119,17 @@ class PostController extends \BaseController {
 		//
 	}
 
+	public function searchPostsByTitle() {
+		$token = Input::get('token');
+		$max_matches = Input::get('max_matches');
+		$use_similar = Input::get('use_similar');
+		$results = Post::where('title', 'LIKE', '%' . $token . '%')->take($max_matches)->get();
+		$array = $results->toArray();
+		array_unshift($array, "kinyelo.Book.suggestedPost");
+		return Response::json(array($array));
+		//$response = array(array('kinyelo.Book.suggestPost', $results))
+		//$json = Response::json($paginator);
+
+	}
+
 }

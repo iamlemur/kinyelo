@@ -34,6 +34,7 @@ class BookController extends \BaseController {
 	 */
 	public function create()
 	{
+		View::share('action', 'create');
 		$this->layout->content = View::make('book/create')->with('book', $this->book);
 	}
 
@@ -47,13 +48,13 @@ class BookController extends \BaseController {
 		$this->book= new Book;
 		$this->book->title = Input::get('title');
 		$this->book->summary= Input::get('summary');
-		$this->book->status = Input::get('status');
+		$this->book->status = "draft";
 		if(Input::get('status') == "published") {
 			$this->book->published_at = Carbon\Carbon::now();
 		}
 		$this->book->user_id = Auth::user()->id;
 		if ( $this->book->save() ) {
-			return Redirect::action('BookController@show', $this->book->id)->with( 'message', 'Thanks for posting!' );
+			return Redirect::action('BookController@edit', $this->book->id)->with( 'message', 'Thanks for posting!' );
 		} else {
 			return Redirect::action('BookController@create')->withErrors( $this->post->errors() );
 		}
@@ -79,6 +80,7 @@ class BookController extends \BaseController {
 	 */
 	public function edit($id)
 	{
+		View::share('action', 'edit');
 		$this->book = Book::with('author')->findOrFail($id);
 		$this->layout->content = View::make('book/edit')->with('book', $this->book);
 	}

@@ -2,14 +2,18 @@
 
 <div class="book-container book-edit">
 	<header>
-		<h1>{{ $book->title }}</h1>
+		<h1 itemprop="title" name="title" contenteditable="true" id="book-title" data-default-value="Enter the title...">
+			{{ $book->title }}
+		</h1>
 		<ul class="status-controls">
 			<li><input type="radio" name="status" id="status-control-draft" value="draft" /><label for="status-control-draft">draft</label></li>
 			<li><input type="radio" name="status" id="status-control-published" value="published" /><label for="status-control-published">published</label></li>
 		</ul>
 	</header>
 	<div class="content-body">
-		<p>{{ $book->summary }}</p>
+		<div id="book-summary" name="summary" contenteditable="true" data-default-value="Enter a summary or drag in a file...">
+			{{$book->summary}}
+		</div>
 	</div>
 
 	<section class="chapters">
@@ -32,7 +36,7 @@
 			<li><button class="heart active">recommended</button></li><li><button class="star">reading list</button></li>
 		</ul>
 		<form class="add-post-search">
-			<input type="text" placeholder="search for a post by title..."/>
+			<input type="text" name="q" placeholder="search for a post by title..."/>
 		</form>
 		<div class="add-post-search-results">
 			<p class="summary">Showing results for "The Dissipation of"</p>
@@ -72,5 +76,7 @@
 	<a href="#" class="delete-book">Permanently delete this book <span>This will not delete posts or characters contained within the book</span></a>
 
 </div>
+
+<link type="text/css" rel="stylesheet" href="C:\closure\closure-library\closure\goog\css\autocomplete.css" />
 
 @stop
