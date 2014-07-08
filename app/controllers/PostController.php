@@ -125,10 +125,13 @@ class PostController extends \BaseController {
 		$use_similar = Input::get('use_similar');
 		$results = Post::where('title', 'LIKE', '%' . $token . '%')->take($max_matches)->get();
 		$array = $results->toArray();
-		array_unshift($array, "kinyelo.Book.suggestedPost");
-		return Response::json(array($array));
-		//$response = array(array('kinyelo.Book.suggestPost', $results))
-		//$json = Response::json($paginator);
+		if(Input::has('autocomplete') && Input::get('autocomplete') != true) {
+			$response = $array;
+		} else {
+			array_unshift($array, "kinyelo.Book.suggestedPost");
+			$response = array($array);
+		}
+		return Response::json($response);
 
 	}
 

@@ -49,9 +49,9 @@ return array(
 		'mysql' => array(
 			'driver'    => 'mysql',
 			'host'      => 'localhost',
-			'database'  => 'postbook',
-			'username'  => 'postbook',
-			'password'  => 'postbook',
+			'database'  => 'kinyelo',
+			'username'  => 'kinyelo',
+			'password'  => 'kinyelo',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

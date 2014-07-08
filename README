@@ -1,0 +1,14 @@
+Make sure you have a hosts entry on the host machine that matches your choice for the hostname in the Vagrantfile for the guest machine
+10.8.8.8 is the IP
+install virtualbox
+install vagrant
+open the terminal and navigate to the deployed directory
+
+#https://github.com/mitchellh/vagrant/issues/3341 -- fucking huge bug
+run: vagrant plugin install vagrant-vbguest
+
+run: vagrant up (this will take a while)
+
+java -jar plovr.jar serve ./plovr/kinyelo-config.js
+
+http://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces

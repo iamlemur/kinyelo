@@ -27,7 +27,7 @@ kinyelo.editor.SingleLineField.prototype.registerPlugins = function() {
 
 kinyelo.editor.SingleLineField.prototype.handleKeyPress = function(e) {
     console.log(e.keyCode);
-    if(e.keyCode == 13) {
+    if(e.keyCode == goog.events.KeyCodes.ENTER) {
         e.preventDefault();
         return true;
     }

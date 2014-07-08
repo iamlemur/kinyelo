@@ -4,8 +4,6 @@ goog.require('goog.events.EventHandler');
 goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.SimpleField');
 goog.require('goog.ui.ac.RichRemote');
-goog.require('goog.ui.ac.Renderer');
-goog.require('goog.ui.ac.Renderer.CustomRenderer');
 
 /**
  *
@@ -45,21 +43,63 @@ kinyelo.Book.prototype.initCreateMode = function() {
 }
 
 kinyelo.Book.prototype.decoratePostFinder = function() {
-    var input = goog.dom.getFirstElementChild(goog.dom.getElementByClass('add-post-search'));
-    var ac = new goog.ui.ac.RichRemote('/posts/search/title', input);
+    var queryForm = goog.dom.getElementByClass('add-post-search');
+    this.postSearchQueryInput_ = goog.dom.getFirstElementChild(queryForm);
+    this.eventRegister_.listen(this.postSearchQueryInput_, goog.events.EventType.KEYUP, this.searchPosts_);
+    this.eventRegister_.listen(queryForm, goog.events.EventType.SUBMIT, function(e) {e.preventDefault()});
+
+    //for when toggling between searching reading list, etc.
+    //var ac = new goog.ui.ac.RichRemote(kinyelo.Book.POST_SEARCH_URL, this.postSearchQueryInput_);
+
+    var postSearchResultsContainer = goog.dom.getElementByClass('add-post-search-results');
+
 }
 
-kinyelo.Book.suggestedPost = function(item) {
+kinyelo.Book.POST_SEARCH_URL = '/posts/search/title';
 
+kinyelo.Book.prototype.searchPosts_ = function(e) {
+    if(e.keyCode == goog.events.KeyCodes.ENTER) {
+        e.preventDefault();
+        var url = kinyelo.Book.POST_SEARCH_URL;
+        var callback = goog.bind(this.handlePostSearchResults_, this);
+
+        var requestMap = new goog.structs.Map();
+        requestMap.set('token', this.postSearchQueryInput_.value);
+        requestMap.set('max_matches', 10);
+        requestMap.set('autocomplete', 0);
+        var requestData = goog.Uri.QueryData.createFromMap(requestMap);
+
+        goog.net.XhrIo.send(goog.Uri.create(null, null, null, null, url, requestData), callback, 'GET', null, kinyelo.Book.requestHeaders);
+    }
+}
+
+kinyelo.Book.prototype.handlePostSearchResults_ = function(e) {
+    var xhr = e.target;
+    if(xhr.isComplete()) {
+        console.log('complete');
+        console.log(xhr.getResponseJson());
+        //TODO: remove the search indicator
+        //TODO: add the results to results container
+    } else {
+        console.log('not complete');
+        //TODO: show the search indicator
+    }
+}
+
+/**
+ * @type {goog.structs.Map}
+ * @const
+ */
+kinyelo.Book.requestHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
+
+kinyelo.Book.suggestedPost = function(item) {
     item.render = function(node, token) {
         var dom_ = goog.dom.getDomHelper(node);
         dom_.appendChild(node, dom_.createTextNode(item.title));
     };
-
     item.select = function(target) {
         target.value = item.id;
     };
-
     return item;
 }
 

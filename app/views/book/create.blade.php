@@ -30,7 +30,6 @@
 
 @if($action == "create")
 	{{ Form::model($book, array('action' => 'BookController@store', 'id' => 'transporter', 'style' => 'display: none')) }}
-	{{ Form::token() }}
 	{{ Form::close() }}
 @endif
 

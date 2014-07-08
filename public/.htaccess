@@ -10,8 +10,10 @@
 
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} !^/phpmyadmin.*$
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
 
 php_value short_open_tag 1
+php_value include_path .:/var/www/

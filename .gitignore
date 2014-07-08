@@ -1,5 +1,8 @@
 /bootstrap/compiled.php
 /vendor
+/public/js/goog
+/public/js/soy
+/plovr/plovr.jar
 /.idea
 composer.phar
 composer.lock
