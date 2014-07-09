@@ -12,3 +12,5 @@ run: vagrant up (this will take a while)
 java -jar plovr.jar serve ./plovr/kinyelo-config.js
 
 http://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces
+
+Comment out this.book_ or this.post_ in /public/js/kinyelo/app.js depending on what you're viewing
