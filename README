@@ -21,6 +21,11 @@ curl -LO https://github.com/google/closure-library/archive/master.zip
 unzip master.zip
 mv closure-library-master/closure/goog/ <<project directory>>/public/js/goog/
 
+curl -LO https://closure-templates.googlecode.com/files/closure-templates-for-javascript-latest.zip
+unzip closure-templates-for-javascript-latest.zip
+mkdir <<project directory>>/public/js/soy/
+cp soyutils.js <<project directory>>/public/js/soy/
+cp soyutils_usegoog.js <<project directory>>/public/js/soy/
 
 -------------------------
 Starting up the server
