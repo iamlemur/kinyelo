@@ -16,13 +16,19 @@ curl -O https://plovr.googlecode.com/files/plovr-81ed862.jar
 mv plovr-81ed862.jar plovr.jar
 cd ../
 
+cd /var/tmp
+curl -LO https://github.com/google/closure-library/archive/master.zip
+unzip master.zip
+mv closure-library-master/closure/goog/ <<project directory>>/public/js/goog/
+
+
 -------------------------
 Starting up the server
 -------------------------
 From here down, run these commands every time in the deployed directory when starting up
 
 In one terminal window, navigate to the deployed directory then the subdirectory 'plovr' and run the command:
-java -jar plovr.jar serve .kinyelo-config.js
+java -jar plovr.jar serve kinyelo-config.js
 This will start the server that serves the compiled Google Closure JavaScript
 
 In another terminal window, navigate to the deployed directory and run the command:
