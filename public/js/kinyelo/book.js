@@ -49,7 +49,7 @@ kinyelo.Book.prototype.decoratePostFinder = function() {
     this.eventRegister_.listen(queryForm, goog.events.EventType.SUBMIT, function(e) {e.preventDefault()});
 
     //for when toggling between searching reading list, etc.
-    //var ac = new goog.ui.ac.RichRemote(kinyelo.Book.POST_SEARCH_URL, this.postSearchQueryInput_);
+    var ac = new goog.ui.ac.RichRemote(kinyelo.Book.POST_SEARCH_URL, this.postSearchQueryInput_);
 
     var postSearchResultsContainer = goog.dom.getElementByClass('add-post-search-results');
 
