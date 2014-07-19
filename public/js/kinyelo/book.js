@@ -67,6 +67,7 @@ kinyelo.Book.prototype.searchPosts_ = function(e) {
         requestMap.set('token', this.postSearchQueryInput_.value);
         requestMap.set('max_matches', 10);
         requestMap.set('autocomplete', 0);
+
         var requestData = goog.Uri.QueryData.createFromMap(requestMap);
 
         goog.net.XhrIo.send(goog.Uri.create(null, null, null, null, url, requestData), callback, 'GET', null, kinyelo.Book.requestHeaders);

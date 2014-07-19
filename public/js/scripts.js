@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-    $("#openNav, #fixed-nav #logo").click(function(e) {
+    $("#openNav, #fixed-nav a.logo").click(function(e) {
         e.preventDefault();
         $("html").toggleClass('js-site-nav');
     });

@@ -8,7 +8,7 @@ class BookController extends \BaseController {
 	public function __construct(Book $book) {
 		$this->book = $book;
 		$this->beforeFilter('auth');
-		View::share('context', 'pb-books');
+		View::share('context', 'k-books');
 	}
 
 	/**

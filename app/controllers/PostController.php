@@ -8,7 +8,7 @@ class PostController extends \BaseController {
 	public function __construct(Post $post) {
 		$this->post = $post;
 		$this->beforeFilter('auth');
-		View::share('context', 'pb-posts');
+		View::share('context', 'k-posts');
 	}
 
 	/**

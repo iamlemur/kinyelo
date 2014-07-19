@@ -9,7 +9,7 @@ class UserController extends \BaseController {
 		$this->user = $user;
 		$this->beforeFilter('auth', array('except' => array('create', 'store', 'getLogin', 'postLogin')));
 		$this->beforeFilter('csrf', array('on' => 'post'));
-		View::share('context', 'pb-user');
+		View::share('context', 'k-user');
 	}
 
 	/**

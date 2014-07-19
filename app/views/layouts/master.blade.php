@@ -6,7 +6,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Kinyelo</title>
+	<title>kinyelo &middot; the evolution of story</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -23,7 +23,7 @@
 				</form>
 				<ul>
 					@if(Auth::check())
-						<li class="personal<?=($context == "pb-user" ? " active" : "")?>">
+						<li class="personal<?=($context == "k-user" ? " active" : "")?>">
 							<a href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
 							<ul>
 								<li><a href="{{ action('UserController@edit') }}"><span>edit</span></a></li>
@@ -33,7 +33,7 @@
 					@else
 						<li class="personal"><a href="{{ action('UserController@getLogin') }}"><span>log in</span></a></li>
 					@endif
-					<li class="posts<?=($context == "pb-posts" ? " active" : "")?>">
+					<li class="posts<?=($context == "k-posts" ? " active" : "")?>">
 						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
 						<ul>
 							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "trending" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'trending')) }}"><span>trending</span></a></li>
@@ -44,7 +44,7 @@
 							<li class="add"><a href="{{ action('PostController@create') }}"><span>create a new post</span></a></li>
 						</ul>
 					</li>
-					<li class="books<?=($context == "pb-books" ? " active" : "")?>">
+					<li class="books<?=($context == "k-books" ? " active" : "")?>">
 						<a href="{{ action('BookController@index') }}"><span>books</span></a>
 						<ul>
 							<li <?= Route::current()->getActionName() == "BookController@listing" && Route::current()->getParameter('filter') == "yours" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'yours')) }}"><span>your books</span></a></li>
@@ -59,7 +59,7 @@
 			</div>
 		</nav>
 		<nav id="fixed-nav">
-			<a href="#" id="logo"></a>
+			<a href="#" class="logo"></a>
 			<a href="#" id="btn-add-favorite"></a>
 		</nav>
 		<div id="active-nav-overlay"></div>
@@ -88,7 +88,7 @@
 <script src="/js/vendor/waypoints-sticky.min.js"></script>
 <script src="/js/vendor/icheck.min.js"></script>
 <!--script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script-->
-<script src="http://kinyelo.com:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script>
+<!--script src="http://kinyelo.com:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script-->
 <script src="/js/scripts.js" type="text/javascript"></script>
 </body>
 </html>
