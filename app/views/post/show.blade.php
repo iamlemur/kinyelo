@@ -66,7 +66,7 @@
 @section('upcoming')
 
 	<div class="upcoming">
-		<a href="#">Michael's Post is Much Better Than Joel's Paltry</a>
+		<a href="#">Michael's Paltry Post Makes Me Kind of Sad</a>
 		<small>published by asiral on May 10, 2014</small>
 	</div>
 
