@@ -1,23 +1,40 @@
 @section('content')
 
-{{ Form::model($user, array('action' => array('UserController@postLogin'), 'method' => 'POST')) }}
+<div class="form-container">
+	<header>
+		<h1>log in</h1>
+	</header>
+	<div class="form-body">
 
-{{ Session::get('error') }}
+		{{ Form::model($user, array('action' => array('UserController@postLogin'), 'method' => 'POST')) }}
 
-{{ Form::token() }}
+		{{ Session::get('error') }}
+		{{ Form::token() }}
 
-{{ Form::label('username', 'Username') }}
-{{ Form::text('username') }}
+		<ul class="fields">
+			<li>
+				{{ Form::label('username', 'username') }}
+				{{ Form::text('username') }}
+			</li>
+			<li>
+				{{ Form::label('password', 'password') }}
+				{{ Form::password('password') }}
+			</li>
+			<li>
+				{{ Form::checkbox('remember') }}
+				{{ Form::label('remember', 'remember') }}
+			</li>
+			<li>
+				{{ Form::submit('Login') }}
+			</li>
+			<li>
+				<p>Don't have an account? <a href="{{ action('UserController@create') }}">Create one.</a></p>
+			</li>
+		</ul>
 
-{{ Form::label('password', 'Password') }}
-{{ Form::password('password') }}
+		{{ Form::close() }}
 
-{{ Form::checkbox('remember') }}
-{{ Form::label('remember', 'Remember me') }}
+	</div>
+</div>
 
-{{ Form::submit('Login') }}
-
-{{ Form::close() }}
-
-<p>Don't have an account? <a href="{{ action('UserController@create') }}">Create one.</a></p>
 @stop
