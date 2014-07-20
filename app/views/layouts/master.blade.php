@@ -77,8 +77,8 @@
 			</div>
 		</nav>
 		<nav id="dev-nav">
-			<a href="#" id="openUtils">Open Utils</a>
-			<a href="{{ action('UserController@getLogin') }}">Login</a>
+			<a href="{{ action('UserController@getLogin') }}">Login</a> |
+            <a href="#" id="openUtils">Open Utils</a>
 		</nav>
 
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
