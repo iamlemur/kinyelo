@@ -1,43 +1,62 @@
 @section('content')
 
-{{ Form::model($user, array('action' => array('UserController@store'), 'method' => 'POST')) }}
+<div class="form-container">
+	<header>
+		<h1>create account</h1>
+	</header>
+	<div class="form-body">
 
-@if(isset($message))
-<p>{{$message}}</p>
-@endif
+		{{ Form::model($user, array('action' => array('UserController@store'), 'method' => 'POST')) }}
 
-@if(count($errors->all()) > 0)
-	@foreach ($errors->all('<li>:message</li>') as $message)
-		{{$message}}
-	@endforeach
-@endif
+		@if(count($errors->all()) > 0)
+			@foreach ($errors->all('<li>:message</li>') as $message)
+				{{$message}}
+			@endforeach
+		@endif
 
-{{ Form::label('email', 'E-Mail Address') }}
-{{ Form::text('email') }}
+		<ul class="fields">
+			<li>
+				{{ Form::label('email', 'email address') }}
+				{{ Form::text('email') }}
+			</li>
+			<li>
+				{{ Form::label('username', 'username') }}
+				{{ Form::text('username') }}
+			</li>
+			<li>
+				{{ Form::label('first_name', 'first name') }}
+				{{ Form::text('first_name') }}
+			</li>
+			<li>
+				{{ Form::label('last_name', 'last name') }}
+				{{ Form::text('last_name') }}
+			</li>
+			<li>
+				{{ Form::label('password', 'password') }}
+				{{ Form::password('password') }}
+			</li>
+			<li>
+				{{ Form::label('password_confirmation', 'password confirmation') }}
+				{{ Form::password('password_confirmation') }}
+			</li>
+			<li>
+				<p><a href="{{ action('PolicyController@terms') }}">Terms of Service</a></p>
+			</li>
+			<li>
+				{{ Form::checkbox('agree') }}
+				{{ Form::label('agree', 'agree to the terms of service') }}
+			</li>
+			<li>
+				{{ Form::submit('register') }}
+			</li>
+			<li>
+				<p>Already registered? <a href="{{ action('UserController@getLogin') }}">Log in.</a></p>
+			</li>
+		</ul>
 
-{{ Form::label('username', 'Username') }}
-{{ Form::text('username') }}
+		{{ Form::close() }}
 
-{{ Form::label('first_name', 'First Name') }}
-{{ Form::text('first_name') }}
+	</div>
+</div>
 
-{{ Form::label('last_name', 'Last Name') }}
-{{ Form::text('last_name') }}
-
-{{ Form::label('password', 'Password') }}
-{{ Form::password('password') }}
-
-{{ Form::label('password_confirmation', 'Password Confirmation') }}
-{{ Form::password('password_confirmation') }}
-
-<p><a href="{{ action('PolicyController@terms') }}">Terms of Service</a></p>
-
-{{ Form::checkbox('agree') }}
-{{ Form::label('agree', 'Agree to the terms of service') }}
-
-{{ Form::submit('Register') }}
-
-{{ Form::close() }}
-
-<p>Already registered? <a href="{{ action('UserController@getLogin') }}">Log in.</a></p>
 @stop
