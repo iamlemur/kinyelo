@@ -115,10 +115,6 @@ kinyelo.editor.plugins.HeadingFormatter.isFormattable = function(range, node) {
  */
 kinyelo.editor.plugins.HeadingFormatter.prototype.formatNode = function(node) {
     var newNode = goog.dom.createDom(this.getTag());
-    var strongNodes = goog.dom.findNodes(node, function(item) { return item.tagName == goog.dom.TagName.STRONG; });
-    if(!goog.array.isEmpty(strongNodes)) {
-        goog.array.forEach(strongNodes, goog.dom.flattenElement);
-    }
     goog.dom.append(newNode, node.childNodes);
     goog.dom.replaceNode(newNode, node);
 }

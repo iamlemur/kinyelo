@@ -13,62 +13,106 @@
 // limitations under the License.
 
 /**
- * @fileoverview Plugin to handle enter keys.
+ * @fileoverview TrogEdit plugin to handle enter keys by inserting the
+ * specified block level tag.
  *
  */
 
-goog.provide('kinyelo.editor.plugins.EnterHandler');
+goog.provide('kinyelo.editor.plugins.TagOnEnterHandler');
+
+goog.require('goog.dom');
+goog.require('goog.dom.NodeType');
+goog.require('goog.dom.Range');
+goog.require('goog.dom.TagName');
+goog.require('goog.editor.Command');
+goog.require('goog.editor.node');
 goog.require('goog.editor.plugins.EnterHandler');
+goog.require('goog.editor.plugins.TagOnEnterHandler');
+goog.require('goog.editor.range');
+goog.require('goog.editor.style');
+goog.require('goog.events.KeyCodes');
+goog.require('goog.string');
+goog.require('goog.style');
+goog.require('goog.userAgent');
+
 
 
 /**
- * @param {opt_allowEnter=} boolean Whether or not to allow pressing enter in this field
+ * Plugin to handle enter keys. This subclass normalizes all browsers to use
+ * the given block tag on enter.
+ * @param {goog.dom.TagName} tag The type of tag to add on enter.
  * @constructor
- * @extends {goog.editor.plugins.EnterHandler}
+ * @extends {goog.editor.plugins.TagOnEnterHandler}
  */
-kinyelo.editor.plugins.EnterHandler = function(opt_allowEnter) {
-    goog.editor.plugins.EnterHandler.call(this);
-    if(goog.isDefAndNotNull(opt_allowEnter)) {
-        this.allowEnter_ = opt_allowEnter;
-    }
-
+kinyelo.editor.plugins.TagOnEnterHandler = function(tag) {
+    goog.editor.plugins.TagOnEnterHandler.call(this, tag);
 };
-goog.inherits(kinyelo.editor.plugins.EnterHandler, goog.editor.plugins.EnterHandler);
+goog.inherits(kinyelo.editor.plugins.TagOnEnterHandler, goog.editor.plugins.TagOnEnterHandler);
 
-kinyelo.editor.plugins.EnterHandler.prototype.allowEnter_ = true;
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.getTrogClassId = function() {
+    return 'TagOnEnterHandler';
+};
+
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.getNonCollapsingBlankHtml =
+    function() {
+        if (this.tag == goog.dom.TagName.P) {
+            return '<p>&nbsp;</p>';
+        } else if (this.tag == goog.dom.TagName.DIV) {
+            return '<div><br></div>';
+        }
+        return '<br>';
+    };
 
 
 /**
  * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.tag = goog.dom.TagName.P;
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.activeOnUneditableFields =
+    goog.functions.TRUE;
+
 
 /** @inheritDoc */
-kinyelo.editor.plugins.EnterHandler.prototype.getNonCollapsingBlankHtml = function() {
-    return '<p>&nbsp;</p>';
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.isSupportedCommand = function(
+    command) {
+    return command == goog.editor.Command.DEFAULT_TAG;
 };
 
-/** @inheritDoc */
-kinyelo.editor.plugins.EnterHandler.prototype.activeOnUneditableFields = goog.functions.TRUE;
 
-/** @override */
-kinyelo.editor.plugins.EnterHandler.prototype.queryCommandValue = function(
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.queryCommandValue = function(
     command) {
     return command == goog.editor.Command.DEFAULT_TAG ? this.tag : null;
 };
 
-/** @override */
-kinyelo.editor.plugins.EnterHandler.prototype.handleBackspaceInternal = function(e, range) {
-    kinyelo.editor.plugins.EnterHandler.superClass_.handleBackspaceInternal.
-        call(this, e, range);
 
-    if (goog.userAgent.GECKO) {
-        this.markBrToNotBeRemoved_(range, true);
-    }
-};
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.handleBackspaceInternal =
+    function(e, range) {
+        kinyelo.editor.plugins.TagOnEnterHandler.superClass_.handleBackspaceInternal.
+            call(this, e, range);
 
-/** @override */
-kinyelo.editor.plugins.EnterHandler.prototype.handleDeleteGecko = function(
+        if (goog.userAgent.GECKO) {
+            this.markBrToNotBeRemoved_(range, true);
+        }
+    };
+
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.processParagraphTagsInternal =
+    function(e, split) {
+        if ((goog.userAgent.OPERA || goog.userAgent.IE) &&
+            this.tag != goog.dom.TagName.P) {
+            this.ensureBlockIeOpera(this.tag);
+        }
+    };
+
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.handleDeleteGecko = function(
     e) {
     var range = this.getFieldObject().getRange();
     var container = goog.editor.style.getContainer(
@@ -91,8 +135,8 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleDeleteGecko = function(
 };
 
 
-/** @override */
-kinyelo.editor.plugins.EnterHandler.prototype.handleKeyUpInternal = function(
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.handleKeyUpInternal = function(
     e) {
     if (goog.userAgent.GECKO) {
         if (e.keyCode == goog.events.KeyCodes.DELETE) {
@@ -107,34 +151,26 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyUpInternal = function(
     // Safari uses DIVs by default.
 };
 
-/**
- * String that matches a single BR tag or NBSP surrounded by non-breaking
- * whitespace
- * @type {string}
- * @private
- */
-kinyelo.editor.plugins.EnterHandler.BrOrNbspSurroundedWithWhiteSpace_ =
-    '[\t\n\r ]*(<br[^>]*\/?>|&nbsp;)[\t\n\r ]*';
 
 /**
- * String that matches a single BR tag or NBSP surrounded by non-breaking
- * whitespace
- * @type {RegExp}
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.emptyLiRegExp_ = new RegExp('^' +
-    kinyelo.editor.plugins.EnterHandler.BrOrNbspSurroundedWithWhiteSpace_ +
+kinyelo.editor.plugins.TagOnEnterHandler.BrOrNbspSurroundedWithWhiteSpace_ =
+    '[\t\n\r ]*(<br[^>]*\/?>|&nbsp;)[\t\n\r ]*';
+
+
+/**
+ * @inheritDoc
+ */
+kinyelo.editor.plugins.TagOnEnterHandler.emptyLiRegExp_ = new RegExp('^' +
+    kinyelo.editor.plugins.TagOnEnterHandler.BrOrNbspSurroundedWithWhiteSpace_ +
     '$');
 
 
 /**
- * Ensures the current node is wrapped in the tag.
- * @param {Node} node The node to ensure gets wrapped.
- * @param {Element} container Element containing the selection.
- * @return {Element} Element containing the selection, after the wrapping.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.ensureNodeIsWrappedW3c_ =
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.ensureNodeIsWrappedW3c_ =
     function(node, container) {
         if (container == this.getFieldObject().getElement()) {
             // If the first block-level ancestor of cursor is the field,
@@ -161,14 +197,30 @@ kinyelo.editor.plugins.EnterHandler.prototype.ensureNodeIsWrappedW3c_ =
             var isChildOfFn = function(child) {
                 return container == child.parentNode; };
             var nodeToWrap = goog.dom.getAncestor(node, isChildOfFn, true);
-            container = kinyelo.editor.plugins.EnterHandler.wrapInContainerW3c_(
+            container = kinyelo.editor.plugins.TagOnEnterHandler.wrapInContainerW3c_(
                 this.tag, {node: nodeToWrap, offset: 0}, container);
         }
         return container;
     };
 
-/** @override */
-kinyelo.editor.plugins.EnterHandler.prototype.
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.handleEnterWebkitInternal =
+    function(e) {
+        if (this.tag == goog.dom.TagName.DIV) {
+            var range = this.getFieldObject().getRange();
+            var container =
+                goog.editor.style.getContainer(range.getContainerElement());
+
+            var position = goog.editor.range.getDeepEndPoint(range, true);
+            container = this.ensureNodeIsWrappedW3c_(position.node, container);
+            goog.dom.Range.createCaret(position.node, position.offset).select();
+        }
+    };
+
+
+/** @inheritDoc */
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.
     handleEnterAtCursorGeckoInternal = function(e, wasCollapsed, range) {
     // We use this because there are a few cases where FF default
     // implementation doesn't follow IE's:
@@ -186,7 +238,7 @@ kinyelo.editor.plugins.EnterHandler.prototype.
     }
     var isEmptyLi = (li &&
         li.innerHTML.match(
-            kinyelo.editor.plugins.EnterHandler.emptyLiRegExp_));
+            kinyelo.editor.plugins.TagOnEnterHandler.emptyLiRegExp_));
     var elementAfterCursor = isEmptyLi ?
         this.breakOutOfEmptyListItemGecko_(li) :
         this.handleRegularEnterGecko_();
@@ -194,8 +246,8 @@ kinyelo.editor.plugins.EnterHandler.prototype.
     // Move the cursor in front of "nodeAfterCursor", and make sure it
     // is visible
     this.scrollCursorIntoViewGecko_(elementAfterCursor);
-
     // Fix for http://b/1991234 :
+    //if (!/[^\t\n\r\xA0 ]/.test(goog.dom.getRawTextContent(elementAfterCursor))) {
     if (goog.editor.plugins.EnterHandler.isBrElem(elementAfterCursor)) {
         // The first element in the new line is a line with just a BR and maybe some
         // whitespace.
@@ -222,12 +274,9 @@ kinyelo.editor.plugins.EnterHandler.prototype.
 
 
 /**
- * If The cursor is in an empty LI then break out of the list like in IE
- * @param {Node} li LI to break out of.
- * @return {Element} Element to put the cursor after.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.breakOutOfEmptyListItemGecko_ =
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.breakOutOfEmptyListItemGecko_ =
     function(li) {
         // Do this as follows:
         // 1. <ul>...<li>&nbsp;</li>...</ul>
@@ -273,19 +322,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.breakOutOfEmptyListItemGecko_ =
     };
 
 
-
 /**
- * Wrap the text indicated by "position" in an HTML container of type
- * "nodeName".
- * @param {string} nodeName Type of container, e.g. "p" (paragraph).
- * @param {Object} position The W3C cursor position object
- *     (from getCursorPositionW3c).
- * @param {Node} container The field containing position.
- * @return {Element} The container element that holds the contents from
- *     position.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.wrapInContainerW3c_ = function(nodeName,
+kinyelo.editor.plugins.TagOnEnterHandler.wrapInContainerW3c_ = function(nodeName,
                                                                      position, container) {
     var start = position.node;
     while (start.previousSibling &&
@@ -313,18 +353,10 @@ kinyelo.editor.plugins.EnterHandler.wrapInContainerW3c_ = function(nodeName,
 };
 
 
-
 /**
- * When we delete an element, FF inserts a BR. We want to strip that
- * BR after the fact, but in the case where your cursor is at a character
- * right before a BR and you delete that character, we don't want to
- * strip it. So we detect this case on keydown and mark the BR as not needing
- * removal.
- * @param {goog.dom.AbstractRange} range The closure range object.
- * @param {boolean} isBackspace Whether this is handling the backspace key.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.markBrToNotBeRemoved_ =
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.markBrToNotBeRemoved_ =
     function(range, isBackspace) {
         var focusNode = range.getFocusNode();
         var focusOffset = range.getFocusOffset();
@@ -339,17 +371,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.markBrToNotBeRemoved_ =
     };
 
 
-
-
 /**
- * If we hit delete/backspace to merge elements, FF inserts a BR.
- * We want to strip that BR. In markBrToNotBeRemoved, we detect if
- * there was already a BR there before the delete/backspace so that
- * we don't accidentally remove a user-inserted BR.
- * @param {boolean} isBackSpace Whether this is handling the backspace key.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.removeBrIfNecessary_ = function(
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.removeBrIfNecessary_ = function(
     isBackSpace) {
     var range = this.getFieldObject().getRange();
     var focusNode = range.getFocusNode();
@@ -382,7 +407,7 @@ kinyelo.editor.plugins.EnterHandler.prototype.removeBrIfNecessary_ = function(
         // Sometimes firefox inserts extra whitespace. Do our best to deal.
         // This is buggy though.
         focusNode.data =
-            kinyelo.editor.plugins.EnterHandler.trimTabsAndLineBreaks_(
+            kinyelo.editor.plugins.TagOnEnterHandler.trimTabsAndLineBreaks_(
                 focusNode.data);
         // When we strip whitespace, make sure that our cursor is still at
         // the end of the textnode.
@@ -391,27 +416,20 @@ kinyelo.editor.plugins.EnterHandler.prototype.removeBrIfNecessary_ = function(
     }
 };
 
+
 /**
- * Trim the tabs and line breaks from a string.
- * @param {string} string String to trim.
- * @return {string} Trimmed string.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.trimTabsAndLineBreaks_ = function(
+kinyelo.editor.plugins.TagOnEnterHandler.trimTabsAndLineBreaks_ = function(
     string) {
     return string.replace(/^[\t\n\r]|[\t\n\r]$/g, '');
 };
 
 
-
-
 /**
- * Called in response to a normal enter keystroke. It has the action of
- * splitting elements.
- * @return {Element} The node that the cursor should be before.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.handleRegularEnterGecko_ =
     function() {
         var range = this.getFieldObject().getRange();
         var container =
@@ -427,6 +445,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
             }
 
             newNode = container.cloneNode(true);
+
+            //custom
+            newNode.removeAttribute('id');
+
             goog.dom.insertSiblingAfter(newNode, container);
         } else {
             if (!container.firstChild) {
@@ -436,7 +458,7 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
             var position = goog.editor.range.getDeepEndPoint(range, true);
             container = this.ensureNodeIsWrappedW3c_(position.node, container);
 
-            newNode = goog.editor.plugins.TagOnEnterHandler.splitDomAndAppend_(
+            newNode = kinyelo.editor.plugins.TagOnEnterHandler.splitDomAndAppend_(
                 position.node, position.offset, container);
 
             // If the left half and right half of the splitted node are anchors then
@@ -445,10 +467,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
             // found while traversing the right branch of container.  The right half
             // is the first anchor found while traversing the left branch of newNode.
             var leftAnchor =
-                kinyelo.editor.plugins.EnterHandler.findAnchorInTraversal_(
+                kinyelo.editor.plugins.TagOnEnterHandler.findAnchorInTraversal_(
                     container);
             var rightAnchor =
-                kinyelo.editor.plugins.EnterHandler.findAnchorInTraversal_(
+                kinyelo.editor.plugins.TagOnEnterHandler.findAnchorInTraversal_(
                     newNode, true);
             if (leftAnchor && rightAnchor &&
                 leftAnchor.tagName == goog.dom.TagName.A &&
@@ -468,16 +490,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
     };
 
 
-
 /**
- * Scroll the cursor into view, resulting from splitting the paragraph/adding
- * a br. It behaves differently than scrollIntoView
- * @param {Element} element The element immediately following the cursor. Will
- *     be used to determine how to scroll in order to make the cursor visible.
- *     CANNOT be a BR, as they do not have offsetHeight/offsetTop.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.prototype.scrollCursorIntoViewGecko_ =
+kinyelo.editor.plugins.TagOnEnterHandler.prototype.scrollCursorIntoViewGecko_ =
     function(element) {
         if (!this.getFieldObject().isFixedHeight()) {
             return; // Only need to scroll fixed height fields.
@@ -509,25 +525,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.scrollCursorIntoViewGecko_ =
     };
 
 
-
 /**
- * Splits the DOM tree around the given node and returns the node
- * containing the second half of the tree. The first half of the tree
- * is modified, but not removed from the DOM.
- * @param {Node} positionNode Node to split at.
- * @param {number} positionOffset Offset into positionNode to split at.  If
- *     positionNode is a text node, this offset is an offset in to the text
- *     content of that node.  Otherwise, positionOffset is an offset in to
- *     the childNodes array.  All elements with child index of  positionOffset
- *     or greater will be moved to the second half.  If positionNode is an
- *     empty element, the dom will be split at that element, with positionNode
- *     ending up in the second half.  positionOffset must be 0 in this case.
- * @param {Node=} opt_root Node at which to stop splitting the dom (the root
- *     is also split).
- * @return {Node} The node containing the second half of the tree.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.splitDom_ = function(
+kinyelo.editor.plugins.TagOnEnterHandler.splitDom_ = function(
     positionNode, positionOffset, opt_root) {
     if (!opt_root) opt_root = positionNode.ownerDocument.body;
 
@@ -569,58 +570,41 @@ kinyelo.editor.plugins.EnterHandler.splitDom_ = function(
         // secondHalfOfSplitNode has a right sibling that isn't a text node,
         // then we can leave secondHalfOfSplitNode empty.
         secondHalfOfSplitNode =
-            kinyelo.editor.plugins.EnterHandler.joinTextNodes_(
+            kinyelo.editor.plugins.TagOnEnterHandler.joinTextNodes_(
                 secondHalfOfSplitNode, true);
-        kinyelo.editor.plugins.EnterHandler.replaceWhiteSpaceWithNbsp_(
+        kinyelo.editor.plugins.TagOnEnterHandler.replaceWhiteSpaceWithNbsp_(
             secondHalfOfSplitNode, true, !!secondHalfOfSplitNode.nextSibling);
 
         // Join positionNode and its left text siblings together and then replace
         // trailing NonNbspWhiteSpace with a Nbsp.
-        var firstHalf = kinyelo.editor.plugins.EnterHandler.joinTextNodes_(
+        var firstHalf = kinyelo.editor.plugins.TagOnEnterHandler.joinTextNodes_(
             positionNode, false);
-        kinyelo.editor.plugins.EnterHandler.replaceWhiteSpaceWithNbsp_(
+        kinyelo.editor.plugins.TagOnEnterHandler.replaceWhiteSpaceWithNbsp_(
             firstHalf, false, false);
     }
 
+    //custom
+    secondHalf.removeAttribute('id');
     return secondHalf;
 };
 
 
 /**
- * Splits the DOM tree around the given node and returns the node containing
- * second half of the tree, which is appended after the old node.  The first
- * half of the tree is modified, but not removed from the DOM.
- * @param {Node} positionNode Node to split at.
- * @param {number} positionOffset Offset into positionNode to split at.  If
- *     positionNode is a text node, this offset is an offset in to the text
- *     content of that node.  Otherwise, positionOffset is an offset in to
- *     the childNodes array.  All elements with child index of  positionOffset
- *     or greater will be moved to the second half.  If positionNode is an
- *     empty element, the dom will be split at that element, with positionNode
- *     ending up in the second half.  positionOffset must be 0 in this case.
- * @param {Node} node Node to split.
- * @return {Node} The node containing the second half of the tree.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_ = function(
+kinyelo.editor.plugins.TagOnEnterHandler.splitDomAndAppend_ = function(
     positionNode, positionOffset, node) {
-    var newNode = kinyelo.editor.plugins.EnterHandler.splitDom_(
+    var newNode = kinyelo.editor.plugins.TagOnEnterHandler.splitDom_(
         positionNode, positionOffset, node);
     goog.dom.insertSiblingAfter(newNode, node);
     return newNode;
 };
 
 
-
 /**
- * Joins node and its adjacent text nodes together.
- * @param {Node} node The node to start joining.
- * @param {boolean} moveForward Determines whether to join left siblings (false)
- *     or right siblings (true).
- * @return {Node} The joined text node.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.joinTextNodes_ = function(node,
+kinyelo.editor.plugins.TagOnEnterHandler.joinTextNodes_ = function(node,
                                                                 moveForward) {
     if (node && node.nodeName == '#text') {
         var nextNodeFn = moveForward ? 'nextSibling' : 'previousSibling';
@@ -642,16 +626,9 @@ kinyelo.editor.plugins.EnterHandler.joinTextNodes_ = function(node,
 
 
 /**
- * Replaces leading or trailing spaces of a text node to a single Nbsp.
- * @param {Node} textNode The text node to search and replace white spaces.
- * @param {boolean} fromStart Set to true to replace leading spaces, false to
- *     replace trailing spaces.
- * @param {boolean} isLeaveEmpty Set to true to leave the node empty if the
- *     text node was empty in the first place, otherwise put a Nbsp into the
- *     text node.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.replaceWhiteSpaceWithNbsp_ = function(
+kinyelo.editor.plugins.TagOnEnterHandler.replaceWhiteSpaceWithNbsp_ = function(
     textNode, fromStart, isLeaveEmpty) {
     var regExp = fromStart ? /^[ \t\r\n]+/ : /[ \t\r\n]+$/;
     textNode.nodeValue = textNode.nodeValue.replace(regExp,
@@ -664,16 +641,9 @@ kinyelo.editor.plugins.EnterHandler.replaceWhiteSpaceWithNbsp_ = function(
 
 
 /**
- * Finds the first A element in a traversal from the input node.  The input
- * node itself is not included in the search.
- * @param {Node} node The node to start searching from.
- * @param {boolean=} opt_useFirstChild Whether to traverse along the first child
- *     (true) or last child (false).
- * @return {Node} The first anchor node found in the search, or null if none
- *     was found.
- * @private
+ * @inheritDoc
  */
-kinyelo.editor.plugins.EnterHandler.findAnchorInTraversal_ = function(node,
+kinyelo.editor.plugins.TagOnEnterHandler.findAnchorInTraversal_ = function(node,
                                                                         opt_useFirstChild) {
     while ((node = opt_useFirstChild ? node.firstChild : node.lastChild) &&
         node.tagName != goog.dom.TagName.A) {
@@ -681,51 +651,3 @@ kinyelo.editor.plugins.EnterHandler.findAnchorInTraversal_ = function(node,
     }
     return node;
 };
-
-
-
-
-
-/** @inheritDoc */
-kinyelo.editor.plugins.EnterHandler.prototype.handleKeyPress = function(e) {
-    if (!this.allowEnter_ && e.keyCode == goog.events.KeyCodes.ENTER) {
-        e.preventDefault();
-        return false;
-    }
-
-    if (e.keyCode == goog.events.KeyCodes.ENTER) {
-        if (goog.userAgent.GECKO) {
-            if (!e.shiftKey) {
-                // Behave similarly to IE's content editable return carriage:
-                // If the shift key is down or specified by the application, insert a
-                // BR, otherwise split paragraphs
-                this.handleEnterGecko_(e);
-            }
-        }/* else {
-            // In Gecko-based browsers, this is handled in the handleEnterGecko_
-            // method.
-            this.getFieldObject().dispatchBeforeChange();
-            var cursorPosition = this.deleteCursorSelection_();
-
-            var split = !!this.getFieldObject().execCommand(
-                goog.editor.plugins.Blockquote.SPLIT_COMMAND, cursorPosition);
-            if (split) {
-                // TODO(user): I think we probably don't need to stopPropagation here
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            this.releasePositionObject_(cursorPosition);
-
-            this.getFieldObject().dispatchChange();
-        }*/
-
-    } else if (goog.userAgent.GECKO && e.keyCode == goog.events.KeyCodes.DELETE) {
-        this.handleDeleteGecko(e);
-    }
-
-    return false;
-
-
-}
-

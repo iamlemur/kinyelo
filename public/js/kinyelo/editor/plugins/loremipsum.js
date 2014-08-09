@@ -2,6 +2,7 @@ goog.provide('kinyelo.editor.plugins.LoremIpsum');
 
 goog.require('goog.editor.plugins.LoremIpsum');
 goog.require('goog.dom.dataset');
+goog.require('goog.string');
 goog.require('goog.events.EventHandler');
 
 
@@ -75,8 +76,18 @@ kinyelo.editor.plugins.LoremIpsum.prototype.handleKeyPress = function(e) {
     //TODO: make sure they are not pressing a control key as well
     if(this.usingLorem_ && e.getBrowserEvent().which != 0) {
         this.usingLorem_ = false;
-        this.getFieldObject().setHtml(true, null, true);
-        this.clearLorem_();
+        this.clearLorem_(true);
+        //this.getFieldObject().setHtml(false, null, true);
+        goog.dom.removeChildren(this.getFieldObject().getElement());
+        var dom = this.getFieldDomHelper();
+        var section = dom.createDom(goog.dom.TagName.SECTION);
+        this.getFieldObject().addUniqueID(section);
+        var p = dom.createDom(goog.dom.TagName.P);
+        this.getFieldObject().addUniqueID(p);
+        goog.dom.appendChild(p, dom.createDom(goog.dom.TagName.BR));
+        goog.dom.appendChild(section, p);
+        goog.dom.appendChild(this.getFieldObject().getElement(), section);
+        goog.editor.range.selectNodeStart(p);
     }
 }
 
@@ -84,13 +95,14 @@ kinyelo.editor.plugins.LoremIpsum.prototype.handleFocus_ = function(e) {
     var fieldObj = this.getFieldObject();
     if(this.usingLorem_) {
         if (fieldObj.isLoaded()) {
-            this.placeCursorAtStart();
+            goog.editor.range.selectNodeStart(this.placeholder_);
         }
     }
 }
 
 kinyelo.editor.plugins.LoremIpsum.prototype.placeCursorAtStart = function() {
     var fieldObj = this.getFieldObject();
+    goog.editor.range.selectNodeStart(this.placeholder_);
     //if (goog.userAgent.WEBKIT) {
         goog.dom.getOwnerDocument(fieldObj.getElement()).body.focus();
         fieldObj.placeCursorAtStart();

@@ -4,8 +4,13 @@ goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.AdvancedField');
 goog.require('goog.events.EventHandler');
 goog.require('goog.dom');
+goog.require('goog.events');
 goog.require('goog.editor.Command');
-
+goog.require('goog.debug.Logger');
+goog.require('goog.net.XmlHttp');
+goog.require('goog.net.XhrIo');
+goog.require('goog.structs.Map');
+goog.require('goog.Uri.QueryData');
 
 
 /**

@@ -1,32 +1,19 @@
 goog.provide('kinyelo.editor.AdvancedField');
 
 goog.require('goog.dom');
-goog.require('goog.dom.dataset');
-goog.require('goog.events');
-goog.require('goog.editor.Field');
-goog.require('goog.editor.ContentEditableField');
-goog.require('goog.editor.plugins.EnterHandler');
-goog.require('kinyelo.editor.plugins.BasicTextFormatter');
-goog.require('goog.editor.plugins.ListTabHandler');
-goog.require('goog.editor.plugins.LoremIpsum');
-goog.require('kinyelo.editor.plugins.LoremIpsum');
 goog.require('goog.editor.plugins.RemoveFormatting');
-goog.require('goog.editor.plugins.SpacesTabHandler');
 goog.require('goog.editor.plugins.UndoRedo');
-goog.require('goog.editor.plugins.TagOnEnterHandler');
-goog.require('goog.ui.Toolbar');
-goog.require('goog.ui.editor.DefaultToolbar');
+goog.require('goog.editor.plugins.BasicTextFormatter');
+//goog.require('goog.editor.plugins.ListTabHandler');
+//goog.require('goog.editor.plugins.SpacesTabHandler');
+goog.require('goog.ui.editor.ToolbarFactory');
 goog.require('goog.ui.editor.ToolbarController');
-goog.require('goog.debug.Logger');
-goog.require('goog.net.XmlHttp');
-goog.require('goog.net.XhrIo');
-goog.require('goog.structs.Map');
-goog.require('goog.Uri.QueryData');
 
 goog.require('kinyelo.editor.Field');
+goog.require('kinyelo.editor.plugins.LoremIpsum');
 goog.require('kinyelo.editor.plugins.InlineFormatter');
 goog.require('kinyelo.editor.plugins.HeadingFormatter');
-goog.require('kinyelo.editor.DelayedCommand');
+goog.require('kinyelo.editor.plugins.EnterHandler');
 
 /**
  * @constructor
@@ -52,15 +39,15 @@ goog.exportSymbol('kinyelo.editor.AdvancedField', kinyelo.editor.AdvancedField);
 goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 1000;
 
 kinyelo.editor.AdvancedField.prototype.registerPlugins = function() {
-//    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
-//    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
-    this.registerPlugin(new kinyelo.editor.plugins.BasicTextFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.EnterHandler());
+    this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.LoremIpsum(''));
+    this.registerPlugin(new goog.editor.plugins.BasicTextFormatter());
     this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     this.registerPlugin(new goog.editor.plugins.UndoRedo());
-    this.registerPlugin(new goog.editor.plugins.ListTabHandler());
-    this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
-    this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
-    this.registerPlugin(new kinyelo.editor.plugins.LoremIpsum(''));
+    //this.registerPlugin(new goog.editor.plugins.ListTabHandler());
+    //this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
     goog.base(this, 'registerPlugins');
 }
 
@@ -73,9 +60,9 @@ kinyelo.editor.AdvancedField.prototype.createToolbar_ = function() {
 
     var dom = goog.dom.getDomHelper(this.parentElement_);
     this.toolbarElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.AdvancedField.TOOLBAR_CONTAINER_ID_});
-/*
-    var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Bold', 'Bold');
-    var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italic', 'Italic');
+
+    var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Strong', 'Strong');
+    var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Emphasis', 'Emphasis');
     strongButton.queryable = true;
     emButton.queryable = true;
     var h1Button = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H1, 'H1', 'H1');
@@ -87,20 +74,15 @@ kinyelo.editor.AdvancedField.prototype.createToolbar_ = function() {
         strongButton,
         emButton,
         h1Button,
-        h2Button
-    ];*/
-
-    this.buttons_ = [
-        goog.editor.Command.BOLD,
-        goog.editor.Command.ITALIC
+        h2Button,
     ];
 
-    this.toolbar_ = goog.ui.editor.DefaultToolbar.makeToolbar(this.buttons_, this.toolbarElement_);
 
-    /*
-     var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
-     this.toolbar.setRenderer(customRenderer);
-     */
+    this.toolbar_ = goog.ui.editor.ToolbarFactory.makeToolbar(this.buttons_, this.toolbarElement_);
+
+    //var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
+    //this.toolbar_.setRenderer(customRenderer);
+
 
     this.parentElement_.appendChild(this.toolbarElement_);
 
@@ -159,57 +141,5 @@ kinyelo.editor.AdvancedField.prototype.toolbarElement_ = null;
  * @private
  */
 kinyelo.editor.AdvancedField.prototype.toolbar_ =  null;
-
-/**
- * A saved command for insertion depending on subsequent user interaction
- * @type {kinyelo.editor.DelayedCommand}
- * @private
- */
-kinyelo.editor.AdvancedField.prototype.delayedCommand_ = null;
-
-/**
- * Save a range and command to insert an inline format later if the user types in the same
- * position after requesting a new format
- * @param {kinyelo.editor.DelayedCommand} command The delayed command to save
- */
-kinyelo.editor.AdvancedField.prototype.setDelayedCommand = function(command) {
-    if(command.getRange().isCollapsed()) {
-        this.delayedCommand_  = command;
-        //add a listener to execute the command after interaction
-        this.keyEvent_ = goog.events.listen(this.field, goog.events.EventType.KEYPRESS, this.onInteraction, false, this);
-        this.clickEvent_ = goog.events.listen(this.field, goog.events.EventType.CLICK, this.onInteraction, false, this);
-    }
-}
-
-/**
- *
- * @returns {kinyelo.editor.DelayedCommand}
- */
-kinyelo.editor.AdvancedField.prototype.getDelayedCommand = function() {
-    return this.delayedCommand_;
-}
-
-
-
-/**
- * The method for a key press
- * @param {!goog.events.Event} e The event
- */
-kinyelo.editor.AdvancedField.prototype.onInteraction = function(e) {
-    if(!goog.isNull(this.delayedCommand_)) {
-        var currentRange = this.getRange();
-        var delayedRange = this.delayedCommand_.getRange();
-        if(kinyelo.editor.isEqualRanges(currentRange, delayedRange) && e.getBrowserEvent().which != 0) {
-            this.execCommand(this.delayedCommand_.getCommand());
-        }
-
-        this.delayedCommand_ = null;
-
-        //set the command to null and remove listener
-        goog.events.unlistenByKey(this.keyEvent_);
-        goog.events.unlistenByKey(this.clickEvent_);
-    }
-}
-
 
 

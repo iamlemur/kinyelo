@@ -729,7 +729,12 @@ kinyelo.editor.plugins.BasicTextFormatter.convertContainerToTextAlign_ =
         }
     };
 
-
+/**
+ * @inheritDoc
+ */
+kinyelo.editor.plugins.BasicTextFormatter.prototype.handleSelectionChange = function(opt_e, opt_target) {
+    console.log('selection changed');
+}
 
 /**
  * @param {kinyelo.editor.plugins.BasicTextFormatter.COMMAND|string} command A command key.
