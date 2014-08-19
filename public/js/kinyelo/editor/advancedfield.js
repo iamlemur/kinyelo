@@ -14,6 +14,7 @@ goog.require('kinyelo.editor.plugins.LoremIpsum');
 goog.require('kinyelo.editor.plugins.InlineFormatter');
 goog.require('kinyelo.editor.plugins.HeadingFormatter');
 goog.require('kinyelo.editor.plugins.EnterHandler');
+goog.require('goog.editor.plugins.TagOnEnterHandler');
 
 /**
  * @constructor
@@ -40,6 +41,7 @@ goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 1000;
 
 kinyelo.editor.AdvancedField.prototype.registerPlugins = function() {
     this.registerPlugin(new kinyelo.editor.plugins.EnterHandler());
+    //this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
     this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
     this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
     this.registerPlugin(new kinyelo.editor.plugins.LoremIpsum(''));

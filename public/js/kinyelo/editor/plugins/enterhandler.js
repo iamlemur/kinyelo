@@ -108,26 +108,6 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyUpInternal = function(
 };
 
 /**
- * String that matches a single BR tag or NBSP surrounded by non-breaking
- * whitespace
- * @type {string}
- * @private
- */
-kinyelo.editor.plugins.EnterHandler.BrOrNbspSurroundedWithWhiteSpace_ =
-    '[\t\n\r ]*(<br[^>]*\/?>|&nbsp;)[\t\n\r ]*';
-
-/**
- * String that matches a single BR tag or NBSP surrounded by non-breaking
- * whitespace
- * @type {RegExp}
- * @private
- */
-kinyelo.editor.plugins.EnterHandler.emptyLiRegExp_ = new RegExp('^' +
-    kinyelo.editor.plugins.EnterHandler.BrOrNbspSurroundedWithWhiteSpace_ +
-    '$');
-
-
-/**
  * Ensures the current node is wrapped in the tag.
  * @param {Node} node The node to ensure gets wrapped.
  * @param {Element} container Element containing the selection.
@@ -183,12 +163,19 @@ kinyelo.editor.plugins.EnterHandler.prototype.
         // Only break out of lists for collapsed selections.
         li = goog.dom.getAncestorByTagNameAndClass(
             range && range.getContainerElement(), goog.dom.TagName.LI);
+        p = goog.dom.getAncestorByTagNameAndClass(
+            range && range.getContainerElement(), goog.dom.TagName.P);
     }
     var isEmptyLi = (li &&
         li.innerHTML.match(
-            kinyelo.editor.plugins.EnterHandler.emptyLiRegExp_));
+            kinyelo.editor.emptyNodeRegExp));
+    var isEmptyP = (p &&
+        p.innerHTML.match(
+            kinyelo.editor.emptyNodeRegExp));
     var elementAfterCursor = isEmptyLi ?
         this.breakOutOfEmptyListItemGecko_(li) :
+        isEmptyP ?
+        this.splitSection_(p) :
         this.handleRegularEnterGecko_();
 
     // Move the cursor in front of "nodeAfterCursor", and make sure it
@@ -220,6 +207,29 @@ kinyelo.editor.plugins.EnterHandler.prototype.
     e.stopPropagation();
 };
 
+/**
+ * If The cursor is in an empty P then split the section
+ * @param {Element} p P of section to break out of.
+ * @return {Element} Element to put the cursor after.
+ * @private
+ */
+kinyelo.editor.plugins.EnterHandler.prototype.splitSection_ =
+    function(p) {
+        var range = this.getFieldObject().getRange();
+        var newNode;
+        var section = goog.dom.getAncestorByTagNameAndClass(p, goog.dom.TagName.SECTION);
+        if(section) {
+            var position = goog.editor.range.getDeepEndPoint(range, true);
+            newNode = kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_(
+                position.node, position.offset, section);
+            goog.dom.removeNode(p);
+
+            this.getFieldObject().addUniqueID(newNode, true);
+        } else {
+            newNode = p;
+        }
+        return /** @type {Element} */ (newNode);
+}
 
 /**
  * If The cursor is in an empty LI then break out of the list like in IE
@@ -404,7 +414,6 @@ kinyelo.editor.plugins.EnterHandler.trimTabsAndLineBreaks_ = function(
 
 
 
-
 /**
  * Called in response to a normal enter keystroke. It has the action of
  * splitting elements.
@@ -436,7 +445,7 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
             var position = goog.editor.range.getDeepEndPoint(range, true);
             container = this.ensureNodeIsWrappedW3c_(position.node, container);
 
-            newNode = goog.editor.plugins.TagOnEnterHandler.splitDomAndAppend_(
+            newNode = kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_(
                 position.node, position.offset, container);
 
             // If the left half and right half of the splitted node are anchors then
@@ -464,6 +473,7 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
                 goog.dom.flattenElement(/** @type {Element} */ (anchorToRemove));
             }
         }
+        this.getFieldObject().addUniqueID(newNode, true);
         return /** @type {Element} */ (newNode);
     };
 
@@ -658,7 +668,8 @@ kinyelo.editor.plugins.EnterHandler.replaceWhiteSpaceWithNbsp_ = function(
         goog.string.Unicode.NBSP);
 
     if (!isLeaveEmpty && textNode.nodeValue == '') {
-        textNode.nodeValue = goog.string.Unicode.NBSP;
+        goog.dom.insertSiblingAfter(goog.dom.createDom(goog.dom.TagName.BR), textNode);
+        //textNode.nodeValue = goog.string.Unicode.NBSP;
     }
 };
 
@@ -694,33 +705,17 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyPress = function(e) {
     }
 
     if (e.keyCode == goog.events.KeyCodes.ENTER) {
-        if (goog.userAgent.GECKO) {
+
             if (!e.shiftKey) {
                 // Behave similarly to IE's content editable return carriage:
                 // If the shift key is down or specified by the application, insert a
                 // BR, otherwise split paragraphs
                 this.handleEnterGecko_(e);
             }
-        }/* else {
-            // In Gecko-based browsers, this is handled in the handleEnterGecko_
-            // method.
-            this.getFieldObject().dispatchBeforeChange();
-            var cursorPosition = this.deleteCursorSelection_();
 
-            var split = !!this.getFieldObject().execCommand(
-                goog.editor.plugins.Blockquote.SPLIT_COMMAND, cursorPosition);
-            if (split) {
-                // TODO(user): I think we probably don't need to stopPropagation here
-                e.preventDefault();
-                e.stopPropagation();
-            }
 
-            this.releasePositionObject_(cursorPosition);
-
-            this.getFieldObject().dispatchChange();
-        }*/
-
-    } else if (goog.userAgent.GECKO && e.keyCode == goog.events.KeyCodes.DELETE) {
+    } else if (e.keyCode == goog.events.KeyCodes.DELETE) {
+        console.log('woot');
         this.handleDeleteGecko(e);
     }
 
@@ -728,4 +723,5 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyPress = function(e) {
 
 
 }
+
 

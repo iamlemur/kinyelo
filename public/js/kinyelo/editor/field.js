@@ -31,13 +31,20 @@ kinyelo.editor.Field.prototype.registerPlugins = function() {
 kinyelo.editor.Field.prototype.execCommand = function(command, var_args) {
     goog.base(this, 'execCommand', command, var_args);
     var blockNodes = goog.dom.findNodes(this.getElement(), goog.editor.node.isBlockTag);
-    goog.array.forEach(blockNodes, goog.bind(this.addUniqueID, this));
+    goog.array.forEach(blockNodes, goog.bind(this.addUniqueID, this, false));
 }
 
-kinyelo.editor.Field.prototype.addUniqueID = function(node) {
-    if(goog.string.isEmptySafe(node.id)) {
+/**
+ *
+ * @param {Element} node
+ * @param {boolean} force
+ * @returns {Element}
+ */
+kinyelo.editor.Field.prototype.addUniqueID = function(node, force) {
+    if(goog.string.isEmptySafe(node.id) || force) {
         node.id = this.generateID();
     }
+    return node;
 }
 
 kinyelo.editor.Field.prototype.generateID = function() {
@@ -60,3 +67,31 @@ kinyelo.editor.Field.prototype.editableElement_ = null;
  * @private
  */
 kinyelo.editor.Field.prototype.eventRegister_ = null;
+
+/**
+ * Handles keydown on the field.
+ * @param {goog.events.BrowserEvent} e The browser event.
+ * @private
+ */
+kinyelo.editor.Field.prototype.handleKeyDown_ = function(e) {
+    console.log(e.keyCode + ' down');
+    if(e.keyCode == goog.events.KeyCodes.BACKSPACE) {
+        var range = this.getRange();
+        var container = goog.editor.style.getContainer(
+            range && range.getContainerElement());
+        var section = goog.dom.getAncestorByTagNameAndClass(container, goog.dom.TagName.SECTION);
+        // if we have the container and the container is empty and the first child of the section
+        // and the section is the last child of the editable element
+        if (container &&
+                container.innerHTML.match(kinyelo.editor.emptyNodeRegExp) &&
+                goog.dom.getFirstElementChild(section) == container &&
+                section &&
+                goog.dom.getFirstElementChild(this.getElement()) == section) {
+            // Don't delete if it's the last node in the field and just has a BR.
+            e.preventDefault();
+            // TODO(user): I think we probably don't need to stopPropagation here
+            e.stopPropagation();
+        }
+    }
+};
+

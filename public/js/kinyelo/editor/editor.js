@@ -55,3 +55,21 @@ kinyelo.editor.flattenElements = function(tag, range, node) {
         goog.dom.flattenElement(node);
     }
 }
+
+/**
+ * String that matches a single BR tag or NBSP surrounded by non-breaking
+ * whitespace
+ * @type {string}
+ * @private
+ */
+kinyelo.editor.BrOrNbspSurroundedWithWhiteSpace_ =
+    '[\t\n\r ]*(<br[^>]*\/?>|&nbsp;)[\t\n\r ]*';
+
+/**
+ * String that matches a single BR tag or NBSP surrounded by non-breaking
+ * whitespace
+ * @type {RegExp}
+ */
+kinyelo.editor.emptyNodeRegExp = new RegExp('^' +
+    kinyelo.editor.BrOrNbspSurroundedWithWhiteSpace_ +
+    '$');
