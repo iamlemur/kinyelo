@@ -67,6 +67,11 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleBackspaceInternal = function
     }
 };
 
+kinyelo.editor.plugins.EnterHandler.TRANSIENT_FORMATS = [
+    goog.dom.TagName.H1,
+    goog.dom.TagName.H2
+];
+
 /** @override */
 kinyelo.editor.plugins.EnterHandler.prototype.handleDeleteGecko = function(
     e) {
@@ -175,8 +180,8 @@ kinyelo.editor.plugins.EnterHandler.prototype.
     var elementAfterCursor = isEmptyLi ?
         this.breakOutOfEmptyListItemGecko_(li) :
         isEmptyP ?
-        this.splitSection_(p) :
-        this.handleRegularEnterGecko_();
+            this.splitSection_(p) :
+            this.handleRegularEnterGecko_();
 
     // Move the cursor in front of "nodeAfterCursor", and make sure it
     // is visible
@@ -616,6 +621,9 @@ kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_ = function(
     positionNode, positionOffset, node) {
     var newNode = kinyelo.editor.plugins.EnterHandler.splitDom_(
         positionNode, positionOffset, node);
+    if(goog.array.contains(kinyelo.editor.plugins.EnterHandler.TRANSIENT_FORMATS, newNode.tagName) && newNode.textContent == '') {
+        newNode = /** @type {Node} */ goog.dom.createDom(goog.dom.TagName.P, { id: newNode.id }, goog.dom.getChildren(newNode));
+    }
     goog.dom.insertSiblingAfter(newNode, node);
     return newNode;
 };
@@ -703,19 +711,14 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyPress = function(e) {
         e.preventDefault();
         return false;
     }
-
     if (e.keyCode == goog.events.KeyCodes.ENTER) {
-
             if (!e.shiftKey) {
                 // Behave similarly to IE's content editable return carriage:
                 // If the shift key is down or specified by the application, insert a
                 // BR, otherwise split paragraphs
                 this.handleEnterGecko_(e);
             }
-
-
     } else if (e.keyCode == goog.events.KeyCodes.DELETE) {
-        console.log('woot');
         this.handleDeleteGecko(e);
     }
 

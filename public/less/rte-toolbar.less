@@ -1,0 +1,41 @@
+#rte-toolbar {
+	position: absolute;
+	top: 0;
+	left: 0;
+	ul {
+		.border-left-radius(5px);
+		.border-right-radius(5px);
+		background-color: @grayDark;
+		padding: 0;
+		margin: 0;
+		position: relative;
+		&:after {
+			content: "";
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-left: -8px;
+			border-top: 8px solid @grayDark;
+			border-right: 8px solid transparent;
+			border-left: 8px solid transparent;
+			border-bottom: 8px solid transparent;
+		}
+		li {
+			display: inline-block;
+			list-style-position: inside;
+			&:hover, &.k-rte-button-checked {
+				button {
+					color: @yellow;
+				}
+			}
+			button {
+				display: inline-block;
+				padding: 5px 10px;
+				font-size: 16px;
+				line-height: 24px;
+				color: @white;
+				font-weight: bold;
+			}
+		}
+	}
+}

@@ -123,7 +123,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.execCommandInternal = function(
 }
 
 
-/** @inheritDoc */
+/** @override */
 kinyelo.editor.plugins.InlineFormatter.prototype.handleKeyboardShortcut = function(e, key, isModifierPressed) {
     if(isModifierPressed && key == 'b') {
         this.getFieldObject().execCommand(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG);
@@ -165,7 +165,8 @@ kinyelo.editor.plugins.InlineFormatter.prototype.inlineFormatFix_ = function(com
             break;
     }
     var range = this.getFieldObject().getRange();
-    var container = range.getContainer();
+    //TODO: we use parentNode here issue with Chrome, can we work around this?
+    var container = range.getContainer().parentNode;
     var savedRange = goog.editor.range.saveUsingNormalizedCarets(range);
     var iterFunction = function(node) {
         return range.containsNode(node, true) && node.tagName == oldTag;
@@ -174,6 +175,7 @@ kinyelo.editor.plugins.InlineFormatter.prototype.inlineFormatFix_ = function(com
     if(goog.array.isEmpty(nodes) && container.tagName == oldTag) {
         nodes.push(container);
     }
+    console.log(nodes, oldTag, newTag);
     var replaceFunction = function(node) {
         var newNode = goog.dom.createDom(newTag);
         goog.dom.insertSiblingBefore(newNode, node);

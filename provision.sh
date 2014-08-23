@@ -12,9 +12,7 @@ curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin
 mv /bin/composer.phar /bin/composer
 printf "\n" | pecl install apc
 cp -fr /vagrant/resources/apc.ini /etc/php.d/apc.ini
-#wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u5-b13/jdk-8u5-linux-x64.rpm
-#yes | rpm -ivh jdk-8u5-linux-x64.rpm
-#rm -rf jdk-8u5-linux-x64.rpm
+
 rm -rf /var/www
 ln -fs /vagrant /var/www
 
@@ -47,11 +45,6 @@ php /var/www/artisan migrate
 echo "1" > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -A PREROUTING -p tcp --dport 9810 -j DNAT --to-destination 10.0.2.2:9810
 iptables -t nat -A POSTROUTING -j MASQUERADE
-
-sudo ln -s /opt/VBoxGuestAdditions-4.3.10/lib/VBoxGuestAdditions /usr/lib/VBoxGuestAdditions
-
-#https://github.com/mitchellh/vagrant/issues/3341
-echo "Remove the last line of the provisioning file once the bug is fixed"
 
 #/sbin/service sendmail start
 #start closure

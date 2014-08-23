@@ -20,13 +20,12 @@ goog.inherits(kinyelo.editor.Field, goog.editor.ContentEditableField);
 
 kinyelo.editor.Field.prototype.registerPlugins = function() {
     var plugin = this.getPluginByClassId('LoremIpsum');
-    if(!goog.isNull(plugin)) {
-        plugin.postInit();
-    }
+    //TODO: check that this plugin exists
+    plugin.postInit();
 }
 
 /**
- * @inheritDoc
+ * @override
  */
 kinyelo.editor.Field.prototype.execCommand = function(command, var_args) {
     goog.base(this, 'execCommand', command, var_args);
@@ -68,13 +67,16 @@ kinyelo.editor.Field.prototype.editableElement_ = null;
  */
 kinyelo.editor.Field.prototype.eventRegister_ = null;
 
+
+
 /**
  * Handles keydown on the field.
+ * override this because the backspace is not detected in Chrome by keyPress or keyDown
  * @param {goog.events.BrowserEvent} e The browser event.
  * @private
+ * @override
  */
 kinyelo.editor.Field.prototype.handleKeyDown_ = function(e) {
-    console.log(e.keyCode + ' down');
     if(e.keyCode == goog.events.KeyCodes.BACKSPACE) {
         var range = this.getRange();
         var container = goog.editor.style.getContainer(
@@ -83,15 +85,17 @@ kinyelo.editor.Field.prototype.handleKeyDown_ = function(e) {
         // if we have the container and the container is empty and the first child of the section
         // and the section is the last child of the editable element
         if (container &&
-                container.innerHTML.match(kinyelo.editor.emptyNodeRegExp) &&
-                goog.dom.getFirstElementChild(section) == container &&
-                section &&
-                goog.dom.getFirstElementChild(this.getElement()) == section) {
+            container.innerHTML.match(kinyelo.editor.emptyNodeRegExp) &&
+            goog.dom.getFirstElementChild(section) == container &&
+            section &&
+            goog.dom.getFirstElementChild(this.getElement()) == section) {
             // Don't delete if it's the last node in the field and just has a BR.
             e.preventDefault();
             // TODO(user): I think we probably don't need to stopPropagation here
             e.stopPropagation();
         }
     }
-};
 
+    goog.base(this, 'handleKeyDown_', e);
+
+};

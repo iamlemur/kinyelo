@@ -6,15 +6,16 @@ goog.require('goog.editor.plugins.UndoRedo');
 goog.require('goog.editor.plugins.BasicTextFormatter');
 //goog.require('goog.editor.plugins.ListTabHandler');
 //goog.require('goog.editor.plugins.SpacesTabHandler');
-goog.require('goog.ui.editor.ToolbarFactory');
+goog.require('kinyelo.ui.editor.ToolbarFactory');
 goog.require('goog.ui.editor.ToolbarController');
 
 goog.require('kinyelo.editor.Field');
 goog.require('kinyelo.editor.plugins.LoremIpsum');
+goog.require('kinyelo.editor.plugins.BasicTextFormatter');
 goog.require('kinyelo.editor.plugins.InlineFormatter');
 goog.require('kinyelo.editor.plugins.HeadingFormatter');
 goog.require('kinyelo.editor.plugins.EnterHandler');
-goog.require('goog.editor.plugins.TagOnEnterHandler');
+goog.require('kinyelo.editor.plugins.ToolbarToggler');
 
 /**
  * @constructor
@@ -40,14 +41,16 @@ goog.exportSymbol('kinyelo.editor.AdvancedField', kinyelo.editor.AdvancedField);
 goog.editor.Field.DELAYED_CHANGE_FREQUENCY = 1000;
 
 kinyelo.editor.AdvancedField.prototype.registerPlugins = function() {
-    this.registerPlugin(new kinyelo.editor.plugins.EnterHandler());
     //this.registerPlugin(new goog.editor.plugins.TagOnEnterHandler(goog.dom.TagName.P));
     this.registerPlugin(new kinyelo.editor.plugins.InlineFormatter());
+    //TODO: we are registering this plugin to call bold and italics but not others, can we prevent them?
+    this.registerPlugin(new kinyelo.editor.plugins.BasicTextFormatter());
     this.registerPlugin(new kinyelo.editor.plugins.HeadingFormatter());
+    this.registerPlugin(new kinyelo.editor.plugins.EnterHandler());
     this.registerPlugin(new kinyelo.editor.plugins.LoremIpsum(''));
-    this.registerPlugin(new goog.editor.plugins.BasicTextFormatter());
     this.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     this.registerPlugin(new goog.editor.plugins.UndoRedo());
+    this.registerPlugin(new kinyelo.editor.plugins.ToolbarToggler());
     //this.registerPlugin(new goog.editor.plugins.ListTabHandler());
     //this.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
     goog.base(this, 'registerPlugins');
@@ -63,12 +66,12 @@ kinyelo.editor.AdvancedField.prototype.createToolbar_ = function() {
     var dom = goog.dom.getDomHelper(this.parentElement_);
     this.toolbarElement_ = dom.createDom(goog.dom.TagName.DIV, {id: kinyelo.editor.AdvancedField.TOOLBAR_CONTAINER_ID_});
 
-    var strongButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Strong', 'Strong');
-    var emButton = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Emphasis', 'Emphasis');
+    var strongButton = kinyelo.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.STRONG, 'Bold', 'b');
+    var emButton = kinyelo.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.InlineFormatter.COMMAND.EM, 'Italics', 'i');
     strongButton.queryable = true;
     emButton.queryable = true;
-    var h1Button = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H1, 'H1', 'H1');
-    var h2Button = goog.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H2, 'H2', 'H2');
+    var h1Button = kinyelo.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H1, 'H1', 'h1');
+    var h2Button = kinyelo.ui.editor.ToolbarFactory.makeToggleButton(kinyelo.editor.plugins.HeadingFormatter.COMMAND.H2, 'H2', 'h2');
     h1Button.queryable = true;
     h2Button.queryable = true;
 
@@ -79,12 +82,8 @@ kinyelo.editor.AdvancedField.prototype.createToolbar_ = function() {
         h2Button,
     ];
 
-
-    this.toolbar_ = goog.ui.editor.ToolbarFactory.makeToolbar(this.buttons_, this.toolbarElement_);
-
-    //var customRenderer = goog.ui.ContainerRenderer.getCustomRenderer(goog.ui.ContainerRenderer, 'k-toolbar');
-    //this.toolbar_.setRenderer(customRenderer);
-
+    this.toolbar_ = kinyelo.ui.editor.ToolbarFactory.makeToolbar(this.buttons_, this.toolbarElement_);
+    this.toolbar_.setVisible(false);
 
     this.parentElement_.appendChild(this.toolbarElement_);
 
@@ -144,4 +143,18 @@ kinyelo.editor.AdvancedField.prototype.toolbarElement_ = null;
  */
 kinyelo.editor.AdvancedField.prototype.toolbar_ =  null;
 
+/**
+ *
+ * @returns {goog.ui.Toolbar}
+ */
+kinyelo.editor.AdvancedField.prototype.getToolbar = function() {
+    return this.toolbar_;
+}
 
+/**
+ *
+ * @returns {HTMLElement}
+ */
+kinyelo.editor.AdvancedField.prototype.getToolbarElement = function() {
+    return this.toolbarElement_;
+}
