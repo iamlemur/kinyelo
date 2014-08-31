@@ -1,4 +1,41 @@
-.annotations-container {
+#annotations {
+	position: fixed;
+	height: 100%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: @zIndexComments;
+	-webkit-transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+	transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
+	.page-utils-scrollable-container {
+		height: 100%;
+		overflow-y: scroll;
+	}
+}
+
+#annotations {
+	width: 300px;
+	right: -300px;
+}
+
+.js-annotations {
+	main[role=main] {
+		transform: translate3d(-300px, 0px, 0px);
+		position: fixed;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		overflow: hidden;
+	}
+	#active-nav-overlay {
+		display: block;
+	}
+	#annotations {
+		right: 0;
+	}
+}
+
+.annotations {
 	font-family: @sansFontFamily;
 	font-size: 13px;
 	line-height: 18px;

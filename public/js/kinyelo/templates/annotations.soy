@@ -1,0 +1,144 @@
+{namespace kinyelo.templates.annotations}
+
+
+/**
+ * @param? threads
+ * @param self
+ */
+{template .container}
+    <div class="annotations">
+        <p>&nbsp;</p>
+        {foreach $thread in $threads}
+            {call .thread}
+                {param thread: $thread/}
+                {param self: $self/}
+                {param level: 1/}
+                {param type: $thread.type/}
+            {/call}
+        {/foreach}
+        	<ul class="actions">
+        		<li>
+        			<button class="add-comment">add a comment</button>
+        		</li>
+        		<li>
+        			<button class="suggest-character">suggest a character</button>
+        		</li>
+        		<li>
+        			<button class="connect-post">connect a post</button>
+        		</li>
+        	</ul>
+        	{call .form}
+        	    {param action: 'create'/}
+        	    {param type: 'character'/}
+        	    {param self: $self/}
+        	{/call}
+            {call .form}
+                {param action: 'create'/}
+                {param type: 'comment'/}
+                {param self: $self/}
+            {/call}
+    </div>
+{/template}
+
+/**
+ * @param? entry
+ * @param action
+ * @param type
+ * @param self
+ */
+{template .entry}
+    <div class="entry">
+        {if $action == 'create'}
+            {call .author}
+                {param author: $self /}
+            {/call}
+            <p class="content">Add a comment...</p>
+            <ul>
+                <li>
+                    <button class="{$action} submit-{$action}-metadata">
+                        {if $action == 'reply'}
+                            reply
+                        {else}
+                            {if $type == 'character'}
+                                suggest
+                            {else}
+                                add
+                            {/if}
+                        {/if}
+                    </button>
+                </li>
+                <li><button class="cancel cancel-{$action}-metadata">cancel</button></li>
+            </ul>
+        {elseif $action == 'reply' and $entry}
+            {call .author}
+                {param author: $entry.author /}
+            {/call}
+            <p class="content">{$entry.content}</p>
+        {/if}
+    </div>
+{/template}
+
+/***/
+{template .replyButton}
+    <button class="reply start-reply">reply</button>
+{/template}
+
+/**
+ * @param type
+ * @param self
+ * @param action
+ */
+{template .form}
+    <div class="action-{$action}-metadata input-metadata {$type}">
+        {call .entry}
+            {param self: $self/}
+            {param type: $type/}
+            {param action: $action/}
+        {/call}
+    </div>
+{/template}
+
+/**
+ * @param author
+ */
+{template .author}
+    <a href="{$author.url}" title="Go to the profile of {$author.username}" class="avatar" rel="nofollow"><img src="{$author.avatar.url|escapeUri}" /></a>
+    <a href="{$author.url}" title="Go to the profile of {$author.username}" class="author">{$author.username|escapeUri}</a>
+{/template}
+
+/**
+ * @param thread
+ * @param level
+ * @param self
+ * @param type
+ */
+{template .thread}
+	<ul class="{if $level == 1}annotation-list {$thread.type}{/if}">
+	    {foreach $entry in $thread}
+		<li class="{if length($entry.children)}has-children{/if}">
+            {call .entry}
+                {param entry: $entry/}
+                {param action: '/}
+                {param self: $self/}
+                {param type: $type/}
+            {/call}
+            {if length($entry.children)}
+                {call .thread}
+                    {param thread: $entry.children/}
+                    {param level: $level++/}
+                    {param self: $self/}
+                {/call}
+            {/if}
+            {if $level == 1}
+                {call .replyButton/}
+                {call .form}
+                    {param self: $self/}
+                    {param type: $thread.type/}
+                    {param action: 'reply'/}
+                {/call}
+            {/if}
+        </li>
+        {/foreach}
+    </ul>
+{/template}
+

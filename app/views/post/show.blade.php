@@ -73,8 +73,8 @@
 @stop
 
 @section('annotations')
-<div class="annotations-container">
-	<p>&nbsp;</p>
+<div class="annotations">
+
 	<ul class="annotation-list comment">
 		<li class="has-children">
 			<div class="entry">

@@ -5,11 +5,11 @@ $(document).ready(function() {
         $("html").toggleClass('js-site-nav');
     });
     $("#active-nav-overlay").click(function() {
-        $("html").removeClass('js-site-nav').removeClass('js-utils-nav');
+        $("html").removeClass('js-site-nav').removeClass('js-annotations');
     });
     $("#openUtils").click(function(e) {
         e.preventDefault();
-        $("html").toggleClass('js-utils-nav');
+        $("html").toggleClass('js-annotations');
     });
     //$(".nano").nanoScroller();
     $(".post-container header").waypoint('sticky', {

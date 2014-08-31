@@ -67,15 +67,16 @@
 			<div class="inner-content-wrapper">
 				<div class="content-container" id="content-container">
 					@yield('content')
+					<div id="template-test"></div>
 				</div>
 				@yield('upcoming')
 			</div>
 		</main>
-		<nav class="page-utils" role="complementary">
-			<div class="page-utils-scrollable-container content">
-				@yield('annotations')
+		<div id="annotations">
+			<div class="annotations-scrollable-container content">
+
 			</div>
-		</nav>
+		</div>
 		<nav id="dev-nav">
 			<a href="{{ action('UserController@getLogin') }}">Login</a> |
             <a href="#" id="openUtils">Open Utils</a>

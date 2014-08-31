@@ -206,20 +206,7 @@ nav[role=navigation] {
 		height: 100%;
 	}
 }*/
-nav[role=complementary] {
-    position: fixed;
-    height: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: @zIndexComments;
-    -webkit-transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
-    transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
-    .page-utils-scrollable-container {
-        height: 100%;
-        overflow-y: scroll;
-    }
-}
+
 
 #active-nav-overlay {
     width: 100%;
@@ -240,11 +227,6 @@ nav[role=navigation] {
     left: -250px;
 }
 
-nav[role=complementary] {
-    width: 300px;
-    right: -300px;
-}
-
 main[role=main] {
     transition: transform 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9) 0s;
 }
@@ -263,22 +245,5 @@ main[role=main] {
     }
     nav[role=navigation] {
         left: 0;
-    }
-}
-
-.js-utils-nav {
-    main[role=main] {
-        transform: translate3d(-300px, 0px, 0px);
-        position: fixed;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
-    }
-    #active-nav-overlay {
-        display: block;
-    }
-    nav[role=complementary] {
-        right: 0;
     }
 }

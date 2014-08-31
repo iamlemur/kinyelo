@@ -2,6 +2,7 @@ goog.provide('kinyelo.Post');
 
 goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.AdvancedField');
+goog.require('kinyelo.annotate.Container');
 goog.require('goog.events.EventHandler');
 goog.require('goog.dom');
 goog.require('goog.events');
@@ -20,6 +21,8 @@ goog.require('goog.Uri.QueryData');
 kinyelo.Post = function() {
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
+    this.annotations_ = new kinyelo.annotate.Container(this.rte_);
+    this.annotationsScroller_ = new goog.ui.ContainerScroller(this.annotations_);
     this.eventRegister_ = new goog.events.EventHandler(this);
     //this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
     this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
@@ -77,7 +80,6 @@ kinyelo.Post.prototype.handleDelayedChange_ = function() {
     postMap.set('title', this.title_.getCleanContents());
     postMap.set('status', 'draft');
 
-    console.log('post id', this.post_id_);
     if(goog.isNull(this.post_id_)) {
         //if we are creating
         callback = goog.bind(this.handleCreateResponse_, this);
