@@ -1,8 +1,13 @@
 goog.provide('kinyelo.annotate.CharacterAnnotation');
 
-goog.require('kintelo.annotation.Annotation');
+goog.require('kinyelo.annotate.Annotation');
 
+/**
+ *
+ * @param {object} annotation
+ * @constructor
+ */
 kinyelo.annotate.CharacterAnnotation = function(annotation) {
-
+    kinyelo.annotate.Annotation.call(this, annotation);
 }
-goog.inherits('kinyelo.annotation.CharacterAnnotation', 'kinyelo.annotate.Annotation');
+goog.inherits(kinyelo.annotate.CharacterAnnotation, kinyelo.annotate.Annotation);

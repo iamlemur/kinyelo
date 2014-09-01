@@ -12,6 +12,7 @@ goog.require('goog.net.XmlHttp');
 goog.require('goog.net.XhrIo');
 goog.require('goog.structs.Map');
 goog.require('goog.Uri.QueryData');
+goog.require('goog.ui.ContainerScroller');
 
 
 /**
@@ -22,7 +23,7 @@ kinyelo.Post = function() {
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
     this.annotations_ = new kinyelo.annotate.Container(this.rte_);
-    this.annotationsScroller_ = new goog.ui.ContainerScroller(this.annotations_);
+    //this.annotationsScroller_ = new goog.ui.ContainerScroller(this.annotations_);
     this.eventRegister_ = new goog.events.EventHandler(this);
     //this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
     this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);

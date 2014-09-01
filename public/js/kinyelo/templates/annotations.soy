@@ -113,19 +113,20 @@
  * @param type
  */
 {template .thread}
-	<ul class="{if $level == 1}annotation-list {$thread.type}{/if}">
+	<ul class="{if $level == 1}annotation-list {$type}{/if}">
 	    {foreach $entry in $thread}
-		<li class="{if length($entry.children)}has-children{/if}">
+		<li class="{if length($entry.replies)}has-children{/if}">
             {call .entry}
                 {param entry: $entry/}
-                {param action: '/}
+                {param action: 'reply'/}
                 {param self: $self/}
                 {param type: $type/}
             {/call}
             {if length($entry.children)}
                 {call .thread}
                     {param thread: $entry.children/}
-                    {param level: $level++/}
+                    {param level: $level+1/}
+                    {param type: $type/}
                     {param self: $self/}
                 {/call}
             {/if}
@@ -133,7 +134,7 @@
                 {call .replyButton/}
                 {call .form}
                     {param self: $self/}
-                    {param type: $thread.type/}
+                    {param type: $type/}
                     {param action: 'reply'/}
                 {/call}
             {/if}

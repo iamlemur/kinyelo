@@ -4,23 +4,27 @@ goog.require('kinyelo.annotate.CommentAnnotation');
 goog.require('kinyelo.annotate.CharacterAnnotation');
 goog.require('kinyelo.annotate.PostAnnotation');
 goog.require('goog.array');
+goog.require('goog.dom');
 
 
 /**
  *
- * @param annotations
+ * @param {array} annotations
+ * @param  {kinyelo.annotate.Container} container
  * @constructor
  */
-kinyelo.annotate.Group = function(annotations) {
+kinyelo.annotate.Group = function(annotations, container) {
     this.annotationsData = annotations;
     goog.array.forEach(this.annotationsData, this.createAnnotation, this);
+    this.container_ = container;
+    this.renderGroup();
 }
 
 /**
  *
  * @param {object} annotation
  */
-kinyelo.annotate.Group.createAnnotation = function(annotation) {
+kinyelo.annotate.Group.prototype.createAnnotation = function(annotation) {
     switch(annotation.type) {
         case 'comment':
             goog.array.insert(this.annotations, new kinyelo.annotate.CommentAnnotation(annotation));
@@ -36,6 +40,13 @@ kinyelo.annotate.Group.createAnnotation = function(annotation) {
 
 /**
  *
+ */
+kinyelo.annotate.Group.prototype.renderGroup = function() {
+    goog.dom.getFirstElementChild(this.container_.getContainerElement());
+}
+
+/**
+ *
  * @type {array=}
  */
-kinyelo.annotate.Group.annotations = null;
+kinyelo.annotate.Group.prototype.annotations = [];

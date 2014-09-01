@@ -8,6 +8,11 @@ goog.require('goog.events.EventTarget');
  * @constructor
  */
 kinyelo.annotate.Annotation = function(annotation) {
-
+    this.annotation
+    goog.events.EventTarget.call(this);
 }
 goog.inherits(kinyelo.annotate.Annotation, goog.events.EventTarget);
+
+kinyelo.annotate.Annotation.renderAnnotations = function() {
+
+}

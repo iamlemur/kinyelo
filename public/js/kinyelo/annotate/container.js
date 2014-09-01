@@ -1,10 +1,12 @@
 goog.provide('kinyelo.annotate.Container');
 
+goog.require('goog.structs.Map');
+goog.require('goog.object');
 goog.require('kinyelo.editor.Field');
 goog.require('kinyelo.annotate.Group');
 goog.require('goog.array');
-goog.require('goog.structs.Map');
 goog.require('goog.ui.Container');
+goog.require('goog.ui.ContainerRenderer');
 goog.require('goog.ui.Container.Orientation');
 goog.require('goog.dom');
 
@@ -17,6 +19,7 @@ kinyelo.annotate.Container = function(editor) {
     this.editor_ = editor;
     this.container_ = goog.dom.getElement(kinyelo.annotate.Container.CONTAINER_ID);
     goog.ui.Container.call(this, goog.ui.Container.Orientation.VERTICAL, goog.ui.ContainerRenderer.getInstance(), goog.dom.getDomHelper(this.container_));
+    this.retrieveAnnotations_();
 }
 goog.inherits(kinyelo.annotate.Annotation, goog.ui.Container);
 
@@ -27,32 +30,40 @@ goog.inherits(kinyelo.annotate.Annotation, goog.ui.Container);
 kinyelo.annotate.Container.CONTAINER_ID = 'annotations';
 
 /**
- * @type {Object|null}
+ * @type {object}
  */
-kinyelo.annotate.Container.annotationMap = null;
+kinyelo.annotate.Container.prototype.annotationMap;
 
 /**
  *
  * @type {Object|null}
  */
-kinyelo.annotate.Container.annotations = null;
+kinyelo.annotate.Container.prototype.annotations = null;
+
+/**
+ *
+ * @returns {HTMLElement}
+ */
+kinyelo.annotate.Container.prototype.getContainerElement = function() {
+    return this.container_;
+}
 
 /**
  *
  * @type {goog.structs.Map}
  */
-kinyelo.annotate.Container.groups = new goog.structs.Map();
+kinyelo.annotate.Container.prototype.groups = new goog.structs.Map();
 
 /**
  *
  * @private
  */
-kinyelo.annotate.Container.retrieveAnnotations_ = function() {
+kinyelo.annotate.Container.prototype.retrieveAnnotations_ = function() {
     this.sampleData_ = kinyelo.annotate.Container.sampleData;
     goog.array.sortObjectsByKey(this.sampleData_.annotations, "createdAt");
     this.annotationMap = goog.array.bucket(this.sampleData_.annotations, this.organizeAnnotations, this);
-    goog.array.forEach(this.annotationMap, function(group, index) {
-        this.groups.set(index, new kinyelo.annotate.Group(group));
+    this.groups = goog.object.map(this.annotationMap, function(group,key) {
+        this.groups.set(key, new kinyelo.annotate.Group(group, this));
     }, this);
 }
 
@@ -62,7 +73,7 @@ kinyelo.annotate.Container.retrieveAnnotations_ = function() {
  * @param {number} index
  * @param {Array} array
  */
-kinyelo.annotate.Container.organizeAnnotations = function(element, index, array) {
+kinyelo.annotate.Container.prototype.organizeAnnotations = function(element, index, array) {
     return element.anchor;
 }
 
