@@ -15,8 +15,7 @@ goog.require('goog.dom');
  * @param {kinyelo.editor.Field} editor
  * @constructor
  */
-kinyelo.annotate.Container = function(editor) {
-    this.editor_ = editor;
+kinyelo.annotate.Container = function() {
     this.container_ = goog.dom.getElement(kinyelo.annotate.Container.CONTAINER_ID);
     goog.ui.Container.call(this, goog.ui.Container.Orientation.VERTICAL, goog.ui.ContainerRenderer.getInstance(), goog.dom.getDomHelper(this.container_));
     this.retrieveAnnotations_();

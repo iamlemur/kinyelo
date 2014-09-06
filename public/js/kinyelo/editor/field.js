@@ -18,11 +18,15 @@ kinyelo.editor.Field = function(id, opt_doc) {
 goog.inherits(kinyelo.editor.Field, goog.editor.ContentEditableField);
 
 
+/**
+ *
+ */
 kinyelo.editor.Field.prototype.registerPlugins = function() {
     var plugin = this.getPluginByClassId('LoremIpsum');
     //TODO: check that this plugin exists
     plugin.postInit();
 }
+
 
 /**
  * @override

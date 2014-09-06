@@ -13,10 +13,9 @@ goog.require('goog.dom');
  * @param  {kinyelo.annotate.Container} container
  * @constructor
  */
-kinyelo.annotate.Group = function(annotations, container) {
+kinyelo.annotate.Group = function(annotations) {
     this.annotationsData = annotations;
     goog.array.forEach(this.annotationsData, this.createAnnotation, this);
-    this.container_ = container;
     this.renderGroup();
 }
 
@@ -42,7 +41,7 @@ kinyelo.annotate.Group.prototype.createAnnotation = function(annotation) {
  *
  */
 kinyelo.annotate.Group.prototype.renderGroup = function() {
-    goog.dom.getFirstElementChild(this.container_.getContainerElement());
+
 }
 
 /**

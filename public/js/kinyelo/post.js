@@ -3,6 +3,7 @@ goog.provide('kinyelo.Post');
 goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.AdvancedField');
 goog.require('kinyelo.annotate.Container');
+goog.require('kinyelo.annotate.MarkerContainer');
 goog.require('goog.events.EventHandler');
 goog.require('goog.dom');
 goog.require('goog.events');
@@ -22,10 +23,12 @@ goog.require('goog.ui.ContainerScroller');
 kinyelo.Post = function() {
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
-    this.annotations_ = new kinyelo.annotate.Container(this.rte_);
+    this.annotations_ = new kinyelo.annotate.Container();
+    this.annotationMarkers_ = new kinyelo.annotate.MarkerContainer(this.rte_, this.annotations_);
+    this.annotationMarkers_.render();
     //this.annotationsScroller_ = new goog.ui.ContainerScroller(this.annotations_);
     this.eventRegister_ = new goog.events.EventHandler(this);
-    //this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
+    this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
     this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
 }
 
@@ -72,7 +75,29 @@ kinyelo.Post.postHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE_HEAD
  */
 kinyelo.Post.prototype.post_id_ = null;
 
-kinyelo.Post.prototype.handleDelayedChange_ = function() {
+/**
+ * @type {Array}
+ * @private
+ */
+kinyelo.Post.prototype.annotatableNodes_;
+
+/**
+ *
+ * @param {goog.events.Event} e
+ * @private
+ */
+kinyelo.Post.prototype.handleDelayedChange_ = function(e) {
+
+    //this.savePost_(e);
+
+}
+
+/**
+ *
+ * @param {goog.events.Event} e
+ * @private
+ */
+kinyelo.Post.prototype.savePost_ = function(e) {
     //TODO: fix these hard-coded urls
     var url = "/posts";
     var callback = null;
@@ -93,7 +118,6 @@ kinyelo.Post.prototype.handleDelayedChange_ = function() {
     }
     var postData = goog.Uri.QueryData.createFromMap(postMap);
     goog.net.XhrIo.send(url, callback, 'POST', postData.toString(), kinyelo.Post.postHeaders);
-
 }
 
 
