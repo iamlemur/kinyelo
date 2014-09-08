@@ -1,51 +1,30 @@
 goog.provide('kinyelo.annotate.Group');
 
-goog.require('kinyelo.annotate.CommentAnnotation');
-goog.require('kinyelo.annotate.CharacterAnnotation');
-goog.require('kinyelo.annotate.PostAnnotation');
-goog.require('goog.array');
-goog.require('goog.dom');
-
+goog.require('kinyelo.annotate.Annotation');
 
 /**
  *
- * @param {array} annotations
- * @param  {kinyelo.annotate.Container} container
+ * @param {Array.<kinyelo.annotate.Annotation>} annotations
  * @constructor
  */
 kinyelo.annotate.Group = function(annotations) {
-    this.annotationsData = annotations;
-    goog.array.forEach(this.annotationsData, this.createAnnotation, this);
-    this.renderGroup();
-}
-
-/**
- *
- * @param {object} annotation
- */
-kinyelo.annotate.Group.prototype.createAnnotation = function(annotation) {
-    switch(annotation.type) {
-        case 'comment':
-            goog.array.insert(this.annotations, new kinyelo.annotate.CommentAnnotation(annotation));
-            break;
-        case 'character':
-            goog.array.insert(this.annotations, new kinyelo.annotate.CharacterAnnotation(annotation));
-            break;
-        case 'post':
-            goog.array.insert(this.annotations, new kinyelo.annotate.PostAnnotation(annotation));
-            break;
+    /**
+     *
+     * @type {Array.<kinyelo.annotate.Annotation>}
+     * @private
+     */
+    this.annotations_;
+    if(!annotations) {
+        this.annotations_ = [];
+    } else {
+        this.annotations_ = annotations;
     }
 }
 
 /**
  *
+ * @returns {Array.<kinyelo.annotate.Annotation>}
  */
-kinyelo.annotate.Group.prototype.renderGroup = function() {
-
+kinyelo.annotate.Group.prototype.getAnnotations = function() {
+    return goog.array.clone(this.annotations_);
 }
-
-/**
- *
- * @type {array=}
- */
-kinyelo.annotate.Group.prototype.annotations = [];

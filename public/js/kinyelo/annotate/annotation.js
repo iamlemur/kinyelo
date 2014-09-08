@@ -1,18 +1,34 @@
 goog.provide('kinyelo.annotate.Annotation');
 
-goog.require('goog.events.EventTarget');
+/** @enum {string} */
+kinyelo.annotate.Annotation.AnnotationTypes = {
+    COMMENT: 'comment',
+    CHARACTER: 'character',
+    POST: 'post'
+}
 
 /**
- *
- * @param {object} annotation
- * @constructor
+ * @enum {string}
  */
-kinyelo.annotate.Annotation = function(annotation) {
-    this.annotation
-    goog.events.EventTarget.call(this);
+kinyelo.annotate.Annotation.AnnotationStates = {
+    PUBLIC: "PUBLIC"
 }
-goog.inherits(kinyelo.annotate.Annotation, goog.events.EventTarget);
 
-kinyelo.annotate.Annotation.renderAnnotations = function() {
-
-}
+/**
+ * @typedef {{
+ postId:number,
+ type:kinyelo.annotate.Annotation.AnnotationTypes,
+ noteId:number,
+ content:string,
+ state:kinyelo.annotate.Annotation.AnnotationStates,
+ author:number,
+ anchor:string,
+ highlightId:number,
+ isRemoved:boolean,
+ createdAt:number,
+ updatedAt:number,
+ stateUpdatedAt:number,
+ removedAt:number,
+ replies:Array<kinyelo.annotate.Annotation>}}
+ */
+kinyelo.annotate.Annotation;
