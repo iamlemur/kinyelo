@@ -19,6 +19,7 @@ kinyelo.annotate.Group = function(annotations) {
     } else {
         this.annotations_ = annotations;
     }
+
 }
 
 /**

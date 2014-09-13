@@ -42,6 +42,7 @@ kinyelo.Post.prototype.loadAnnotations_ = function() {
     this.annotations = new kinyelo.annotate.Container(this.sampleData_);
     this.container = new kinyelo.ui.annotate.Container(this.annotations);
     this.container.render(goog.dom.getElement('annotations'));
+    this.containerScroller = new goog.ui.ContainerScroller(this.container);
 
 }
 
@@ -216,7 +217,7 @@ kinyelo.Post.sampleAnnotations = {
             "noteId": "1c107a20a11c",
             "content": "Made another comment!",
             "state": "PUBLIC",
-            "author": "dce2602520fb",
+            "authorId": "dce2602520fb",
             "anchor": "f566",
             "highlightId": "",
             "isRemoved": false,
@@ -228,10 +229,25 @@ kinyelo.Post.sampleAnnotations = {
         {
             "postId": "12",
             "type": "comment",
+            "noteId": "1c107a20a11d",
+            "content": "Made yet another comment!",
+            "state": "PUBLIC",
+            "authorId": "dce2602520fb",
+            "anchor": "f566",
+            "highlightId": "",
+            "isRemoved": false,
+            "createdAt": 1369578673674,
+            "updatedAt": 0,
+            "stateUpdatedAt": 1369580806529,
+            "removedAt": 0
+        },
+        {
+            "postId": "12",
+            "type": "comment",
             "noteId": "1c107a20a11b",
             "content": "Great post, take a look at my thoughts over here, we share a lot of opinions — https://medium.com/adventures-in-consumer-technology/379a24ab845f",
             "state": "PUBLIC",
-            "author": "dce2602520fb",
+            "authorId": "dce2602520fb",
             "anchor": "f565",
             "highlightId": "1c107a20a11b",
             "isRemoved": false,
@@ -246,7 +262,7 @@ kinyelo.Post.sampleAnnotations = {
                     "noteId": "1c107a20a11b",
                     "replyId": "d9ea9ca583af",
                     "content": "Yes we do. I tried Path, but I wasn’t ready to abandon Facebook at that point. Also, I want a tool that builds communities around great content. Working on some related ideas.",
-                    "author": "dce2602520fb",
+                    "authorId": "dce2602520fb",
                     "state": "",
                     "isRemoved": false,
                     "createdAt": 1369580986050,

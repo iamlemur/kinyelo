@@ -20,7 +20,7 @@ goog.addSingletonGetter(kinyelo.ui.annotate.ContainerRenderer);
 /**
  * @type {string}
  */
-kinyelo.ui.annotate.ContainerRenderer.CSS_CLASS = 'annotation-container';
+kinyelo.ui.annotate.ContainerRenderer.CSS_CLASS = 'annotations-container';
 
 /**
  * @inheritDoc
@@ -53,7 +53,8 @@ kinyelo.ui.annotate.ContainerRenderer.prototype.createDom = function(container) 
 
     //do more here with the metadata in the container data set
 
-    goog.object.forEach(groups, function(group, id) {
+    goog.object.forEach(groups, function(item, id) {
+        var group = new kinyelo.annotate.Group(item);
         var control = new kinyelo.ui.annotate.Group(id, group);
         container.addChild(control, true);
     });

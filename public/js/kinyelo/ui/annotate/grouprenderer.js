@@ -2,6 +2,7 @@ goog.provide('kinyelo.ui.annotate.GroupRenderer');
 
 goog.require('goog.ui.ControlRenderer');
 goog.require('kinyelo.ui.annotate.Annotation');
+goog.require('kinyelo.ui.annotate.annotation.Comment');
 goog.require('goog.array');
 
 
@@ -35,14 +36,22 @@ kinyelo.ui.annotate.GroupRenderer.prototype.getCssClass = function() {
  * @returns {Element}
  */
 kinyelo.ui.annotate.GroupRenderer.prototype.createDom = function(group) {
-    var el = goog.base(this, 'createDom', group);
-    console.log(el);
+
+    var el = group.getDomHelper().createDom(
+        'ul', this.getClassNames(group).join(' '), group.getContent());
+
+    this.setAriaStates(group, el);
+
     group.setElementInternal(el);
 
     var annotations = group.getModel();
 
-    goog.array.forEach(annotations, function(annotation) {
-        var control = new kinyelo.ui.annotate.Annotation(annotation);
+    goog.array.forEach(annotations.getAnnotations(), function(annotation) {
+        switch(annotation.type) {
+            case 'comment':
+                var control = new kinyelo.ui.annotate.annotation.Comment(annotation);
+                break;
+        }
         group.addChild(control, true);
     });
 

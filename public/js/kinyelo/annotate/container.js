@@ -1,6 +1,7 @@
 goog.provide('kinyelo.annotate.Container');
 
 goog.require('goog.array');
+goog.require('goog.object');
 
 
 /**
@@ -15,6 +16,16 @@ kinyelo.annotate.Container = function(data) {
      */
     this.data_ = data;
 
+    this.authors_ = this.data_.authors;
+
+    this.authorMap_ = goog.array.toObject(this.authors_, function(author) {
+        return author.id;
+    }, this);
+
+    goog.array.forEach(this.data_.annotations, this.assignAuthors_, this);
+
+    console.log(this.data_.annotations);
+
     goog.array.sortObjectsByKey(this.data_.annotations, "createdAt");
 
     /**
@@ -22,6 +33,7 @@ kinyelo.annotate.Container = function(data) {
      * @private
      */
     this.annotationMap_ = goog.array.bucket(this.data_.annotations, kinyelo.annotate.Container.groupAnnotations);
+
 }
 
 /**
@@ -29,6 +41,21 @@ kinyelo.annotate.Container = function(data) {
  */
 kinyelo.annotate.Container.prototype.getAnnotationMap = function() {
     return this.annotationMap_;
+}
+
+/**
+ *
+ * @param {kinyelo.annotate.Annotation} annotation
+ * @private
+ */
+kinyelo.annotate.Container.prototype.assignAuthors_ = function(annotation) {
+    var author = goog.object.get(this.authorMap_, annotation.authorId);
+    if(goog.isDef(author)) {
+        annotation.author = author;
+    }
+    if(goog.isDefAndNotNull(annotation.replies)) {
+        goog.array.forEach(annotation.replies, this.assignAuthors_, this);
+    }
 }
 
 /**

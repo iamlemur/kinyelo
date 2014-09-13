@@ -73,9 +73,6 @@
 			</div>
 		</main>
 		<div id="annotations">
-			<div class="annotations-scrollable-container content">
-
-			</div>
 		</div>
 		<nav id="dev-nav">
 			<a href="{{ action('UserController@getLogin') }}">Login</a> |

@@ -25,6 +25,8 @@ kinyelo.ui.annotate.Group = function(id, group, renderer) {
         group = new kinyelo.annotate.Group();
     }
     this.setModel(group);
+
+
 }
 goog.inherits(kinyelo.ui.annotate.Group, goog.ui.Control);
 
@@ -39,7 +41,7 @@ kinyelo.ui.annotate.Group.prototype.getModel;
  */
 kinyelo.ui.annotate.Group.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
-    //TODO: ass listeners
+    //TODO: add listeners
 }
 
 /**
@@ -48,7 +50,7 @@ kinyelo.ui.annotate.Group.prototype.enterDocument = function() {
  * @return {string} Unique component ID.
  */
 kinyelo.ui.annotate.Group.prototype.getId = function() {
-    return 'pre-' + this.contentId_;
+    return this.contentId_;
 };
 
 goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Group, kinyelo.ui.annotate.GroupRenderer);

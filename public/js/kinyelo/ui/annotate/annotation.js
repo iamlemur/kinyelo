@@ -2,13 +2,14 @@ goog.provide('kinyelo.ui.annotate.Annotation');
 
 goog.require('kinyelo.ui.annotate.AnnotationRenderer');
 goog.require('kinyelo.annotate.Annotation');
+goog.require('goog.ui.Control');
 
 /**
  *
  * @param {kinyelo.annotate.Annotation=} annotation
  * @param {kinyelo.ui.annotate.AnnotationRenderer} renderer
  * @constructor
- * @extend {goog.ui.Control}
+ * @extends {goog.ui.Control}
  */
 kinyelo.ui.annotate.Annotation = function(annotation, renderer) {
     goog.base(this, null /* content*/, renderer);
@@ -16,7 +17,9 @@ kinyelo.ui.annotate.Annotation = function(annotation, renderer) {
     if(!annotation) {
         //TODO: create empty annotation typedef here
     }
+
     this.setModel(annotation);
+
 }
 goog.inherits(kinyelo.ui.annotate.Annotation, goog.ui.Control);
 

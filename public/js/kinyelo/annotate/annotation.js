@@ -1,5 +1,7 @@
 goog.provide('kinyelo.annotate.Annotation');
 
+goog.require('kinyelo.annotate.Author');
+
 /** @enum {string} */
 kinyelo.annotate.Annotation.AnnotationTypes = {
     COMMENT: 'comment',
@@ -14,6 +16,8 @@ kinyelo.annotate.Annotation.AnnotationStates = {
     PUBLIC: "PUBLIC"
 }
 
+//TODO: see p 32 and 33 for more on typedef when updating this later
+
 /**
  * @typedef {{
  postId:number,
@@ -21,7 +25,7 @@ kinyelo.annotate.Annotation.AnnotationStates = {
  noteId:number,
  content:string,
  state:kinyelo.annotate.Annotation.AnnotationStates,
- author:number,
+ authorId:number,
  anchor:string,
  highlightId:number,
  isRemoved:boolean,
@@ -29,6 +33,6 @@ kinyelo.annotate.Annotation.AnnotationStates = {
  updatedAt:number,
  stateUpdatedAt:number,
  removedAt:number,
- replies:Array<kinyelo.annotate.Annotation>}}
+ author:kinyelo.annotate.Author}}
  */
 kinyelo.annotate.Annotation;
