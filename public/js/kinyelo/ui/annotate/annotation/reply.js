@@ -8,7 +8,7 @@ goog.require('kinyelo.annotate.Reply');
  * @param {Array.<kinyelo.annotate.Reply>=} reply
  * @param {kinyelo.ui.annotate.annotation.ReplyRenderer} renderer
  * @constructor
- * @extend {goog.ui.Control}
+ * @extends {goog.ui.Control}
  */
 kinyelo.ui.annotate.annotation.Reply = function(reply, renderer) {
     goog.base(this, null /* content*/, renderer);
@@ -29,6 +29,9 @@ goog.inherits(kinyelo.ui.annotate.annotation.Reply, goog.ui.Control);
  */
 kinyelo.ui.annotate.annotation.Reply.prototype.getModel;
 
+/**
+ * @inheritDoc
+ */
 kinyelo.ui.annotate.annotation.Reply.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners

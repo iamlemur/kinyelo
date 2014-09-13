@@ -1,6 +1,5 @@
 goog.provide('kinyelo.ui.annotate.annotation.ReplyRenderer');
 
-goog.require('kinyelo.ui.annotate.annotation.Reply');
 goog.require('kinyelo.ui.annotate.AnnotationRenderer');
 goog.require('goog.dom');
 goog.require('goog.array');
@@ -9,7 +8,7 @@ goog.require('goog.array');
 /**
  *
  * @constructor
- * @extends {kinyelo.ui.annotate.annotation.ReplyRenderer}
+ * @extends {kinyelo.ui.annotate.annotation.AnnotationRenderer}
  */
 kinyelo.ui.annotate.annotation.ReplyRenderer = function() {
     goog.base(this);

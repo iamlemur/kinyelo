@@ -24,8 +24,6 @@ kinyelo.annotate.Container = function(data) {
 
     goog.array.forEach(this.data_.annotations, this.assignAuthors_, this);
 
-    console.log(this.data_.annotations);
-
     goog.array.sortObjectsByKey(this.data_.annotations, "createdAt");
 
     /**
@@ -45,7 +43,7 @@ kinyelo.annotate.Container.prototype.getAnnotationMap = function() {
 
 /**
  *
- * @param {kinyelo.annotate.Annotation} annotation
+ * @param {Object} annotation
  * @private
  */
 kinyelo.annotate.Container.prototype.assignAuthors_ = function(annotation) {

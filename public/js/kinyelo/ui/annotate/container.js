@@ -32,12 +32,7 @@ kinyelo.ui.annotate.Container.prototype.enterDocument = function() {
 
 
 /**
- * Returns the child control that owns the given DOM node, or null if no such
- * control is found.
- * @param {Node} node DOM node whose owner is to be returned.
- * @return {goog.ui.Control?} Control hosted in the container to which the node
- *     belongs (if found).
- * @protected
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.getOwnerControl = function(node) {
     // Ensure that this container actually has child controls before
@@ -61,9 +56,7 @@ kinyelo.ui.annotate.Container.prototype.getOwnerControl = function(node) {
 
 
 /**
- * Configures the container after its DOM has been rendered, and sets up event
- * handling.  Overrides {@link goog.ui.Component#enterDocument}.
- * @override
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.enterDocument = function() {
     goog.ui.Container.superClass_.enterDocument.call(this);
@@ -115,11 +108,7 @@ kinyelo.ui.annotate.Container.prototype.enterDocument = function() {
 
 
 /**
- * Creates a DOM ID for the child control and registers it to an internal
- * hash table to be able to find it fast by id.
- * @param {goog.ui.Component} child The child control. Its root element has
- *     to be created yet.
- * @private
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.registerChildId = function(child) {
     // Map the DOM ID of the control's root element to the control itself.
@@ -139,15 +128,7 @@ kinyelo.ui.annotate.Container.prototype.registerChildId = function(child) {
 
 
 /**
- * Adds the control as a child of this container at the given 0-based index.
- * Overrides {@link goog.ui.Component#addChildAt} by also updating the
- * container's highlight index.  Since {@link goog.ui.Component#addChild} uses
- * {@link #addChildAt} internally, we only need to override this method.
- * @param {goog.ui.Component} control New child.
- * @param {number} index Index at which the new child is to be added.
- * @param {boolean=} opt_render Whether the new child should be rendered
- *     immediately after being added (defaults to false).
- * @override
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.addChildAt = function(control, index, opt_render) {
     // Make sure the child control dispatches HIGHLIGHT, UNHIGHLIGHT, OPEN, and
@@ -176,16 +157,7 @@ kinyelo.ui.annotate.Container.prototype.addChildAt = function(control, index, op
 };
 
 /**
- * Removes a child control.  Overrides {@link goog.ui.Component#removeChild} by
- * updating the highlight index.  Since {@link goog.ui.Component#removeChildAt}
- * uses {@link #removeChild} internally, we only need to override this method.
- * @param {string|goog.ui.Component} control The ID of the child to remove, or
- *     the control itself.
- * @param {boolean=} opt_unrender Whether to call {@code exitDocument} on the
- *     removed control, and detach its DOM from the document (defaults to
- *     false).
- * @return {goog.ui.Control} The removed control, if any.
- * @override
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.removeChild = function(control, opt_unrender) {
     control = goog.isString(control) ? this.getChild(control) : control;
@@ -218,9 +190,7 @@ kinyelo.ui.annotate.Container.prototype.removeChild = function(control, opt_unre
 };
 
 /**
- * Handles HIGHLIGHT events dispatched by items in the container when
- * they are highlighted.
- * @param {goog.events.Event} e Highlight event to handle.
+ * @inheritDoc
  */
 kinyelo.ui.annotate.Container.prototype.handleHighlightItem = function(e) {
     var index = this.indexOfChild(/** @type {goog.ui.Control} */ (e.target));
@@ -259,14 +229,6 @@ kinyelo.ui.annotate.Container.prototype.handleHighlightItem = function(e) {
         goog.a11y.aria.State.ACTIVEDESCENDANT,
         goog.dom.dataset.get(e.target.getElement(), 'id'));
 };
-
-
-
-kinyelo.ui.annotate.Container.prototype.getGroups = function() {
-    //do I need to clone here?
-    goog.array.sortObjectsByKey(this.sampleData_.annotations, "createdAt");
-    this.annotationMap = goog.array.bucket(this.sampleData_.annotations, this.organizeAnnotations, this);
-}
 
 goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Container, kinyelo.ui.annotate.ContainerRenderer);
 

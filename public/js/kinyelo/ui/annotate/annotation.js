@@ -30,6 +30,9 @@ goog.inherits(kinyelo.ui.annotate.Annotation, goog.ui.Control);
  */
 kinyelo.ui.annotate.Annotation.prototype.getModel;
 
+/**
+ * @inheritDoc
+ */
 kinyelo.ui.annotate.Annotation.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners

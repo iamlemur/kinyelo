@@ -23,6 +23,11 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.getCssClass = function() {
     return kinyelo.ui.annotate.AnnotationRenderer.CSS_CLASS;
 }
 
+/**
+ *
+ * @param {kinyelo.ui.annotate.Annotation} annotation
+ * @returns {Element}
+ */
 kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation) {
 
     this.annotation = annotation.getModel();
@@ -40,9 +45,14 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation
 }
 
 
+/**
+ *
+ * @param {kinyelo.annotate.Annotation} annotation
+ * @returns {Element}
+ * @protected
+ */
 kinyelo.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation) {
 
-    console.log(annotation);
     var avatarImage = this.domHelper.createDom(goog.dom.TagName.IMG, {
         'src': annotation.author.avatar.url
     });
@@ -57,6 +67,12 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation
 
 }
 
+/**
+ *
+ * @param {kinyelo.annotate.Annotation} annotation
+ * @returns {Element}
+ * @protected
+ */
 kinyelo.ui.annotate.AnnotationRenderer.prototype.getAuthorLink = function(annotation) {
     var link = this.domHelper.createDom(goog.dom.TagName.A, {
         'href': annotation.author.url,
@@ -68,6 +84,12 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.getAuthorLink = function(annota
 
 }
 
+/**
+ *
+ * @param {kinyelo.annotate.Annotation} annotation
+ * @returns {Element}
+ * @protected
+ */
 kinyelo.ui.annotate.AnnotationRenderer.prototype.getContent = function(annotation) {
 
     var content = this.domHelper.createDom(goog.dom.TagName.P, 'content', annotation.content);

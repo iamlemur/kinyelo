@@ -24,9 +24,13 @@ kinyelo.ui.annotate.annotation.CommentRenderer.prototype.getCssClass = function(
     return kinyelo.ui.annotate.annotation.CommentRenderer.CSS_CLASS;
 }
 
-kinyelo.ui.annotate.annotation.CommentRenderer.prototype.createDom = function(comment) {
 
-    console.log('kinyelo.ui.annotate.annotation.CommentRenderer.prototype.createDom', comment);
+/**
+ *
+ * @param {kinyelo.ui.annotate.annotation.Comment} comment
+ * @returns {Element}
+ */
+kinyelo.ui.annotate.annotation.CommentRenderer.prototype.createDom = function(comment) {
 
     var el = goog.base(this, 'createDom', comment);
 
