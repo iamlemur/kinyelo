@@ -1,4 +1,4 @@
-<?
+<?php
 
 use Illuminate\Database\Eloquent\SoftDeletingTrait;
 
@@ -19,6 +19,10 @@ class Post extends Eloquent {
 
 	public function author() {
 		return $this->belongsTo('User', 'user_id');
+	}
+
+	public function comments() {
+		return $this->hasManyThrough('AnnotationComment', 'Annotation', 'post_id', 'annotation_id');
 	}
 
 }

@@ -81,12 +81,13 @@
 
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
 <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
-<script src="/js/vendor/jquery.nanoscroller.min.js"></script>
+<!--script src="/js/vendor/jquery.nanoscroller.min.js"></script-->
 <script src="/js/vendor/waypoints.min.js"></script>
 <script src="/js/vendor/waypoints-sticky.min.js"></script>
 <script src="/js/vendor/icheck.min.js"></script>
 <!--script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script-->
 <script src="http://kinyelo.com:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script>
+<!--script src="http://kinyelo.com/js/compiled.js" type="text/javascript"></script-->
 <script src="/js/scripts.js" type="text/javascript"></script>
 </body>
 </html>

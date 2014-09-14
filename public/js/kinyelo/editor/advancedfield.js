@@ -79,7 +79,7 @@ kinyelo.editor.AdvancedField.prototype.createToolbar_ = function() {
         strongButton,
         emButton,
         h1Button,
-        h2Button,
+        h2Button
     ];
 
     this.toolbar_ = kinyelo.ui.editor.ToolbarFactory.makeToolbar(this.buttons_, this.toolbarElement_);
