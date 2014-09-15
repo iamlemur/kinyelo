@@ -17,7 +17,7 @@ kinyelo.ui.annotate.Annotation = function(annotation, renderer) {
     if(!annotation) {
         //TODO: create empty annotation typedef here
     }
-
+    console.log(annotation);
     this.setModel(annotation);
 
 }

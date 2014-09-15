@@ -138,7 +138,7 @@ class UserController extends \BaseController {
 		$this->layout->content = View::make('user/dashboard')->with('user', $this->user);
 	}
 
-	public function show() {
+	public function show($id) {
 		$this->layout->content = View::make('user/show')->with('user', $this->user);
 	}
 

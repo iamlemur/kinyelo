@@ -47,7 +47,7 @@ kinyelo.annotate.Container.prototype.getAnnotationMap = function() {
  * @private
  */
 kinyelo.annotate.Container.prototype.assignAuthors_ = function(annotation) {
-    var author = goog.object.get(this.authorMap_, annotation.authorId);
+    var author = goog.object.get(this.authorMap_, annotation.user_id);
     if(goog.isDef(author)) {
         annotation.author = author;
     }

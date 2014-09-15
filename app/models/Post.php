@@ -21,8 +21,8 @@ class Post extends Eloquent {
 		return $this->belongsTo('User', 'user_id');
 	}
 
-	public function comments() {
-		return $this->hasManyThrough('AnnotationComment', 'Annotation', 'post_id', 'annotation_id');
+	public function annotations() {
+		return $this->hasMany('Annotation');
 	}
 
 }

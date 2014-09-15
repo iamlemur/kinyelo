@@ -24,7 +24,11 @@ class CreateAnnotationsTable extends Migration {
 			$table->foreign('user_id')->references('id')->on('users');
 			$table->integer('post_id')->unsigned();
 			$table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
+			$table->integer('linked_post_id')->unsigned()->nullable();
+			$table->foreign('linked_post_id')->references('id')->on('posts')->onDelete('cascade');
 			$table->string('anchor', 4);
+			$table->text('content');
+			$table->enum('type', array('COMMENT', 'POST', 'CHARACTER'))->index();
 			$table->enum('state', array('PRIVATE', 'PUBLIC'))->index();
 			$table->timestamp('state_updated_at')->nullable()->index();
 			$table->softDeletes();
@@ -40,31 +44,12 @@ class CreateAnnotationsTable extends Migration {
 			$table->foreign('annotation_id')->references('id')->on('annotations')->onDelete('cascade');
 		});
 
-		Schema::create('annotations_posts', function($table)
+		Schema::create('annotations_replies', function($table)
 		{
 			$table->engine = 'InnoDB';
 			$table->increments('id')->unsigned();
 			$table->integer('annotation_id')->unsigned();
 			$table->foreign('annotation_id')->references('id')->on('annotations')->onDelete('cascade');
-			$table->integer('linked_post_id')->unsigned();
-			$table->foreign('linked_post_id')->references('id')->on('posts')->onDelete('cascade');
-		});
-
-		Schema::create('annotations_comments', function($table)
-		{
-			$table->engine = 'InnoDB';
-			$table->increments('id')->unsigned();
-			$table->integer('annotation_id')->unsigned();
-			$table->foreign('annotation_id')->references('id')->on('annotations')->onDelete('cascade');
-			$table->text('content');
-		});
-
-		Schema::create('annotations_comments_replies', function($table)
-		{
-			$table->engine = 'InnoDB';
-			$table->increments('id')->unsigned();
-			$table->integer('comment_id')->unsigned();
-			$table->foreign('comment_id')->references('id')->on('annotations_comments')->onDelete('cascade');
 			$table->integer('user_id')->unsigned();
 			$table->foreign('user_id')->references('id')->on('users');
 			$table->text('content');
@@ -80,9 +65,7 @@ class CreateAnnotationsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('annotations_comments_replies');
-		Schema::dropIfExists('annotations_comments');
-		Schema::dropIfExists('annotations_posts');
+		Schema::dropIfExists('annotations_replies');
 		Schema::dropIfExists('annotations');
 		Schema::dropIfExists('highlights');
 	}

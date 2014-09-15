@@ -11,6 +11,7 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 	use UserTrait, RemindableTrait;
 
 	protected $table = 'users';
+	protected $appends = array('url', 'avatar');
 	protected $hidden = array('password', 'remember_token');
 	protected $guarded = array('id', 'updated_at', 'created_at', 'confirmation_code', 'confirmed', 'deleted_at', 'password');
 	public $createRules = array(
@@ -31,6 +32,16 @@ class User extends Eloquent implements UserInterface, RemindableInterface {
 		'password' => 'between:8,64|confirmed',
 		'password_confirmation' => 'between:8,64',
 	);
+
+	public function getUrlAttribute()
+	{
+		return action('UserController@show', $this->id);
+	}
+
+	public function getAvatarAttribute()
+	{
+		return '/img/avatar1.jpg';
+	}
 
 	public function getAuthIdentifier()
 	{

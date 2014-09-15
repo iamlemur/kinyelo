@@ -22,15 +22,11 @@ class Annotation extends Eloquent {
 	}
 
 	public function highlight() {
-		return $this->hasOne('Highlight');
+		return $this->hasOne('AnnotationHighlight');
 	}
 
 	public function replies() {
-		return $this->hasManyThrough('AnnotationCommentReplies', 'AnnotationComment', 'annotation_id', 'comment_id');
-	}
-
-	public function comment() {
-		return $this->hasOne('AnnotationComment');
+		return $this->hasMany('AnnotationReply');
 	}
 
 }

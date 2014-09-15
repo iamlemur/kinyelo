@@ -24,8 +24,7 @@ goog.require('goog.ui.ContainerScroller');
 kinyelo.Post = function() {
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
-    //this.annotationsScroller_ = new goog.ui.ContainerScroller(this.annotations_);
-    this.loadAnnotations_();
+    this.retrieveAnnotations_();
     this.eventRegister_ = new goog.events.EventHandler(this);
     this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
     this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
@@ -36,9 +35,14 @@ kinyelo.Post = function() {
  *
  * @private
  */
-kinyelo.Post.prototype.loadAnnotations_ = function() {
+kinyelo.Post.prototype.loadAnnotations_ = function(e) {
 
-    this.retrieveAnnotations_();
+
+    var xhr = e.target;
+    if(xhr.isComplete()) {
+        console.log(xhr.getResponseJson());
+        this.sampleData_ = xhr.getResponseJson();
+    }
     this.annotations = new kinyelo.annotate.Container(this.sampleData_);
     this.container = new kinyelo.ui.annotate.Container(this.annotations);
     this.container.render(goog.dom.getElement('annotations'));
@@ -180,7 +184,10 @@ kinyelo.Post.prototype.loadPost = function(post) {
  * @private
  */
 kinyelo.Post.prototype.retrieveAnnotations_ = function() {
-    this.sampleData_ = kinyelo.Post.sampleAnnotations;
+    //this.sampleData_ = kinyelo.Post.sampleAnnotations;
+    //TODO: fix these hard-coded urls
+    var url = "/posts/1/annotations";
+    goog.net.XhrIo.send(url, this.loadAnnotations_);
 }
 
 

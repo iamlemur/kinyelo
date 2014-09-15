@@ -81,7 +81,7 @@ class PostController extends \BaseController {
 	public function edit($id)
 	{
 		$this->post = Post::with('author')->findOrFail($id);
-		$this->layout->content = View::make('post/create_edit')->with('post', $this->post)->with('jsonPost', $this->post->toJson());
+		$this->layout->content = View::make('post/create_edit')->with('post', $this->post);
 	}
 
 	/**

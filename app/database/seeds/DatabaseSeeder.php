@@ -75,12 +75,9 @@ class AnnotationsTableSeeder extends Seeder {
 			'user_id' => '2',
 			'post_id' => '1',
 			'anchor' => '558b',
-			'state' => 'PUBLIC'
-		));
-
-		AnnotationComment::create(array(
-			'annotation_id' => '1',
-			'content' => 'This is an awesome article dude!'
+			'state' => 'PUBLIC',
+			'content' => 'This is an awesome article dude!',
+			'type' => 'COMMENT'
 		));
 
 		AnnotationHighlight::create(array(
@@ -92,16 +89,13 @@ class AnnotationsTableSeeder extends Seeder {
 			'user_id' => '2',
 			'post_id' => '1',
 			'anchor' => '558b',
-			'state' => 'PUBLIC'
+			'state' => 'PUBLIC',
+			'content' => 'I need to re-emphasize that this is awesome!',
+			'type' => 'COMMENT'
 		));
 
-		AnnotationComment::create(array(
+		AnnotationReply::create(array(
 			'annotation_id' => '2',
-			'content' => 'I need to re-emphasize that this is awesome!'
-		));
-
-		AnnotationCommentReply::create(array(
-			'comment_id' => '2',
 			'user_id' => '1',
 			'content' => 'We get it dude.'
 		));

@@ -16,6 +16,8 @@ Route::post('/log', 'HomeController@log');
 Route::get('/log', 'HomeController@log');
 Route::get('/policies/terms', 'PolicyController@terms');
 
+Route::resource('/user', 'UserController');
+
 Route::get('/dashboard', 'UserController@dashboard');
 Route::get('/user', 'UserController@show');
 
@@ -31,6 +33,8 @@ Route::post('/user/edit', 'UserController@update');
 Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
 Route::get('/posts/lists/{filter?}', 'PostController@listing');
 Route::resource('/posts', 'PostController');
+
+Route::get('/posts/{id}/annotations', 'AnnotationController@getAnnotationsForPost');
 
 Route::get('/books/lists/{filter?}', 'BookController@listing');
 Route::resource('/books', 'BookController');

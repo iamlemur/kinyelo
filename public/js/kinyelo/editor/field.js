@@ -11,6 +11,7 @@ goog.require('goog.string');
 kinyelo.editor.Field = function(id, opt_doc) {
 
     this.editableElement_ = /** @type {!Element} */ (goog.dom.getElement(id));
+    this.editableElement_.spellcheck = false;
     goog.editor.ContentEditableField.call(this, this.editableElement_, opt_doc);
     this.registerPlugins();
 

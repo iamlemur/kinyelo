@@ -4,6 +4,7 @@ goog.require('goog.ui.ControlRenderer');
 goog.require('kinyelo.ui.annotate.Annotation');
 goog.require('kinyelo.ui.annotate.annotation.Comment');
 goog.require('goog.array');
+goog.require('kinyelo.annotate.Annotation');
 
 
 /**
@@ -48,7 +49,7 @@ kinyelo.ui.annotate.GroupRenderer.prototype.createDom = function(group) {
 
     goog.array.forEach(annotations.getAnnotations(), function(annotation) {
         switch(annotation.type) {
-            case 'comment':
+            case 'COMMENT':
                 var control = new kinyelo.ui.annotate.annotation.Comment(annotation);
                 break;
         }

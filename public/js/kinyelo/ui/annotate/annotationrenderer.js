@@ -54,7 +54,7 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation
 kinyelo.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation) {
 
     var avatarImage = this.domHelper.createDom(goog.dom.TagName.IMG, {
-        'src': annotation.author.avatar.url
+        'src': annotation.author.avatar
     });
     var avatar = this.domHelper.createDom(goog.dom.TagName.A, {
         'href': annotation.author.url,
