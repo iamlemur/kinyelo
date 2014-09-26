@@ -36,6 +36,7 @@ kinyelo.ui.annotate.Annotation.prototype.getModel;
 kinyelo.ui.annotate.Annotation.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners
+    this.dispatchEvent(kinyelo.events.annotations.EventType.NEW_ANNOTATION);
 }
 
 

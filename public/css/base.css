@@ -105,7 +105,7 @@ button{background:none;border:0 none;color:#000000;-webkit-box-sizing:'border-bo
 #fixed-nav .logo:hover:after{content:"";}
 #fixed-nav #btn-add-favorite{position:absolute;top:30px;right:30px;border-radius:500px;border:2px solid #858585;display:block;width:50px;height:50px;}#fixed-nav #btn-add-favorite:before{color:#858585;font-size:24px;content:"\e0b5";font-family:'Flaticons Solid';speak:none;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;position:absolute;line-height:47px;top:0;left:13px;}
 .outer-content-wrapper{z-index:1000;height:100%;overflow:auto;}.outer-content-wrapper .inner-content-wrapper{height:100%;}
-.content-container{padding:4% 5%;margin:0 auto;max-width:1024px;width:90%;display:block;}.content-container .form-container header h1,.content-container .index-container header h1{border-bottom:2px solid #e5e5e5;}
+.content-container{padding:4% 5%;margin:0 auto;max-width:1024px;width:90%;display:block;position:relative;}.content-container .form-container header h1,.content-container .index-container header h1{border-bottom:2px solid #e5e5e5;}
 .content-container header{padding-top:30px;margin-bottom:45px;}.content-container header>h1{text-align:center;font-size:44px;margin:0;line-height:56px;padding:20px;}
 .content-container header>nav>ul{margin:0 0 20px;padding:0;*zoom:1;}.content-container header>nav>ul:before,.content-container header>nav>ul:after{content:" ";display:table;}
 .content-container header>nav>ul:after{clear:both;}
@@ -285,6 +285,8 @@ p{text-decoration:none;display:block;}
 .annotations-container button.reply,.annotations-container button.cancel{display:inline-block;padding:10px 10px 10px 79px;position:relative;font-size:13px;line-height:20px;}.annotations-container button.reply:before,.annotations-container button.cancel:before{font-family:'Flaticons Solid';speak:none;font-style:normal;font-weight:normal;line-height:1;-webkit-font-smoothing:antialiased;position:absolute;top:0;left:0;width:14px;height:14px;font-size:13px;line-height:13px;border-radius:16px;border-width:2px;border-style:solid;}
 .annotations-container button.reply:before{content:"\e0b2";}
 .annotations-container button.cancel:before{content:"\e1bb";}
+#annotation-markers{position:absolute;top:0;right:-20px;display:block;height:100%;overflow:visible;}#annotation-markers .annotation-marker-container{height:100%;display:block;}
+#annotation-markers .k-annotation-marker{position:relative;}
 .ac-renderer{font:normal 13px Arial,sans-serif;position:absolute;background:#fff;border:1px solid #666;-moz-box-shadow:2px 2px 2px rgba(102, 102, 102, 0.4);-webkit-box-shadow:2px 2px 2px rgba(102, 102, 102, 0.4);width:300px;}
 .ac-row{cursor:pointer;padding:.4em;}
 .ac-highlighted{font-weight:bold;}

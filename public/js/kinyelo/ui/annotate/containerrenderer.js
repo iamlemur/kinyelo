@@ -1,6 +1,6 @@
 goog.provide('kinyelo.ui.annotate.ContainerRenderer');
 
-goog.require('goog.ui.ContainerRenderer');
+goog.require('kinyelo.ui.ContainerRenderer');
 goog.require('goog.object');
 goog.require('kinyelo.annotate.Container');
 goog.require('kinyelo.ui.annotate.Group');
@@ -9,12 +9,12 @@ goog.require('kinyelo.ui.annotate.Group');
 /**
  *
  * @constructor
- * @extends {goog.ui.ContainerRenderer}
+ * @extends {kinyelo.ui.ContainerRenderer}
  */
 kinyelo.ui.annotate.ContainerRenderer = function() {
     goog.base(this);
 }
-goog.inherits(kinyelo.ui.annotate.ContainerRenderer, goog.ui.ContainerRenderer);
+goog.inherits(kinyelo.ui.annotate.ContainerRenderer, kinyelo.ui.ContainerRenderer);
 goog.addSingletonGetter(kinyelo.ui.annotate.ContainerRenderer);
 
 /**
@@ -28,17 +28,6 @@ kinyelo.ui.annotate.ContainerRenderer.CSS_CLASS = 'annotations-container';
 kinyelo.ui.annotate.ContainerRenderer.prototype.getCssClass = function() {
     return kinyelo.ui.annotate.ContainerRenderer.CSS_CLASS;
 }
-
-/**
- * @inheritDoc
- */
-kinyelo.ui.annotate.ContainerRenderer.prototype.getClassNames = function(container) {
-    var classNames = goog.base(this, 'getClassNames', container);
-
-    //remove the orientation class
-    goog.array.removeAt(classNames, 1);
-    return classNames;
-};
 
 /**
  *
