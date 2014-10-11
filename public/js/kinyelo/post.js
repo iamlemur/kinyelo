@@ -47,16 +47,24 @@ kinyelo.Post = function() {
     this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
     this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
 
-    /*this.eventRegister_.listen(this.rte_.getElement(), [
-        goog.events.EventType.MOUSEOVER,
-        goog.events.EventType.MOUSEMOVE,
-        goog.events.EventType.MOUSEOUT
-    ], this.handleHover_);*/
-
     this.retrieveAnnotations_();
 }
 goog.inherits(kinyelo.Post, goog.events.EventTarget);
 
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+kinyelo.Post.prototype.handleHover_ = function(e) {
+    var ancestor = goog.dom.getAncestor(e.target, goog.editor.node.isBlockTag, true);
+    var marker = this.markerContainer_.getChild(ancestor.id);
+    if(!goog.isNull(marker)) {
+        if(!marker.isActive()) {
+            console.log('setting marker active');
+            marker.setActive();
+        }
+    }
+}
 
 /**
  *
@@ -83,6 +91,12 @@ kinyelo.Post.prototype.loadAnnotations_ = function(e) {
         this.eventRegister_.listen(this.markerContainer_, kinyelo.events.annotations.EventType.MARKER_CLICKED, function(e) {
             this.handleMarkerClick(e);
         }, false, this.annotationsContainer);
+
+        this.eventRegister_.listen(this.rte_.getElement(), [
+            goog.events.EventType.MOUSEOVER,
+            goog.events.EventType.MOUSEMOVE,
+            goog.events.EventType.MOUSEOUT
+        ], this.handleHover_);
 
         this.annotationsContainer.render(goog.dom.getElement('annotations'));
         this.annotationsScroller = new goog.ui.ContainerScroller(this.annotationsContainer);

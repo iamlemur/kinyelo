@@ -5,6 +5,7 @@ goog.require('kinyelo.ui.annotate.Annotation');
 goog.require('kinyelo.ui.annotate.annotation.Comment');
 goog.require('goog.array');
 goog.require('kinyelo.annotate.Annotation');
+goog.require('kinyelo.ui.annotate.Button');
 
 
 /**
@@ -56,5 +57,16 @@ kinyelo.ui.annotate.GroupRenderer.prototype.createDom = function(group) {
         group.addChild(control, true);
     });
 
+    this.addButtons(group);
+
     return el;
+}
+
+kinyelo.ui.annotate.GroupRenderer.prototype.addButtons = function(control) {
+    var comment = new kinyelo.ui.annotate.Button('Add Comment');
+    var character = new kinyelo.ui.annotate.Button('Add Character');
+    var post = new kinyelo.ui.annotate.Button('Connect Post');
+    control.addChild(comment, true);
+    control.addChild(character, true);
+    control.addChild(post, true);
 }
