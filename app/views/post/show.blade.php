@@ -43,11 +43,11 @@
 
 	<figure class="content-author">
 		<div class="img-wrapper">
-			<img src="/img/avatar.jpg" />
+			<img src="/img/icn-profile-32.svg" />
 		</div>
 		<div class="bio">
-			<h2>iamlemur</h2>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu neque non erat ullamcorper aliquet sed id nibh. Ut vel diam malesuada, interdum tortor ac, blandit tellus. Aliquam erat volutpat. Integer urna neque, molestie sed gravida ac, auctor quis felis. Fusce et rutrum massa. Etiam convallis arcu vel nulla tincidunt, aliquet vehicula urna suscipit. Sed auctor quam ac eleifend ultricies. Ut nibh tellus, scelerisque sit amet aliquam et, dignissim sed erat. Phasellus nibh odio, lobortis eget ante sed, dignissim ornare justo. Mauris sagittis tortor eget euismod dictum. Curabitur tincidunt nisi at enim malesuada tempus. In fringilla tristique mauris, ultrices adipiscing justo accumsan non. Aliquam aliquet orci eu metus dapibus faucibus. Aenean varius egestas tortor sed gravida. </p>
+			<h2><a href="#">{{ $post->author->username }}</a></h2>
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent eu neque non erat ullamcorper aliquet sed id nibh.</p>
 		</div>
 	</figure>
 
