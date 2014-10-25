@@ -54,7 +54,6 @@ nav[role=navigation] {
                     span {
                         position: relative;
                         display: block;
-                        padding: 0 25px;
                         font-family: @sansFontFamily;
                         font-weight: @lightWeight;
                     }
@@ -107,7 +106,7 @@ nav[role=navigation] {
                     > a {
                         span {
                             .icon-post-before();
-                            //.icon-plus-after();
+                            .icon-add-after();
                         }
                     }
                 }
@@ -115,7 +114,7 @@ nav[role=navigation] {
                     > a {
                         span {
                             .icon-book-before();
-                            //.icon-plus-after();
+                            .icon-add-after();
                         }
                     }
                 }
@@ -139,14 +138,15 @@ nav[role=navigation] {
             padding: 0;
             margin: 0;
             > li {
+                padding: 0px 10px;
                 > a {
                     display: block;
-                    padding: 20px;
+                    padding: 20px 10px;
                     font-size: 14px;
+                    border-top: 1px solid @gray;
                     span {
                         position: relative;
                         display: block;
-                        padding: 0 22px;
                         margin: 0 auto;
                         font-family: @sansFontFamily;
                         font-weight: @lightWeight;
@@ -156,6 +156,11 @@ nav[role=navigation] {
                     > a {
                         span {
                             .icon-cog-before();
+                        }
+                        &:hover {
+                            span{
+                                color: white;
+                            }
                         }
                     }
                 }

@@ -1,21 +1,113 @@
+// Custom Font Icons
+// --------------------------------------------------
+
 @font-face {
-    font-family: 'Flaticons';
-    src: url('../fonts/flaticons.eot');
-    src: url('../fonts/flaticons.eot?#iefix') format("embedded-opentype"),
-    url('../fonts/flaticons.woff') format('woff'),
-    url('../fonts/flaticons.ttf') format('truetype'),
-    url('../fonts/flaticons.svg#flaticons') format('svg');
+    font-family: 'Kinyelo Icons';
+    src: url('../fonts/icons.eot');
+    src: url('../fonts/icons.eot?#iefix') format("embedded-opentype"),
+    url('../fonts/icons.woff') format('woff'),
+    url('../fonts/icons.ttf') format('truetype'),
+    url('../fonts/icons.svg#icons') format('svg');
     font-weight: normal;
     font-style: normal; }
 
-.flaticon() {
-    font-family: 'Flaticons';
+.k-icons() {
+    font-family: 'Kinyelo Icons';
     speak: none;
     font-style: normal;
     font-weight: normal;
     line-height: 1;
     -webkit-font-smoothing: antialiased;
 }
+
+
+
+// Nav Icons
+// --------------------------------------------------
+
+.icon-avatar-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        top: 2px;
+        content: "\e60a";
+        padding-right: 10px;
+        left: 0;
+    }
+}
+.icon-post-before() {
+    &:before {
+        .k-icons();
+        font-size: 16px;
+        top: 2px;
+        content: "\e609";
+        padding-right: 10px;
+        left: 0;
+    }
+}
+.icon-book-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        top: 2px;
+        content: "\e600";
+        padding-right: 10px;
+        left: 0;
+    }
+}
+.icon-character-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        top: 2px;
+        content: "\e601";
+        padding-right: 10px;
+        left: 0;
+    }
+}
+.icon-author-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        top: 2px;
+        content: "\e608";
+        padding-right: 10px;
+        left: 0;
+    }
+}
+.icon-cog-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        content: "\e614";
+        padding-right: 5px;
+        left: 0;
+    }
+}
+.icon-logout-before() {
+    &:before {
+        .k-icons();
+        font-size: 15px;
+        content: "\e61a";
+        padding-right: 5px;
+        left: 0;
+    }
+}
+
+.icon-add-after() {
+    &:after {
+        .k-icons();
+        font-size: 12px;
+        content: "\e61c";
+        padding-top: 4px;
+        float: right;
+    }
+}
+
+
+
+// Flaticon Font Icons
+// --------------------------------------------------
 
 
 @font-face {
@@ -124,67 +216,67 @@
 // Navigation
 // -------------------------
 
-.icon-avatar-before() {
-    &:before {
-        .icon-stroke();
-        font-size: 15px;
-        top: 2px;
-        content: "\e514";
-        left: 0;
-    }
-}
-.icon-post-before() {
-	&:before {
-		.icon-solid();
-        font-size: 16px;
-        top: 2px;
-		content: "\e01f";
-		left: 0;
-	}
-}
-.icon-book-before() {
-	&:before {
-		.icon-solid();
-        font-size: 15px;
-        top: 2px;
-		content: "\e056";
-		left: 0;
-	}
-}
-.icon-character-before() {
-	&:before {
-		.icon-solid();
-        font-size: 15px;
-        top: 2px;
-		content: "\e0ca";
-		left: 0;
-	}
-}
-.icon-author-before() {
-	&:before {
-		.icon-solid();
-        font-size: 15px;
-        top: 2px;
-		content: "\e0a1";
-		left: 0;
-	}
-}
-.icon-cog-before() {
-    &:before {
-        .icon-stroke();
-        font-size: 15px;
-        content: "\e514";
-        left: 0;
-    }
-}
-.icon-logout-before() {
-    &:before {
-        .icon-stroke();
-        font-size: 15px;
-        content: "\e514";
-        left: 0;
-    }
-}
+//.icon-avatar-before() {
+//    &:before {
+//        .icon-stroke();
+//        font-size: 15px;
+//        top: 2px;
+//        content: "\e514";
+//        left: 0;
+//    }
+//}
+//.icon-post-before() {
+//	&:before {
+//		.icon-solid();
+//        font-size: 16px;
+//        top: 2px;
+//		content: "\e01f";
+//		left: 0;
+//	}
+//}
+//.icon-book-before() {
+//	&:before {
+//		.icon-solid();
+//        font-size: 15px;
+//        top: 2px;
+//		content: "\e056";
+//		left: 0;
+//	}
+//}
+//.icon-character-before() {
+//	&:before {
+//		.icon-solid();
+//        font-size: 15px;
+//        top: 2px;
+//		content: "\e0ca";
+//		left: 0;
+//	}
+//}
+//.icon-author-before() {
+//	&:before {
+//		.icon-solid();
+//        font-size: 15px;
+//        top: 2px;
+//		content: "\e0a1";
+//		left: 0;
+//	}
+//}
+//.icon-cog-before() {
+//    &:before {
+//        .icon-stroke();
+//        font-size: 15px;
+//        content: "\e514";
+//        left: 0;
+//    }
+//}
+//.icon-logout-before() {
+//    &:before {
+//        .icon-stroke();
+//        font-size: 15px;
+//        content: "\e514";
+//        left: 0;
+//    }
+//}
 
 // General
 // -------------------------

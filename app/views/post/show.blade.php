@@ -23,10 +23,10 @@
 
 	<div class="social-actions">
 		<ul>
-			<li><a href="#" class="btn-favorite"></a></li>
-			<li><a href="#" class="btn-email"></a></li>
-			<li><a href="#" class="btn-facebook"></a></li>
-			<li><a href="#" class="btn-twitter"></a></li>
+			<li><button href="#" class="btn-recommend"></button></li>
+			<li><button href="#" class="btn-email"></button></li>
+			<li><button href="#" class="btn-facebook"></button></li>
+			<li><button href="#" class="btn-twitter"></button></li>
 		</ul>
 	</div>
 

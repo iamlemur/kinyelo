@@ -14,17 +14,57 @@
 		</nav>
 	</header>
 	<div class="index">
-		<ul>
+		<ul class="result-listings">
 			@foreach($posts as $post)
 			<li>
-<!--                <button class="fav">Mark as favorite</button>-->
+                <button class="btn-fav"></button>
 				<div class="listing">
                     <h2><a href="{{ action('PostController@show', $post->id) }}">{{ $post->title }}</a></h2>
                     <small>published by {{ $post->author->username }} <time datetime="{{ $post->created_at->toISO8601String() }}">{{ $post->created_at->diffForHumans() }}</time></small>
                 </div>
-<!--                <button class="expand">Expand</button>-->
+                <button class="btn-expandable"></button>
 			</li>
 			@endforeach
+            <li>
+                <button class="btn-fav active"></button>
+                <div class="listing">
+                    <h2><a href="">This is a Title of a Post</a></h2>
+                    <small>published by username <time datetime="">Month Day, Year</time></small>
+                </div>
+                <button class="btn-expandable"></button>
+            </li>
+            <li>
+                <button class="btn-fav"></button>
+                <div class="listing">
+                    <h2><a href="">Some Titles Will be Very Very Long to the Point of Absurdity So that We Can See How This Whole Thing Wraps</a></h2>
+                    <small>published by username <time datetime="">Month Day, Year</time></small>
+                </div>
+                <button class="btn-expandable"></button>
+            </li>
+            <li>
+                <button class="btn-fav"></button>
+                <div class="listing">
+                    <h2><a href="">Other Titles will be mispeled and bad grammers.</a></h2>
+                    <small>published by username <time datetime="">Month Day, Year</time></small>
+                </div>
+                <button class="btn-expandable"></button>
+            </li>
+            <li>
+                <button class="btn-fav"></button>
+                <div class="listing">
+                    <h2><a href="">Tomorrow is another day for</a></h2>
+                    <small>published by username <time datetime="">Month Day, Year</time></small>
+                </div>
+                <button class="btn-expandable"></button>
+            </li>
+            <li>
+                <button class="btn-fav"></button>
+                <div class="listing">
+                    <h2><a href="">Another chance to make your mistakes again</a></h2>
+                    <small>published by username <time datetime="">Month Day, Year</time></small>
+                </div>
+                <button class="btn-expandable"></button>
+            </li>
 		</ul>
 	</div>
 </div>

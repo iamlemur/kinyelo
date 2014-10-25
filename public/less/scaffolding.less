@@ -17,6 +17,10 @@ a {
 	color: @black;
 	text-decoration: none;
 }
+body.k-user {
+    border-top: @pageBorder solid @personalColor;
+    .contextual-colors(@personalColor);
+}
 body.k-posts {
 	border-top: @pageBorder solid @postsColor;
 	.contextual-colors(@postsColor);
@@ -25,9 +29,13 @@ body.k-books {
 	border-top: @pageBorder solid @booksColor;
 	.contextual-colors(@booksColor);
 }
-body.k-user {
-	border-top: @pageBorder solid @personalColor;
-	.contextual-colors(@personalColor);
+body.k-characters {
+    border-top: @pageBorder solid @charactersColor;
+    .contextual-colors(@charactersColor);
+}
+body.k-authors {
+    border-top: @pageBorder solid @authorsColor;
+    .contextual-colors(@authorsColor);
 }
 button {
 	background: none;
@@ -47,86 +55,6 @@ button {
 	left: 0;
 	display: block;
 	width: 100%;
-	.logo {
-		position: absolute;
-		top: 20px;
-		left: 20px;
-		text-align: left;
-		border-radius: 500px;
-		background-color: @grayDark;
-		@size: 35px;
-		font-size: @size;
-		width: @size;
-		height: @size;
-		display: inline-block;
-		color: @white;
-		font-family: @serifFontFamily;
-        font-weight: @lightWeight;
-		&:before {
-			content: "k";
-			display: inline-block;
-			font-size: 1.19em;
-			line-height: 0.92em;
-			border-radius: 0 none;
-			text-indent: 0.1em;
-		}
-		&:after {
-			content: ".";
-			left: 0.8em;
-			font-size: 0.8em;
-			display: inline-block;
-			position: absolute;
-			top: 0.23em;
-		}
-		&:hover {
-			&:before {
-				.icon-stroke();
-				content: "\e53d";
-				font-size: 0.6em;
-				line-height: 1.64em;
-				text-indent: 0.32em;
-			}
-			&:after {
-				content: "";
-			}
-		}
-	}
-	#btn-add-favorite {
-		position: absolute;
-		top: 25px;
-		right: 25px;
-		border-radius: 500px;
-		border: 2px solid @grayLight;
-		display: block;
-		width: 35px;
-		height: 35px;
-		&:before {
-			color: @grayLight;
-			font-size: 21px;
-			content: "\e0b5";
-			.icon-solid();
-			top: 7px;
-			left: 7px;
-		}
-	}
-    #btn-edit {
-        position: absolute;
-        top: 25px;
-        right: 75px;
-        border-radius: 500px;
-        border: 2px solid @grayLight;
-        display: block;
-        width: 35px;
-        height: 35px;
-        &:before {
-            color: @grayLight;
-            font-size: 21px;
-            content: "\e0b5";
-            .icon-solid();
-            top: 7px;
-            left: 7px;
-        }
-    }
 }
 .outer-content-wrapper {
 	z-index: @zIndexMain;
@@ -154,6 +82,9 @@ button {
 		> h1 {
             .title();
 			margin: 0;
+            section p {
+                .title();
+            }
 		}
 		> nav {
             text-align:center;
@@ -181,22 +112,43 @@ button {
 			text-align: center;
 		}
 	}
+    #opus {
+        #post-body {
+            section {
+                padding: 0;
+                p {
+                    .body();
+                    margin: 0;
+                }
+            }
+            p {
+                .body();
+                span{
+
+                }
+            }
+        }
+    }
 	.index-container {
 		.index {
-			> ul {
+			> ul.result-listings {
 				padding: 0;
 				margin: 0;
-                > button {
-                    display: inline-block;
-                }
 				> li {
-					padding: 0 20px 15px 20px;
+                    padding: 0 0 20px 0;
+                    > button {
+                        display: inline-block;
+                        vertical-align: top;
+                    }
                     .listing {
                         display: inline-block;
+                        width: 540px;
+                        position: relative;
+                        top: 0px;
+                        left: 10px;
                         > h2 {
                             .listTitle();
-                            line-height: 1;
-                            padding-bottom: 6px;
+                            padding: 2px 0 4px;
                             margin: 0;
                             > a {
                                 display: block;
@@ -214,6 +166,7 @@ button {
 			}
 		}
 	}
+
 	.post-container {
 		header.stuck {
 			position: fixed;
@@ -247,58 +200,57 @@ button {
         text-align: center;
 		> ul {
             padding: 0;
+            margin-bottom: 0;
             li {
                 display: inline-block;
+                padding: 2px;
             }
-            a {
+            button {
                 border-radius: 500px;
-                border: 2px solid @grayLight;
+                border: 2px solid @grayDarker;
                 display: inline-block;
-                width: 50px;
-                height: 50px;
+                width: 35px;
+                height: 35px;
                 position: relative;
                 &.btn-facebook {
                     &:before {
-                        .icon-social();
-                        content: "\e7d0";
-                        top: 2px;
-                        left: 12px;
-                        color: @grayLight;
-                        line-height: 47px;
-                        font-size: 24px;
+                        .k-icons();
+                        content: "\e605";
+                        color: @grayDarker;
+                        position: relative;
+                        left: 7px;
+                        font-size: 20px;
                     }
                 }
+
                 &.btn-email {
                     &:before {
-                        .icon-solid();
-                        content: "\e0ad";
-                        top: 2px;
-                        left: 12px;
-                        color: @grayLight;
-                        line-height: 47px;
-                        font-size: 24px;
+                        .k-icons();
+                        content: "\e604";
+                        color: @grayDarker;
+                        position: relative;
+                        left: 6px;
+                        font-size: 16px;
                     }
                 }
-                &.btn-favorite {
+                &.btn-recommend {
                     &:before {
-                        .icon-solid();
-                        content: "\e0b6";
-                        top: 3px;
-                        left: 14px;
-                        color: @grayLight;
-                        line-height: 47px;
-                        font-size: 24px;
+                        .k-icons();
+                        content: "\e606";
+                        color: @grayDarker;
+                        position: relative;
+                        left: 6px;
+                        font-size: 18px;
                     }
                 }
                 &.btn-twitter {
                     &:before {
-                        .icon-social();
-                        content: "\e7d1";
-                        top: 2px;
-                        left: 12px;
-                        color: @grayLight;
-                        line-height: 47px;
-                        font-size: 24px;
+                        .k-icons();
+                        content: "\e60e";
+                        color: @grayDarker;
+                        position: relative;
+                        left: 6px;
+                        font-size: 18px;
                     }
                 }
             }
@@ -307,7 +259,7 @@ button {
 	.tags {
 		text-align: center;
 		font-family: @sansFontFamily;
-		padding: 30px 0;
+		padding: 20px 0 40px 0;
 		ul {
 			margin: 0 auto;
 			display: inline-block;
@@ -356,8 +308,6 @@ button {
             padding: 0 15px 0 0;
 			img {
 				width: 50px;
-//				border-radius: 50px;
-//				border: 2px solid @grayLightest;
 			}
 		}
 		.bio {
@@ -404,12 +354,12 @@ button {
 			display: inline-block;
 			float: right;
 			color: @grayLight;
-			padding-left: 20px;
-			&:before {
-				.icon-stroke();
-				content: "\e4ad";
-				left: 0;
-			}
+//			padding-left: 20px;
+//			&:before {
+//				.k-icons();
+//				content: "\e616";
+//				left: 0;
+//			}
 		}
 	}
 }
@@ -473,7 +423,7 @@ ul.expandable > li, .content-container section > h2 {
 }
 .content-container section > h2, ul.expandable > li > h2 {
 	&:before {
-		.flaticon-solid();
+//		.flaticon-solid();
 		.expandable-icon();
 	}
 }

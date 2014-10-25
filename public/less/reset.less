@@ -164,6 +164,7 @@ a:hover {
 	outline: 0;
 }
 
+
 /* ==========================================================================
    Typography
    ========================================================================== */
@@ -454,6 +455,20 @@ textarea {
 	margin: 0; /* 2 */
 	vertical-align: baseline; /* 3 */
 	*vertical-align: middle; /* 3 */
+}
+
+button,
+input,
+select,
+textarea,
+div,
+span,
+h1,
+h2,
+p {
+    &:focus {
+        outline: none;
+    }
 }
 
 /**
