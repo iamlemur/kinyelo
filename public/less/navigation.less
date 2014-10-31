@@ -47,16 +47,36 @@ nav[role=navigation] {
             padding: 0;
             margin: 0;
             > li {
-                > a {
-                    display: block;
+                > a.nav-item {
+                    display: inline-block;
                     padding: 20px;
                     font-size: 18px;
+                    width: 210px;
+                    vertical-align: top;
                     span {
                         position: relative;
                         display: block;
                         font-family: @sansFontFamily;
                         font-weight: @lightWeight;
                     }
+                }
+                > a.nav-add {
+                    display: inline-block;
+                    position: relative;
+                    width: 60px;
+                    height: 58px;
+                    &:before {
+                        color: @white;
+                        font-size: 12px;
+                        content: "\e61c";
+                        .k-icons();
+                        position: absolute;
+                        top: 25px;
+                        left: 24px;
+                    }
+                }
+                .nav-notify {
+
                 }
                 &.active {
                     > ul {
@@ -81,9 +101,11 @@ nav[role=navigation] {
                 &:hover {
                     &.authors {
                         background-color: @authorsColor;
+                        color: mix(@postsColor, @bodyBackgroundColor, 80%);
                     }
                     &.posts {
                         background-color: @postsColor;
+                        color: mix(@postsColor, @bodyBackgroundColor, 80%);
                     }
                     &.characters {
                         background-color: @charactersColor;
@@ -103,18 +125,18 @@ nav[role=navigation] {
                     }
                 }
                 &.posts {
-                    > a {
+                    > a.nav-item {
+                        width: 145px;
                         span {
                             .icon-post-before();
-                            .icon-add-after();
                         }
                     }
                 }
                 &.books {
-                    > a {
+                    > a.nav-item {
+                        width: 145px;
                         span {
                             .icon-book-before();
-                            .icon-add-after();
                         }
                     }
                 }
@@ -130,6 +152,22 @@ nav[role=navigation] {
                         span {
                             .icon-author-before();
                         }
+                    }
+                }
+                .nav-add {
+                    position: relative;
+                    width: 30px;
+                    height: 58px;
+                    top: 0px;
+                    //    left: 10px;
+                    &:before {
+                        color: @white;
+                        font-size: 15px;
+                        content: "\e61c";
+                        .k-icons();
+                        position: absolute;
+                        top: 20px;
+                        left: 7px;
                     }
                 }
             }

@@ -1,13 +1,47 @@
+button {
+    background: none;
+    border: 0 none;
+    color: @black;
+    .box-sizing('border-box');
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    font-family: @sansFontFamily;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
 // standard buttons
 //----------------------------------------
 
-.btn-stndrd(@color){
-
+.btn-stndrd {
+    margin:0;
+    padding: 6px 20px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 4px;
 }
-
-
-
-
+.btn-alert {
+    margin: 0 auto;
+    padding: 6px 20px;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    border-radius: 4px;
+    color: @red;
+    background: @white;
+    border: 2px solid @red;
+    &:disabled, .disabled{
+        border: @gray;
+        color: @gray;
+        background-color: @white;
+    }
+    &:hover, :active {
+        color: @white;
+        background-color: @red;
+    }
+}
 
 // 35px buttons
 //----------------------------------------
@@ -20,7 +54,7 @@
     height: 35px;
 }
 
-#btn-add-favorite {
+.btn-add-favorite {
     position: absolute;
     top: 25px;
     right: 25px;
@@ -35,7 +69,7 @@
         left: 8px;
     }
 }
-#btn-edit {
+.btn-edit {
     position: absolute;
     top: 25px;
     right: 75px;
@@ -96,7 +130,6 @@
 }
 
 
-
 // general buttons
 //----------------------------------------
 
@@ -145,4 +178,11 @@
             content: "";
         }
     }
+}
+
+.btn-report {
+    position: relative;
+    display: inline-block;
+    float: right;
+    color: @grayLight;
 }

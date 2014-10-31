@@ -162,7 +162,8 @@ kinyelo.Post.prototype.annotatableNodes_;
  */
 kinyelo.Post.prototype.handleDelayedChange_ = function(e) {
 
-    //this.savePost_(e);
+    // auto save
+    this.savePost_(e);
 
 }
 

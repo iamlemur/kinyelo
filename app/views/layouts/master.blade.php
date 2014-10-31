@@ -25,21 +25,23 @@
 				<ul class="nav-primary">
 					@if(Auth::check())
 					<li class="personal<?=($context == "k-user" ? " active" : "")?>">
-						<a href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
+						<a class="nav-item" href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
 					</li>
 					@else
-						<li class="personal"><a href="{{ action('UserController@getLogin') }}"><span>log in</span></a></li>
+					<li class="personal">
+					    <a class="nav-item" href="{{ action('UserController@getLogin') }}"><span>log in</span></a>
+					</li>
 					@endif
 					<li class="posts<?=($context == "k-posts" ? " active" : "")?>">
-						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
-
+						<a class="nav-item" href="{{ action('PostController@index') }}"><span>posts</span></a>
+                        <a class="nav-add" href="{{ action('PostController@create') }}"></a>
                     </li>
 					<li class="books<?=($context == "k-books" ? " active" : "")?>">
-						<a href="{{ action('BookController@index') }}"><span>books</span></a>
-                        <!--<a href="{{ action('BookController@create') }}"><span>create a new book</span></a>-->
+						<a class="nav-item" href="{{ action('BookController@index') }}"><span>books</span></a>
+                        <a class="nav-add" href="{{ action('BookController@create') }}"></a>
 					</li>
-					<li class="characters"><a href="#"><span>characters</span></a></li>
-					<li class="authors"><a href="#"><span>authors</span></a></li>
+					<li class="characters"><a class="nav-item" href="#"><span>characters</span></a></li>
+					<li class="authors"><a class="nav-item" href="#"><span>authors</span></a></li>
 				</ul>
                 @if(Auth::check())
                 <ul class="nav-secondary">
@@ -50,12 +52,13 @@
 			</div>
 		</nav>
 		<nav id="fixed-nav">
+            @yield('draftstatus')
 			<a href="#" class="logo"></a>
             @if(Auth::check())
             <!-- need method: verify that user has edit privileges -->
-            <a href="#" id="btn-edit"></a>
+            <a href="#" class="btn-edit c-btn-icn" id="btn-edit"></a>
             @endif
-			<a href="#" id="btn-add-favorite"></a>
+			<a href="#" class="btn-add-favorite c-btn-icn" id="btn-add-favorite"></a>
 		</nav>
 		<div id="active-nav-overlay"></div>
 		<main class="outer-content-wrapper" role="main">
