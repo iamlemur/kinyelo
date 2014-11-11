@@ -8,7 +8,7 @@ goog.require('kinyelo.ui.annotate.annotation.CommentRenderer');
 /**
  *
  * @param {kinyelo.annotate.Reply} comment
- * @param {kinyelo.ui.annotate.annotation.CommentRenderer} renderer
+ * @param {kinyelo.ui.annotate.annotation.CommentRenderer=} renderer
  * @constructor
  * @extends {kinyelo.ui.annotate.Annotation}
  */
