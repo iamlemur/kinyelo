@@ -58,6 +58,7 @@ kinyelo.ui.annotate.GroupRenderer.prototype.createDom = function(group) {
     });
 
     this.addButtons(group);
+    this.addCommentForm(group);
 
     return el;
 }
@@ -69,4 +70,8 @@ kinyelo.ui.annotate.GroupRenderer.prototype.addButtons = function(control) {
     control.addChild(comment, true);
     control.addChild(character, true);
     control.addChild(post, true);
+}
+
+kinyelo.ui.annotate.GroupRenderer.prototype.addCommentForm = function(control) {
+    //control.getDomHelper().createDom('div');
 }

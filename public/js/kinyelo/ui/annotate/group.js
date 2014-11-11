@@ -1,6 +1,7 @@
 goog.provide('kinyelo.ui.annotate.Group');
 
 goog.require('goog.ui.Control');
+goog.require('goog.ui.Component.State');
 goog.require('kinyelo.annotate.Group');
 goog.require('kinyelo.ui.annotate.GroupRenderer');
 
@@ -16,6 +17,7 @@ goog.require('kinyelo.ui.annotate.GroupRenderer');
 kinyelo.ui.annotate.Group = function(id, group, renderer) {
     goog.base(this, null /* content */, renderer);
     //TODO: set the supported states, p231
+    this.setSupportedState(goog.ui.Component.State.OPENED, true);
     /**
      * @type {string}
      * @private

@@ -32,7 +32,13 @@ kinyelo.ui.annotate.Container.prototype.handleMarkerClick = function(e) {
     console.log(e.target, 'click registered by annotation container');
     console.log(e.target.getId());
     var control = this.getChild(e.target.getId());
-    control.setActive(true);
+    control.setOpen(true);
+    this.setOpenGroup(e.target.getId());
+    this.forEachChild(function(child) {
+        if(child.getId() != this.activeGroupId_) {
+            child.setOpen(false);
+        }
+    }, this);
     var html = goog.dom.getElementsByTagNameAndClass(goog.dom.TagName.HTML);
     goog.dom.classes.toggle(html[0], 'js-annotations');
 
@@ -41,6 +47,20 @@ kinyelo.ui.annotate.Container.prototype.handleMarkerClick = function(e) {
     goog.style.setPosition(control.getContentElement(), null, position.y);
 
 }
+
+kinyelo.ui.annotate.Container.prototype.setOpenGroup = function(id) {
+    this.activeGroupId_ = id;
+}
+
+kinyelo.ui.annotate.Container.prototype.handleOpenItem = function(e) {
+    console.log('is this being called?');
+}
+
+/**
+ * @type {number}
+ * @private
+ */
+kinyelo.ui.annotate.Container.prototype.activeGroupId_;
 
 goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Container, kinyelo.ui.annotate.ContainerRenderer);
 
