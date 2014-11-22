@@ -35,75 +35,77 @@ nav[role=navigation] {
                 margin: 0 auto;
                 width: 80%;
                 &:focus {
-                    color: @white;
+                    color: @teal;
                 }
             }
         }
         a, a:visited, a:active, a:hover {
             color: @white !important;
             text-decoration: none;
-            font-size: @fontSizeNav;
         }
-        > ul {
+        > ul.nav-primary {
             padding: 0;
             margin: 0;
             > li {
-                > a {
-                    display: block;
-                    padding: 15px;
+                > a.nav-item {
+                    display: inline-block;
+                    padding: 20px;
+                    font-size: 18px;
+                    width: 210px;
+                    vertical-align: top;
                     span {
                         position: relative;
                         display: block;
-                        padding: 0 20px;
-                        .icon-right-arrow-after();
+                        font-family: @sansFontFamily;
+                        font-weight: @lightWeight;
                     }
                 }
-                &.active {
-                    > a {
-                        span {
-                            .icon-down-arrow-after();
-                        }
+                > a.nav-add {
+                    display: inline-block;
+                    position: relative;
+                    width: 60px;
+                    height: 58px;
+                    &:before {
+                        color: @white;
+                        font-size: 12px;
+                        content: "\e61c";
+                        .k-icons();
+                        position: absolute;
+                        top: 25px;
+                        left: 24px;
                     }
+                }
+                .nav-notify {
+
+                }
+                &.active {
                     > ul {
                         display: block;
                     }
                     &.authors {
-                        > ul {
-                            background-color: darken(@authorsColor, 5%);
-                        }
                         background-color: @authorsColor;
                     }
                     &.posts {
-                        > ul {
-                            background-color: darken(@postsColor, 5%);
-                        }
                         background-color: @postsColor;
                     }
                     &.characters {
-                        > ul {
-                            background-color: darken(@charactersColor, 5%);
-                        }
                         background-color: @charactersColor;
                     }
                     &.books {
-                        > ul {
-                            background-color: darken(@booksColor, 5%);
-                        }
                         background-color: @booksColor;
                     }
                     &.personal {
-                        > ul {
-                            background-color: darken(@personalColor, 5%);
-                        }
                         background-color: @personalColor;
                     }
                 }
                 &:hover {
                     &.authors {
                         background-color: @authorsColor;
+                        color: mix(@postsColor, @bodyBackgroundColor, 80%);
                     }
                     &.posts {
                         background-color: @postsColor;
+                        color: mix(@postsColor, @bodyBackgroundColor, 80%);
                     }
                     &.characters {
                         background-color: @charactersColor;
@@ -115,25 +117,33 @@ nav[role=navigation] {
                         background-color: @personalColor;
                     }
                 }
-                &.posts {
+                &.personal {
                     > a {
+                        span {
+                            .icon-avatar-before();
+                        }
+                    }
+                }
+                &.posts {
+                    > a.nav-item {
+                        width: 145px;
                         span {
                             .icon-post-before();
                         }
                     }
-
+                }
+                &.books {
+                    > a.nav-item {
+                        width: 145px;
+                        span {
+                            .icon-book-before();
+                        }
+                    }
                 }
                 &.characters {
                     > a {
                         span {
                             .icon-character-before();
-                        }
-                    }
-                }
-                &.books {
-                    > a {
-                        span {
-                            .icon-book-before();
                         }
                     }
                 }
@@ -144,47 +154,58 @@ nav[role=navigation] {
                         }
                     }
                 }
-                &.personal {
+                .nav-add {
+                    position: relative;
+                    width: 30px;
+                    height: 58px;
+                    top: 0px;
+                    //    left: 10px;
+                    &:before {
+                        color: @white;
+                        font-size: 15px;
+                        content: "\e61c";
+                        .k-icons();
+                        position: absolute;
+                        top: 20px;
+                        left: 7px;
+                    }
+                }
+            }
+        }
+        > ul.nav-secondary {
+            padding: 0;
+            margin: 0;
+            > li {
+                padding: 0px 10px;
+                > a {
+                    display: block;
+                    padding: 20px 10px;
+                    font-size: 14px;
+                    border-top: 1px solid @gray;
+                    span {
+                        position: relative;
+                        display: block;
+                        margin: 0 auto;
+                        font-family: @sansFontFamily;
+                        font-weight: @lightWeight;
+                    }
+                }
+                &.settings {
                     > a {
                         span {
                             .icon-cog-before();
                         }
+                        &:hover {
+                            span{
+                                color: white;
+                            }
+                        }
                     }
                 }
-                > ul {
-                    padding: 10px 0;
-                    margin: 0;
-                    display: none;
-                    > li {
-                        position: relative;
-                        &.active {
-                            &:after {
-                                position: absolute;
-                                top: 0;
-                                right: 0;
-                                content: "";
-                                border-width: 15px;
-                                border-color: transparent;
-                                border-style: solid;
-                                border-right-color: @bodyBackgroundColor;
-                                margin-top: 0;
-                                margin-left: -7px;
-                            }
-                        }
-                        &.add {
-                            > a {
-                                padding: 7px 35px 7px 15px;
-                                > span {
-                                    .icon-plus-before();
-                                    position: relative;
-                                    display: block;
-                                    padding: 0 20px;
-                                }
-                            }
-                        }
-                        a {
-                            padding: 7px 35px;
-                            display: block;
+                &.logout {
+                    > a {
+                        span {
+                            .icon-logout-before();
                         }
                     }
                 }
@@ -192,21 +213,6 @@ nav[role=navigation] {
         }
     }
 }
-
-/*nav[role=complementary] {
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	z-index: @zIndexComments;
-	-webkit-transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
-	transition: right 0.2s cubic-bezier(0.2, 0.3, 0.25, 0.9);
-	.clearfix();
-	.page-utils-scrollable-container {
-		height: 100%;
-	}
-}*/
-
 
 #active-nav-overlay {
     width: 100%;

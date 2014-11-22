@@ -1,0 +1,89 @@
+// Typography
+// -------------------------
+@sansFontFamily:        'Lato', Myriad Pro, Verdana, Arial, Tahoma, sans-serif;
+@serifFontFamily:       'Merriweather', 'Georgia', Times, serif;
+@monoFontFamily:        Monaco, Menlo, Consolas, "Courier New", monospace;
+
+@lightWeight:           300;
+@regularWeight:         400;
+@boldWeight:            700;
+
+@baseline:				16px;
+
+@paddingLarge:          11px 19px; // 44px
+@paddingSmall:          2px 10px;  // 26px
+@paddingMini:           0 6px;   // 22px
+
+
+// Styles
+// -------------------------
+
+.body {
+    font-size: 18px;
+    line-height: 35px;
+    font-family: @serifFontFamily;
+    color: @grayDarker;
+}
+.title {
+    font-size: 44px;
+    line-height: 55px;
+    font-family: @serifFontFamily;
+    color: @grayDarker;
+    text-align: center;
+}
+.listTitle {
+    font-size: 18px;
+    line-height: 23px;
+    font-family: @serifFontFamily;
+    color: @grayDarker;
+}
+.attribution {
+    font-size: 13px;
+    line-height: auto;
+    font-family: @sansFontFamily;
+    color: @grayLight;
+    a {
+        color: @gray;
+    }
+}
+.detail {
+    font-size: 15px;
+    line-height: 20px;
+    font-family: @sansFontFamily;
+    color: @grayLight;
+}
+.info {
+    font-size: 15px;
+    line-height: 17px;
+    font-family: @sansFontFamily;
+    font-weight: @regularWeight;
+    color: @grayDarker;
+}
+.edit-head {
+    font-size: 16px;
+    font-weight: @boldWeight;
+    line-height: auto;
+    font-family: @sansFontFamily;
+    color: @grayDarker;
+}
+.ann-contributor {
+
+}
+.ann-contributor-reply {
+
+}
+.ann-body {
+
+}
+.dialog-header {
+
+}
+
+// Michael: this class is set in the draft HTML by js, but I can't find where.
+// Do you want to update it to match the naming convention of other CSS classes?
+.defaultValue {
+    color: @grayLight;
+}
+
+
+

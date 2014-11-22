@@ -11,7 +11,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link rel="stylesheet" href="/css/base.css">
-	<script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700|Merriweather:400,300,700' rel='stylesheet' type='text/css'>
+    <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
 </head>
 <body class="{{ $context }}">
 
@@ -21,46 +22,43 @@
 				<form role="search" method="get" action="/search">
 					<input type="text" name="q" placeholder="search" />
 				</form>
-				<ul>
+				<ul class="nav-primary">
 					@if(Auth::check())
-						<li class="personal<?=($context == "k-user" ? " active" : "")?>">
-							<a href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
-							<ul>
-								<li><a href="{{ action('UserController@edit') }}"><span>edit</span></a></li>
-								<li><a href="{{ action('UserController@logout') }}"><span>log out</span></a></li>
-							</ul>
-						</li>
+					<li class="personal<?=($context == "k-user" ? " active" : "")?>">
+						<a class="nav-item" href="{{ action('UserController@show') }}"><span>{{ Auth::user()->username }}</span></a>
+					</li>
 					@else
-						<li class="personal"><a href="{{ action('UserController@getLogin') }}"><span>log in</span></a></li>
+					<li class="personal">
+					    <a class="nav-item" href="{{ action('UserController@getLogin') }}"><span>log in</span></a>
+					</li>
 					@endif
 					<li class="posts<?=($context == "k-posts" ? " active" : "")?>">
-						<a href="{{ action('PostController@index') }}"><span>posts</span></a>
-						<ul>
-							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "trending" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'trending')) }}"><span>trending</span></a></li>
-							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "editor" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'editor')) }}"><span>editor's picks</span></a></li>
-							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "recent" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'recent')) }}"><span>most recent</span></a></li>
-							<li><a href="#"><span>my reading list</span></a></li>
-							<li><a href="#"><span>my posts</span></a></li>
-							<li class="add"><a href="{{ action('PostController@create') }}"><span>create a new post</span></a></li>
-						</ul>
-					</li>
+						<a class="nav-item" href="{{ action('PostController@index') }}"><span>posts</span></a>
+                        <a class="nav-add" href="{{ action('PostController@create') }}"></a>
+                    </li>
 					<li class="books<?=($context == "k-books" ? " active" : "")?>">
-						<a href="{{ action('BookController@index') }}"><span>books</span></a>
-						<ul>
-							<li <?= Route::current()->getActionName() == "BookController@listing" && Route::current()->getParameter('filter') == "yours" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'yours')) }}"><span>your books</span></a></li>
-							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "reading" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'reading')) }}"><span>your reading list</span></a></li>
-							<li <?= Route::current()->getActionName() == "PostController@listing" && Route::current()->getParameter('filter') == "recommendations" ? 'class="active"' : ""?>><a href="{{ action('PostController@listing', array('filter' => 'recommendations')) }}"><span>your recommendations</span></a></li>
-							<li class="add"><a href="{{ action('BookController@create') }}"><span>create a new book</span></a></li>
-						</ul>
+						<a class="nav-item" href="{{ action('BookController@index') }}"><span>books</span></a>
+                        <a class="nav-add" href="{{ action('BookController@create') }}"></a>
 					</li>
-					<li class="characters"><a href="#"><span>characters</span></a></li>
-					<li class="authors"><a href="#"><span>authors</span></a></li>
+					<li class="characters"><a class="nav-item" href="#"><span>characters</span></a></li>
+					<li class="authors"><a class="nav-item" href="#"><span>authors</span></a></li>
 				</ul>
+                @if(Auth::check())
+                <ul class="nav-secondary">
+                    <li class="settings"><a href="{{ action('UserController@edit') }}"><span>settings</span></a></li>
+                    <li class="logout"><a href="{{ action('UserController@logout') }}"><span>log out</span></a></li>
+                </ul>
+                @endif
 			</div>
 		</nav>
 		<nav id="fixed-nav">
+            @yield('draftstatus')
 			<a href="#" class="logo"></a>
-			<a href="#" id="btn-add-favorite"></a>
+            @if(Auth::check())
+            <!-- need method: verify that user has edit privileges -->
+            <a href="#" class="btn-edit c-btn-icn" id="btn-edit"></a>
+            @endif
+			<a href="#" class="btn-add-favorite c-btn-icn" id="btn-add-favorite"></a>
 		</nav>
 		<div id="active-nav-overlay"></div>
 		<main class="outer-content-wrapper" role="main">
@@ -74,10 +72,13 @@
 		</main>
 		<div id="annotations">
 		</div>
-		<nav id="dev-nav">
+
+		<!--
+        <nav id="dev-nav">
 			<a href="{{ action('UserController@getLogin') }}">Login</a> |
             <a href="#" id="openUtils">Open Utils</a>
 		</nav>
+		-->
 
 <!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
 <script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>

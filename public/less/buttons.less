@@ -1,0 +1,188 @@
+button {
+    background: none;
+    border: 0 none;
+    color: @black;
+    .box-sizing('border-box');
+    text-align: left;
+    padding: 0;
+    margin: 0;
+    font-family: @sansFontFamily;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+// standard buttons
+//----------------------------------------
+
+.btn-stndrd {
+    margin:0;
+    padding: 6px 20px;
+    text-align: center;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.btn-alert {
+    margin: 0 auto;
+    padding: 6px 20px;
+    text-align: center;
+    display: block;
+    text-decoration: none;
+    border-radius: 4px;
+    color: @red;
+    background: @white;
+    border: 2px solid @red;
+    &:disabled, .disabled{
+        border: @gray;
+        color: @gray;
+        background-color: @white;
+    }
+    &:hover, :active {
+        color: @white;
+        background-color: @red;
+    }
+}
+
+// 35px buttons
+//----------------------------------------
+
+.btn-35() {
+    border-radius: 500px;
+    border: 2px solid @grayLighter;
+    display: block;
+    width: 35px;
+    height: 35px;
+}
+
+.btn-add-favorite {
+    position: absolute;
+    top: 25px;
+    right: 25px;
+    .btn-35();
+    &:before {
+        color: @grayLighter;
+        font-size: 20px;
+        content: "\e60d";
+        .k-icons();
+        position: absolute;
+        top: 7px;
+        left: 8px;
+    }
+}
+.btn-edit {
+    position: absolute;
+    top: 25px;
+    right: 75px;
+    .btn-35();
+    &:before {
+        color: @grayLighter;
+        font-size: 18px;
+        content: "\e608";
+        .k-icons();
+        position: absolute;
+        top: 9px;
+        left: 9px;
+    }
+}
+
+
+// 20px buttons
+//----------------------------------------
+
+.btn-20() {
+    border-radius: 500px;
+    border: 1px solid @grayLight;
+    width: 20px;
+    height: 20px;
+}
+
+.btn-fav {
+    .btn-20();
+    position: relative;
+    top: 2px;
+    left: 0;
+    &:before {
+        color: @grayLight;
+        font-size: 10px;
+        content: "\e60d";
+        .k-icons();
+        position: absolute;
+        top: 4px;
+        left: 4px;
+    }
+}
+
+.btn-expandable {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    top: 4px;
+    left: 10px;
+    &:before {
+        color: @grayLighter;
+        font-size: 8px;
+        content: "\e610";
+        .k-icons();
+        position: absolute;
+        top: 6px;
+        left: 8px;
+    }
+}
+
+
+// general buttons
+//----------------------------------------
+
+.logo {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    text-align: left;
+    border-radius: 500px;
+    background-color: @grayDark;
+    @size: 35px;
+    font-size: @size;
+    width: @size;
+    height: @size;
+    display: inline-block;
+    color: @white;
+    font-family: @serifFontFamily;
+    font-weight: @lightWeight;
+    &:before {
+        content: "k";
+        display: inline-block;
+        font-size: 1.1em;
+        line-height: 1em;
+        border-radius: 0 none;
+        text-indent: 0.1em;
+    }
+    &:after {
+        content: ".";
+        left: 0.88em;
+        font-size: 0.8em;
+        display: inline-block;
+        position: absolute;
+        top: 0.23em;
+    }
+    &:hover {
+        &:before {
+            .k-icons();
+            content: "\e617";
+            font-size: 0.4em;
+            bottom: 10px;
+//            line-height: 15em;
+            text-indent: 0.6em;
+            color: @white;
+        }
+        &:after {
+            content: "";
+        }
+    }
+}
+
+.btn-report {
+    position: relative;
+    display: inline-block;
+    float: right;
+    color: @grayLight;
+}

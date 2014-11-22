@@ -1,12 +1,63 @@
+@section('draftstatus')
+    <div id="draft-bar">
+		<h2>editing draft</h2>
+		<p>autosaved 2 mins ago</p>
+	</div>
+@stop
+
+
 @section('content')
 
 <div id="opus">
-	<h1 itemprop="title" id="post-title" name="title" contenteditable="true" data-default-value="Type your title">{{{ $post->title }}}</h1>
+    <header>
+	    <h1 itemprop="title" id="post-title" name="title" contenteditable="true" data-default-value="Type your title">{{{ $post->title }}}</h1>
+    </header>
 	<div id="post-body" contenteditable="true" data-default-value="Write your story">{{ $post->content }}</div>
 	<div id="annotation-markers"></div>
 </div>
-
+<div id="edit-options">
+    <div id="edit-details">
+        <figure class="edit-tags">
+            <h2>tags</h2>
+            <div class="form-body">
+                <form role="tag" method="get" action="/tag">
+					<input class="edit-input" type="text" name="tag" placeholder="Enter a tag">
+					<ul class="edit-tag-list">
+					    <li class="tag"><a href="#">tagone</a></li>
+					    <li class="tag"><a href="#">another</a></li>
+					    <li class="tag"><a href="#">tag</a></li>
+					</ul>
+				</form>
+            </div>
+        </figure>
+        <figure class="edit-rights">
+            <h2>rights and usage</h2>
+            <p>All posts and characters are published under the Attribution-NonCommercial-ShareAlike (CC BY-NC-SA) licesnse. This allows other authors to:</p>
+            <ul>
+                <li>create books with your post</li>
+                <li>create posts using your characters</li>
+            </ul>
+        </figure>
+        <figure class="edit-share">
+            <h2>share</h2>
+            <p>Send this link to friends so they can annotate your draft and provide feedback:</p>
+            <p><a href="#">https://www.kinyelo.com/drafts/23nuk-as4214</a></p>
+        </figure>
+        <figure class="edit-delete">
+            <h2>delete</h2>
+            <p>Deleting this post will permanently erase it, including all characters originating in it and all annotations attached to it.</p>
+            <button class="btn-alert">I understand. Delete this post.</button>
+        </figure>
+    </div>
+    <div id="edit-actions">
+        <button class="edit-more c-link">more</button>
+        <button class="edit-save btn-stndrd c-btn-stndrd">save</button>
+        <button class="edit-publish btn-stndrd c-btn-stndrd">publish</button>
+    </div>
+</div>
 @stop
+
+
 
 
 @section('annotations')

@@ -102,6 +102,10 @@
 	border-top-left-radius: @radius;
 }
 
+.border-top {
+    border-top: 1px solid @grayLighter;
+}
+
 // Drop shadows
 .box-shadow(@shadow) {
 	-webkit-box-shadow: @shadow; // iOS <4.3 & Android <4.1
@@ -177,9 +181,9 @@
 }
 
 .contextual-colors(@color) {
-	#fixed-nav #btn-add-favorite,
-	.content-container .post-container .post-actions a,
-	.content-container .post-container footer a {
+    @colorDark: mix(@color, @black, 80%);
+    @colorLight: mix(@color, @bodyBackgroundColor, 80%);
+    .c-btn-icn {
 		&:hover{
 			border-color: @color;
 			color: @color;
@@ -194,7 +198,29 @@
 				color: @bodyBackgroundColor;
 			}
 		}
+        &:disabled, .disabled{
+
+        }
 	}
+    .c-btn-stndrd {
+        color: white;
+        background: @color;
+        border-bottom: 2px solid @colorDark;
+        &:disabled, .disabled{
+            border: none;
+            color: @gray;
+            background-color: @color;
+        }
+    }
+    .c-link {
+        &:hover, :active, .active{
+            border-color: @color;
+            color: @color;
+            &:before {
+                color: @color;
+            }
+        }
+    }
 	nav li.active a {
 		color: @color;
 	}
@@ -211,12 +237,16 @@
 	nav[role=navigation] {
 		border-top: @pageBorder solid @color;
 	}
+    #edit-options figure h2 {
+        border-top: 1px solid @color;
+        background-color: mix(@color, @bodyBackgroundColor, 10%);
+    }
 }
 
 .container() {
 	padding: 4% 5%;
 	margin: 0 auto;
-	max-width: 1024px;
+	max-width: 600px;
 	width: 90%;
 	display: block;
 }
