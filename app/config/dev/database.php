@@ -48,10 +48,10 @@ return array(
 
 		'mysql' => array(
 			'driver'    => 'mysql',
-			'host'      => 'mysql.kinyelo.com',
+			'host'      => 'localhost',
 			'database'  => 'kinyelo',
-			'username'  => 'kinyelo_user',
-			'password'  => 'K1ny3l0K',
+			'username'  => 'kinyelo',
+			'password'  => 'kinyelo',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_unicode_ci',
 			'prefix'    => '',

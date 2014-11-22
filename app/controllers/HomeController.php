@@ -30,4 +30,28 @@ class HomeController extends BaseController {
 		Log::info(Input::all());
 	}
 
+	public function getTeaser() {
+		$this->layout = View::make('teaser');
+	}
+	public function postTeaser() {
+
+		$validator = Validator::make(
+			Input::all(),
+			array('email' => 'required|email')
+		);
+
+		if ($validator->fails())
+		{
+			return Response::json(array('response' => 0, 'message' => 'Invalid email address'));
+		}
+
+		$email = TeaserEmail::create(array('email_address' => Input::get('email')));
+		if($email) {
+			return Response::json(array('response' => 1));
+		} else {
+			return Response::json(array('response' => 0, 'message' => 'The email address already exists'));
+		}
+
+	}
+
 }

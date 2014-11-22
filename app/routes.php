@@ -11,30 +11,38 @@
 |
 */
 
-Route::get('/', 'HomeController@showWelcome');
-Route::post('/log', 'HomeController@log');
-Route::get('/log', 'HomeController@log');
-Route::get('/policies/terms', 'PolicyController@terms');
+Route::get('/', 'HomeController@getTeaser');
+Route::post('/', 'HomeController@postTeaser');
 
-Route::resource('/user', 'UserController');
+Route::group(array('before' => 'auth'), function() {
 
-Route::get('/dashboard', 'UserController@dashboard');
-Route::get('/user', 'UserController@show');
 
-Route::get('/login', 'UserController@getLogin');
-Route::post('/login', 'UserController@postLogin');
-Route::get('/logout', 'UserController@logout');
+	Route::get('/home', 'HomeController@showWelcome');
+	Route::post('/log', 'HomeController@log');
+	Route::get('/log', 'HomeController@log');
+	Route::get('/policies/terms', 'PolicyController@terms');
 
-Route::get('/signup', 'UserController@create');
-Route::post('/signup', 'UserController@store');
-Route::get('/user/edit', 'UserController@edit');
-Route::post('/user/edit', 'UserController@update');
+	Route::resource('/user', 'UserController');
 
-Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
-Route::get('/posts/lists/{filter?}', 'PostController@listing');
-Route::resource('/posts', 'PostController');
+	Route::get('/dashboard', 'UserController@dashboard');
+	Route::get('/user', 'UserController@show');
 
-Route::get('/posts/{id}/annotations', 'AnnotationController@getAnnotationsForPost');
+	Route::get('/login', 'UserController@getLogin');
+	Route::post('/login', 'UserController@postLogin');
+	Route::get('/logout', 'UserController@logout');
 
-Route::get('/books/lists/{filter?}', 'BookController@listing');
-Route::resource('/books', 'BookController');
+	Route::get('/signup', 'UserController@create');
+	Route::post('/signup', 'UserController@store');
+	Route::get('/user/edit', 'UserController@edit');
+	Route::post('/user/edit', 'UserController@update');
+
+	Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
+	Route::get('/posts/lists/{filter?}', 'PostController@listing');
+	Route::resource('/posts', 'PostController');
+
+	Route::get('/posts/{id}/annotations', 'AnnotationController@getAnnotationsForPost');
+
+	Route::get('/books/lists/{filter?}', 'BookController@listing');
+	Route::resource('/books', 'BookController');
+
+});
