@@ -4,14 +4,20 @@ yum -y update
 wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 wget http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 rpm -Uvh remi-release-6*.rpm epel-release-6*.rpm
-yum -y install httpd.x86_64 gcc make git gettext mod_authz_ldap mod_ssl unzip --disablerepo=epel
+yum -y install httpd.x86_64 gcc make git gettext mod_authz_ldap mod_ssl unzip libssh2 libssh2-devel --disablerepo=epel
 yum -y install php mysql-server php-pear php-devel httpd-devel pcre-devel php-gd php-ldap php-mbstring php-mysql php-pdo php-soap --enablerepo=remi --disablerepo=epel
-yum -y install libmcrypt --enablerepo=epel
+yum -y install libmcrypt nodejs npm --enablerepo=epel
 yum -y install phpmyadmin --enablerepo=remi --disablerepo=epel
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin
 mv /bin/composer.phar /bin/composer
+npm install -g less
 printf "\n" | pecl install apc
 cp -fr /vagrant/resources/apc.ini /etc/php.d/apc.ini
+
+pear channel-discover pear.phing.info
+pear install phing/phing
+pear install VersionControl_Git-0.4.4
+pecl install pecl.php.net/ssh2-0.12
 
 rm -rf /var/www
 ln -fs /vagrant /var/www

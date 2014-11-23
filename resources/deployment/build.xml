@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- can still address unit testing and db migrations, include frontend? less compilation? handling javascripts? rsync staging assets with production -->
+
+<project name="kinyelo" default="build">
+
+    <property name="basedir"            value="/home/kinyelo/kinyelo.com" />
+    <property name="dir.tmp"             value="/tmp/deploy" />
+    <property name="dir.live"           value="${basedir}"/>
+    <property name="dir.packages"          value="${dir.tmp}/packages"/>
+    <property name="dir.release"          value="${dir.tmp}/release"/>
+    <property name="dir.repo"          value="${dir.tmp}/repository"/>
+    <property name="server" value="braeval.dreamhost.com"/>
+    <property name="username.ftp" value="kinyelo"/>
+
+    <target name="build">
+
+        <delete dir="${dir.tmp}" includeemptydirs="true" failonerror="false" />
+        <delete dir="${dir.release}" includeemptydirs="true" failonerror="false" />
+
+        <mkdir dir="${dir.tmp}"/>
+        <mkdir dir="${dir.packages}"/>
+        <mkdir dir="${dir.repo}"/>
+
+        <propertyprompt propertyName="username.github" useExistingValue="false" promptText="GitHub username" />
+
+        <property name="lib.name" value="kinyelo" />
+        <property name="lib.repo" value="https://${username.github}@github.com/iamlemur/kinyelo" />
+        <property name="lib.target"          value=""/>
+        <property name="lib.strip"          value="0"/>
+
+        <echo msg="Now cloning the GitHub repository"/>
+        <echo msg="git clone --branch master ${lib.repo} ${dir.repo}"/>
+        <exec command="git clone --branch master ${lib.repo} ${dir.repo}"></exec>
+
+        <echo msg="git --work-tree=${dir.repo} --git-dir=${dir.repo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"/>
+        <exec command="git --work-tree=${dir.repo} --git-dir=${dir.repo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"></exec>
+
+        <echo msg="Compiling CSS" />
+        <!-- the -x option does not work for some reason -->
+        <echo msg="lessc --no-color -x base.less > ${dir.release}/public/css/base.css ------ from ${dir.release}/public/less" />
+        <exec command="lessc --no-color base.less > ${dir.release}/public/css/base.css" dir="${dir.release}/public/less" />
+
+        <chmod mode="0777">
+            <fileset dir="${dir.release}" >
+                <include name="app/storage/**" />
+            </fileset>
+        </chmod>
+
+        <exec command="composer install" dir="${dir.release}/" />
+
+        <phingcall target="package"/>
+
+        <phingcall target="upload"/>
+
+    </target>
+
+    <target name="package">
+
+        <tar destfile="${dir.packages}/kinyelo.tar.gz" prefix="${dir.live}/" compression="gzip">
+            <fileset dir="${dir.release}">
+                <include name="**" />
+            </fileset>
+        </tar>
+
+    </target>
+
+    <target name="upload">
+
+        <echo message="Uploading packages"/>
+
+        <exec command="read -s -p &quot;Enter password: &quot; password &amp;&amp; echo &quot;$password&quot; " outputProperty="password"/>
+        <scp username="${username.ftp}" password="${password}" host="${server}" todir="${dir.live}">
+            <fileset dir="${dir.packages}">
+                <include name="*.tar.gz"/>
+            </fileset>
+        </scp>
+        <echo message="deleting the release directory on target machine"/>
+        <echo message="extracting uploaded packages"/>
+        <echo message="removing uploaded packages"/>
+        <echo message="running commands: tar -Ppzxf ${dir.live}/kinyelo.tar.gz; rm -vf ${dir.live}/kinyelo.tar.gz"/>
+        <ssh username="${username.ftp}" password="${password}" host="${server}" command="tar -Ppzxf ${dir.live}/kinyelo.tar.gz; rm -vf ${dir.live}/kinyelo.tar.gz" />
+
+    </target>
+
+
+</project>

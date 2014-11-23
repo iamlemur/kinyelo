@@ -14,8 +14,13 @@
 Route::get('/', 'HomeController@getTeaser');
 Route::post('/', 'HomeController@postTeaser');
 
-Route::group(array('before' => 'auth'), function() {
+Route::get('/login', 'UserController@getLogin');
+Route::post('/login', 'UserController@postLogin');
 
+Route::get('/signup', 'UserController@create');
+Route::post('/signup', 'UserController@store');
+
+Route::group(array('before' => 'auth'), function() {
 
 	Route::get('/home', 'HomeController@showWelcome');
 	Route::post('/log', 'HomeController@log');
@@ -27,12 +32,8 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('/dashboard', 'UserController@dashboard');
 	Route::get('/user', 'UserController@show');
 
-	Route::get('/login', 'UserController@getLogin');
-	Route::post('/login', 'UserController@postLogin');
 	Route::get('/logout', 'UserController@logout');
 
-	Route::get('/signup', 'UserController@create');
-	Route::post('/signup', 'UserController@store');
 	Route::get('/user/edit', 'UserController@edit');
 	Route::post('/user/edit', 'UserController@update');
 
