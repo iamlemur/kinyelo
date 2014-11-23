@@ -10,6 +10,9 @@
     <property name="dir.packages"          value="${dir.tmp}/packages"/>
     <property name="dir.release"          value="${dir.tmp}/release"/>
     <property name="dir.repo"          value="${dir.tmp}/repository"/>
+    <property name="dir.repo.kinyelo"          value="${dir.repo}/kinyelo"/>
+    <property name="dir.repo.closure"          value="${dir.repo}/closure"/>
+    <property name="dir.repo.templates"          value="${dir.repo}/closure-templates"/>
     <property name="server" value="braeval.dreamhost.com"/>
     <property name="username.ftp" value="kinyelo"/>
 
@@ -24,22 +27,48 @@
 
         <propertyprompt propertyName="username.github" useExistingValue="false" promptText="GitHub username" />
 
-        <property name="lib.name" value="kinyelo" />
         <property name="lib.repo" value="https://${username.github}@github.com/iamlemur/kinyelo" />
-        <property name="lib.target"          value=""/>
         <property name="lib.strip"          value="0"/>
 
         <echo msg="Now cloning the GitHub repository"/>
-        <echo msg="git clone --branch master ${lib.repo} ${dir.repo}"/>
-        <exec command="git clone --branch master ${lib.repo} ${dir.repo}"></exec>
+        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.kinyelo}"/>
+        <exec command="git clone --branch master ${lib.repo} ${dir.repo.kinyelo}"></exec>
 
-        <echo msg="git --work-tree=${dir.repo} --git-dir=${dir.repo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"/>
-        <exec command="git --work-tree=${dir.repo} --git-dir=${dir.repo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"></exec>
+        <echo msg="git --work-tree=${dir.repo.kinyelo} --git-dir=${dir.repo.kinyelo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"/>
+        <exec command="git --work-tree=${dir.repo.kinyelo} --git-dir=${dir.repo.kinyelo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"></exec>
+
+        <property name="lib.repo" value="https://github.com/google/closure-library" override="true" />
+        <property name="lib.strip" value="1" override="true" />
+        <property name="lib.paths"          value="closure/goog"/>
+
+        <echo msg="Now cloning the GitHub repository"/>
+        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.closure}"/>
+        <exec command="git clone --branch master ${lib.repo} ${dir.repo.closure}"></exec>
+
+        <echo msg="git --work-tree=${dir.repo.closure} --git-dir=${dir.repo.closure}/.git archive master ${lib.paths} | tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js"/>
+        <exec command="git --work-tree=${dir.repo.closure} --git-dir=${dir.repo.closure}/.git archive master ${lib.paths} | tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js"></exec>
+
+        <property name="lib.repo" value="https://github.com/google/closure-templates" override="true" />
+        <property name="lib.strip" value="1" override="true" />
+        <property name="lib.paths"          value="javascript" override="true" />
+
+        <echo msg="Now cloning the GitHub repository"/>
+        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.templates}"/>
+        <exec command="git clone --branch master ${lib.repo} ${dir.repo.templates}"></exec>
+
+        <echo msg="git --work-tree=${dir.repo.templates} --git-dir=${dir.repo.templates}/.git archive master ${lib.paths} | (mkdir ${dir.release}/public/js/soy &amp;&amp; tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js/soy)"/>
+        <exec command="git --work-tree=${dir.repo.templates} --git-dir=${dir.repo.templates}/.git archive master ${lib.paths} | (mkdir ${dir.release}/public/js/soy &amp;&amp; tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js/soy)"></exec>
+
 
         <echo msg="Compiling CSS" />
         <!-- the -x option does not work for some reason -->
         <echo msg="lessc --no-color -x base.less > ${dir.release}/public/css/base.css ------ from ${dir.release}/public/less" />
         <exec command="lessc --no-color base.less > ${dir.release}/public/css/base.css" dir="${dir.release}/public/less" />
+
+        <echo msg="Compiling JS" />
+        <!-- the -x option does not work for some reason -->
+        <echo msg="java -jar /var/www/plovr/plovr.jar build ${dir.release}/plovr/kinyelo-config.js > ${dir.release}/public/js/compiled.js" />
+        <exec command="java -jar /var/www/plovr/plovr.jar build ${dir.release}/plovr/kinyelo-config.js > ${dir.release}/public/js/compiled.js" />
 
         <chmod mode="0777">
             <fileset dir="${dir.release}" >
