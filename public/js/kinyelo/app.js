@@ -7,7 +7,15 @@ goog.require('kinyelo.Book');
  * @constructor
  */
 kinyelo.App = function() {
-    //this.book_ = new kinyelo.Book();
-    this.post_ = new kinyelo.Post();
+    try {
+        this.book_ = new kinyelo.Book();
+    } catch(e) {
+
+    }
+    try {
+        this.post_ = new kinyelo.Post();
+    } catch(e) {
+
+    }
 }
 
