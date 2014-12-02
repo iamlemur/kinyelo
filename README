@@ -26,6 +26,8 @@ cp soyutils.js <<project directory>>/public/js/soy/
 cp soyutils_usegoog.js <<project directory>>/public/js/soy/
 ```
 
+Will investigate later to move this into a build script or dependency management system like composer.
+
 # Starting up the server
 
 From here down, run these commands every time in the deployed directory when starting up.
@@ -45,7 +47,19 @@ This will start up the virtual machine and then return to the bash prompt
 
 # Migrations
 
-**Michael: please add info about migrations. How are they run in Laravel? Which ones need to be run?**
+When starting with a new environment, you will want to run the migrations to set up the database and the seeds to
+populate the database.  To create the database, run:
+
+> php /var/www/artisan migrate
+
+To populate the database, run:
+
+> php /var/www/artisan db:seed
+
+You can run the migration command at any time and will need to for some updates. I will investigate if seeding is
+smart enough to not seed identical data more than once.
+
+For more information, see: http://laravel.com/docs/4.2/migrations#database-seeding
 
 # Notes
 
