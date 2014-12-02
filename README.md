@@ -48,7 +48,17 @@ This will start up the virtual machine and then return to the bash prompt
 # Migrations
 
 When starting with a new environment, you will want to run the migrations to set up the database and the seeds to
-populate the database.  To create the database, run:
+populate the database.  
+
+From the deployed directory, run:
+
+> vagrant ssh
+
+To sudo into root: run
+
+> sudo su - root
+
+To create the database, run:
 
 > php /var/www/artisan migrate
 
