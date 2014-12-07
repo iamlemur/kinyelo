@@ -7,7 +7,7 @@ goog.require('goog.ui.CustomButtonRenderer');
  * @constructor
  * @extends {goog.ui.CustomButtonRenderer}
  */
-kinyelo.ui.ButtonRenderer = function() {
+kinyelo.ui.annotate.ButtonRenderer = function() {
     goog.base(this);
 }
 goog.inherits(kinyelo.ui.annotate.ButtonRenderer, goog.ui.CustomButtonRenderer);

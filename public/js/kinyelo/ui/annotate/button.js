@@ -1,6 +1,7 @@
 goog.provide('kinyelo.ui.annotate.Button');
 
 goog.require('goog.ui.CustomButton');
+goog.require('kinyelo.ui.annotate.ButtonRenderer');
 
 /**
  * @inheritDoc
