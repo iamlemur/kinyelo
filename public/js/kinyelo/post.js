@@ -85,7 +85,7 @@ kinyelo.Post.prototype.loadAnnotations_ = function(e) {
         this.annotationsContainer = new kinyelo.ui.annotate.Container(this.annotations);
 
         this.eventRegister_.listen(this.annotationsContainer, kinyelo.events.annotations.EventType.NEW_ANNOTATION, function(e) {
-            //this.handleNewAnnotation(e);
+            this.handleNewAnnotation(e);
         }, false, this.markerContainer_);
 
         this.eventRegister_.listen(this.markerContainer_, kinyelo.events.annotations.EventType.MARKER_CLICKED, function(e) {

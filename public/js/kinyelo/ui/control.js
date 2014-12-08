@@ -1,6 +1,7 @@
 goog.provide('kinyelo.ui.Control');
 
 goog.require('goog.ui.Control');
+goog.require('goog.ui.Component');
 
 /**
  * @inheritDoc
@@ -8,6 +9,8 @@ goog.require('goog.ui.Control');
  */
 kinyelo.ui.Control = function() {
     goog.ui.Control.call(this);
+    this.setSupportedState(goog.ui.Component.State.HOVER, true);
+    this.setAutoStates(goog.ui.Component.State.HOVER, false);
 }
 goog.inherits(kinyelo.ui.Control, goog.ui.Control);
 
@@ -21,18 +24,14 @@ kinyelo.ui.Control.IdFragment = {
  * @inheritDoc
  */
 kinyelo.ui.Control.prototype.enterDocument = function() {
-    var icon = this.getElementByFragment(kinyelo.ui.Test.IdFragment.ICON);
-    this.getHandler().listen(icon, goog.events.EventType.HOVER, function(e) { console.log('hovered over icon'); });
+    goog.base(this, 'enterDocument');
+    var icon = this.getElementByFragment(kinyelo.ui.Control.IdFragment.ICON);
+    this.getHandler().listen(icon, [goog.ui.Component.EventType.HIGHLIGHT,
+        goog.ui.Component.EventType.UNHIGHLIGHT], function(e) { console.log('hovered over icon'); });
 }
 
 kinyelo.ui.Control.prototype.createDom = function() {
-    var dom = this.dom_;
-    var iconId = this.makeId(kinyelo.ui.Control.IdFragment.ICON);
-    var labelId = this.makeId(kinyelo.ui.Control.IdFragment.LABEL);
-    var element = dom.createDom('div', undefined,
-        dom.createDom('div', {'id': iconId, 'class': 'icon'}),
-        dom.createDom('span', {'id': labelId }, 'asiral'));
-    this.setElementInternal(element);
+
 }
 
 kinyelo.ui.Control.prototype.canDecorate = goog.functions.FALSE;

@@ -1,7 +1,9 @@
 goog.provide('kinyelo.ui.annotate.MarkerRenderer');
 
 goog.require('kinyelo.ui.ControlRenderer');
+goog.require('goog.ui.ControlRenderer');
 goog.require('goog.dom.TagName');
+//goog.require('kinyelo.ui.annotate.Marker');
 
 /**
  *
@@ -10,7 +12,7 @@ goog.require('goog.dom.TagName');
 kinyelo.ui.annotate.MarkerRenderer = function() {
     goog.ui.ControlRenderer.call(this);
 }
-goog.inherits(kinyelo.ui.annotate.MarkerRenderer, kinyelo.ui.ControlRenderer);
+goog.inherits(kinyelo.ui.annotate.MarkerRenderer, goog.ui.ControlRenderer);
 goog.addSingletonGetter(kinyelo.ui.annotate.MarkerRenderer);
 
 /**
@@ -31,13 +33,31 @@ kinyelo.ui.annotate.MarkerRenderer.prototype.getCssClass = function() {
     return kinyelo.ui.annotate.MarkerRenderer.CSS_CLASS;
 };
 
+kinyelo.ui.annotate.MarkerRenderer.IdFragment = {
+    ICON: 'ic',
+    LABEL: 'la'
+};
+
 /**
  *
  * @param {kinyelo.ui.annotate.Marker} control
- * @returns {!HTMLElement}
+ * @inheritDoc
  */
 kinyelo.ui.annotate.MarkerRenderer.prototype.createDom = function(control) {
+
+
     var classNames = this.getClassNames(control).join(' ');
+
+    var dom = control.getDomHelper();
+    console.log(kinyelo.ui.annotate.MarkerRenderer.IdFragment.ICON);
+    var iconId = control.makeId(kinyelo.ui.annotate.MarkerRenderer.IdFragment.ICON);
+    var labelId = control.makeId(kinyelo.ui.annotate.MarkerRenderer.IdFragment.LABEL);
+    var element = dom.createDom('div', null,
+        [dom.createDom('div', {'id': iconId, 'class': 'icon'}),
+        dom.createDom('span', {'id': labelId }, 'asiral')]);
+    return element;
+
+    /*
 
     var dom = control.getDomHelper();
     var controlElement = dom.createDom('span', classNames,
@@ -46,6 +66,7 @@ kinyelo.ui.annotate.MarkerRenderer.prototype.createDom = function(control) {
     this.setAriaStates(control, controlElement);
 
     return controlElement;
+    */
 };
 
 /**
