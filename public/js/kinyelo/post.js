@@ -17,6 +17,8 @@ goog.require('goog.structs.Map');
 goog.require('goog.Uri.QueryData');
 goog.require('goog.ui.ContainerScroller');
 goog.require('goog.editor.Field');
+goog.require('kinyelo.editor.Anchor');
+goog.require('kinyelo.User');
 
 
 /**
@@ -26,85 +28,13 @@ goog.require('goog.editor.Field');
  */
 kinyelo.Post = function() {
 
-    /**
-     * @type {kinyelo.editor.SingleLineField}
-     * @private
-     */
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
-
-    /**
-     * @type {kinyelo.editor.AdvancedField}
-     * @private
-     */
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
-
-    /**
-     * @type {goog.events.EventHandler}
-     * @private
-     */
     this.eventRegister_ = new goog.events.EventHandler(this);
-
-    this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
-    this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
 
     this.retrieveAnnotations_();
 }
 goog.inherits(kinyelo.Post, goog.events.EventTarget);
-
-/**
- *
- * @param {goog.events.Event} e
- */
-kinyelo.Post.prototype.handleHover_ = function(e) {
-    var ancestor = goog.dom.getAncestor(e.target, goog.editor.node.isBlockTag, true);
-    var marker = this.markerContainer_.getChild(ancestor.id);
-    if(!goog.isNull(marker)) {
-        if(!marker.isActive()) {
-            console.log('setting marker active');
-            marker.setActive();
-        }
-    }
-}
-
-/**
- *
- * @private
- */
-kinyelo.Post.prototype.loadAnnotations_ = function(e) {
-
-    var xhr = e.target;
-    if(xhr.isComplete()) {
-
-        console.log(xhr.getResponseJson());
-        this.sampleData_ = xhr.getResponseJson();
-
-        this.markerContainer_ = new kinyelo.ui.annotate.MarkerContainer();
-        this.markerContainer_.render(goog.dom.getElement('annotation-markers'));
-
-        this.annotations = new kinyelo.annotate.Container(this.sampleData_);
-        this.annotationsContainer = new kinyelo.ui.annotate.Container(this.annotations);
-
-        this.eventRegister_.listen(this.annotationsContainer, kinyelo.events.annotations.EventType.NEW_ANNOTATION, function(e) {
-            this.handleNewAnnotation(e);
-        }, false, this.markerContainer_);
-
-        this.eventRegister_.listen(this.markerContainer_, kinyelo.events.annotations.EventType.MARKER_CLICKED, function(e) {
-            this.handleMarkerClick(e);
-        }, false, this.annotationsContainer);
-
-        this.eventRegister_.listen(this.rte_.getElement(), [
-            goog.events.EventType.MOUSEOVER,
-            goog.events.EventType.MOUSEMOVE,
-            goog.events.EventType.MOUSEOUT
-        ], this.handleHover_);
-
-        this.annotationsContainer.render(goog.dom.getElement('annotations'));
-        this.annotationsScroller = new goog.ui.ContainerScroller(this.annotationsContainer);
-
-    }
-
-
-}
 
 /**
  * @type {string}
@@ -119,41 +49,179 @@ kinyelo.Post.POST_CONTAINER_ID = 'post-body';
 kinyelo.Post.POST_TITLE_ID = 'post-title';
 
 /**
- * @type {kinyelo.editor.Field=}
- * @private
- */
-kinyelo.Post.prototype.title_ = null;
-
-/**
- * @type {kinyelo.editor.Field=}
- * @private
- */
-kinyelo.Post.prototype.rte_ = null;
-
-/**
- * @type {goog.events.EventHandler=}
- * @private
- */
-kinyelo.Post.prototype.eventRegister_ = null;
-
-
-/**
  * @type {goog.structs.Map}
  * @const
  */
 kinyelo.Post.postHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
 
 /**
+ * @type {goog.events.EventHandler}
+ * @private
+ */
+kinyelo.Post.prototype.eventRegister_;
+
+/**
+ * @type {kinyelo.editor.AdvancedField}
+ * @private
+ */
+kinyelo.Post.prototype.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
+/**
+ * @type {kinyelo.editor.SingleLineField}
+ * @private
+ */
+kinyelo.Post.prototype.title_;
+
+/**
  * @type {number=}
  * @private
  */
-kinyelo.Post.prototype.post_id_ = null;
+kinyelo.Post.prototype.post_id_;
 
 /**
- * @type {Array}
+ * @type {Object}
+ */
+kinyelo.Post.prototype.highlights;
+
+/**
+ * @type {Object}
+ */
+kinyelo.Post.prototype.anchors;
+
+/**
+ * @type {Object}
+ */
+kinyelo.Post.prototype.users;
+
+/**
+ * @type {Object}
+ */
+kinyelo.Post.prototype.annotations;
+
+/**
+ *
+ * @param node {Node}
+ * @returns {boolean}
+ */
+kinyelo.Post.isAnnotatableNode = function(node) {
+    return goog.editor.node.isBlockTag(node)
+    && goog.editor.node.isEditable(node) &&
+    node.tagName != goog.dom.TagName.SECTION;
+}
+
+
+/**
+ *
  * @private
  */
-kinyelo.Post.prototype.annotatableNodes_;
+kinyelo.Post.prototype.retrieveAnnotations_ = function() {
+    //this.sampleData_ = kinyelo.Post.sampleAnnotations;
+    //TODO: fix these hard-coded urls
+    var url = "/posts/1/annotations";
+    goog.net.XhrIo.send(url, goog.bind(this.loadAnnotations_, this));
+}
+
+
+/**
+ *
+ * @private
+ */
+kinyelo.Post.prototype.loadAnnotations_ = function(e) {
+
+    var xhr = e.target;
+    if(xhr.isComplete()) {
+
+        //get all anchors in the RTE of post ready
+        var anchors = goog.dom.findNodes(this.rte_.getElement(), kinyelo.Post.isAnnotatableNode);
+
+        //go through all the anchors and create objects for them
+        goog.array.forEach(anchors, function(anchor) {
+            goog.object.add(this.anchors, anchor.id, new kinyelo.editor.Anchor(anchor.id));
+        }, this);
+
+
+        //retrieve JSON
+        var response = xhr.getResponseJson();
+
+        //get all the annotations in a map
+        this.annotations = goog.array.toObject(response.annotations, function(annotation) {
+            return annotation.id;
+        });
+
+        //get all the highlights in a map
+        if(!goog.isNull(response.highlights)) {
+            this.highlights = goog.array.toObject(response.highlights, function(highlight) {
+                return highlight.id;
+            });
+
+            //iterate through annotations to see if highlight is reference
+            //then check for existence and add to anchor
+            goog.array.forEach(response.annotations, function(annotation) {
+                if(annotation.highlight_id != null) {
+                    if(goog.object.containsKey(this.highlights, annotation.highlight_id)) {
+                        var anchor = goog.object.get(this.anchors, annotation.anchor);
+                        anchor.addHighlight(annotation.id, goog.object.get(this.highlights, annotation.highlight_id));
+                    }
+                }
+            }, this);
+
+        }
+
+        //
+        if(!goog.isNull(response.self)) {
+            this.currentUser = new kinyelo.User(response.self);
+            goog.object.add(this.users, response.self.id, this.currentUser);
+        }
+
+        if(!goog.isNull(response.users)) {
+            goog.array.forEach(response.users, function(user) {
+                goog.object.add(this.users, user.id, new kinyelo.User(user));
+            }, this);
+        }
+
+        this.markerContainer = new kinyelo.ui.annotate.MarkerContainer();
+        this.markerContainer.render(goog.dom.getElement('annotation-markers'));
+
+        this.annotationsModel = new kinyelo.annotate.Container(this.currentUser, this.annotations, this.users);
+        this.annotationsContainer = new kinyelo.ui.annotate.Container(this.annotationsModel);
+
+        this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
+        this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
+
+        this.eventRegister_.listen(
+            this.markerContainer,
+            kinyelo.events.annotations.EventType.MARKER_CLICKED,
+            function(e) {
+                console.log('marker clicked');
+            },
+            false);
+    }
+
+}
+
+kinyelo.Post.prototype.initListeners = function() {
+    //clear all first
+
+    /*
+
+    this.eventRegister_.listen(
+        this.annotationsContainer,
+        kinyelo.events.annotations.EventType.NEW_ANNOTATION,
+        function(e) {
+            this.handleNewAnnotation(e);
+        },
+        false,
+        this.markerContainer
+    );
+
+    this.eventRegister_.listen(this.rte_.getElement(), [
+        goog.events.EventType.MOUSEOVER,
+        goog.events.EventType.MOUSEMOVE,
+        goog.events.EventType.MOUSEOUT
+    ], this.handleHover_);
+    */
+
+}
+
 
 /**
  *
@@ -193,6 +261,17 @@ kinyelo.Post.prototype.savePost_ = function(e) {
     }
     var postData = goog.Uri.QueryData.createFromMap(postMap);
     goog.net.XhrIo.send(url, callback, 'POST', postData.toString(), kinyelo.Post.postHeaders);
+}
+
+
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+kinyelo.Post.prototype.handleHover_ = function(e) {
+    var ancestor = goog.dom.getAncestor(e.target, kinyelo.Post.isAnnotatableNode, true);
+    //ancestor.id
+    console.log(e);
 }
 
 
@@ -236,18 +315,6 @@ kinyelo.Post.prototype.loadPost = function(post) {
 }*/
 
 
-/**
- *
- * @private
- */
-kinyelo.Post.prototype.retrieveAnnotations_ = function() {
-    //this.sampleData_ = kinyelo.Post.sampleAnnotations;
-    //TODO: fix these hard-coded urls
-    var url = "/posts/1/annotations";
-    goog.net.XhrIo.send(url, goog.bind(this.loadAnnotations_, this));
-}
-
-
 
 kinyelo.Post.sampleAnnotations = {
     "self": {
@@ -258,7 +325,7 @@ kinyelo.Post.sampleAnnotations = {
         },
         "url": "/authors/asiral"
     },
-    "authors": [
+    "users": [
         {
             "username": "asiral",
             "avatar": {

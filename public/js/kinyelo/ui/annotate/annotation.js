@@ -6,41 +6,23 @@ goog.require('goog.ui.Control');
 
 /**
  *
- * @param {kinyelo.annotate.Annotation=} annotation
- * @param {kinyelo.ui.annotate.AnnotationRenderer} renderer
+ * @param {kinyelo.annotate.Annotation=} model
  * @constructor
  * @extends {goog.ui.Control}
  */
-kinyelo.ui.annotate.Annotation = function(annotation, renderer) {
-    goog.base(this, null /* content*/, renderer);
-    //TODO: set supported states
-    if(!annotation) {
-        //TODO: create empty annotation typedef here
-    }
-    console.log(annotation);
-    this.setModel(annotation);
+kinyelo.ui.annotate.Annotation = function(model) {
+    goog.base(this);
+
+    this.setModel(model);
+    //TODO: set the supported states, p231
+    this.setSupportedState(goog.ui.Component.State.OPENED, true);
 
 }
 goog.inherits(kinyelo.ui.annotate.Annotation, goog.ui.Control);
-
+goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Annotation, kinyelo.ui.annotate.AnnotationRenderer);
 
 /**
  * return {!kinyelo.annotate.Annotation}
  * @override
  */
 kinyelo.ui.annotate.Annotation.prototype.getModel;
-
-/**
- * @inheritDoc
- */
-kinyelo.ui.annotate.Annotation.prototype.enterDocument = function() {
-    goog.base(this, 'enterDocument');
-    //TODO: add listeners
-    this.dispatchEvent(kinyelo.events.annotations.EventType.NEW_ANNOTATION);
-}
-
-
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Annotation, kinyelo.ui.annotate.AnnotationRenderer);
-
-goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.AnnotationRenderer.CSS_CLASS,
-    function() { return new kinyelo.ui.annotate.Annotation(); });

@@ -38,7 +38,6 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation
     var el = this.domHelper.createDom(
         'li', this.getClassNames(annotation).join(' '), div);
 
-
     this.setAriaStates(annotation, el);
 
     return el;

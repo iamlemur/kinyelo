@@ -16,7 +16,7 @@ goog.require('kinyelo.events.annotations');
  * @extends {goog.ui.Control}
  */
 kinyelo.ui.annotate.Marker = function(anchor) {
-    kinyelo.ui.Control.call(this);
+    goog.ui.Control.call(this);
     /**
      *
      * @type {string}
@@ -24,10 +24,11 @@ kinyelo.ui.annotate.Marker = function(anchor) {
      */
     this.contentId_ = anchor;
     this.updateCount();
-    //goog.events.setSupportedState(goog.ui.Component.State.HOVER, true);
-    //goog.events.setAutoStates(goog.ui.Component.State.HOVER, false);
-    goog.events.listen(this, goog.ui.Component.EventType.ACTION, this.handleClick);
-    //goog.events.listen(this, goog.ui.Component.EventType.HOVER, this.handleHover);
+
+    this.eventRegister_ = new goog.events.EventHandler(this);
+
+    this.eventRegister_.listen(this, goog.ui.Component.EventType.ACTION, this.handleClick);
+
 }
 goog.inherits(kinyelo.ui.annotate.Marker, goog.ui.Control);
 goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Marker, kinyelo.ui.annotate.MarkerRenderer);
@@ -61,11 +62,8 @@ kinyelo.ui.annotate.Marker.prototype.updatePosition = function() {
 }
 
 kinyelo.ui.annotate.Marker.prototype.handleClick = function(e) {
-    console.log('getting actions', e.target);
-    console.log(this.isActive());
     this.dispatchEvent(kinyelo.events.annotations.EventType.MARKER_CLICKED);
 }
-
 
 /**
  * @returns {number}
@@ -84,12 +82,7 @@ kinyelo.ui.annotate.Marker.prototype.getId = function() {
     return this.contentId_;
 };
 
-kinyelo.ui.annotate.Marker.prototype.enterDocument = function() {
-    goog.base(this, 'enterDocument');
-    var icon = this.getElementByFragment(kinyelo.ui.Control.IdFragment.ICON);
-    this.getHandler().listen(icon, [goog.ui.Component.EventType.HIGHLIGHT,
-        goog.ui.Component.EventType.UNHIGHLIGHT], function(e) { console.log('hovered over icon'); });
-}
+
 
 /**
  *

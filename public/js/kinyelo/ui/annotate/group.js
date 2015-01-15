@@ -2,7 +2,7 @@ goog.provide('kinyelo.ui.annotate.Group');
 
 goog.require('goog.ui.Control');
 goog.require('goog.ui.Component.State');
-goog.require('kinyelo.annotate.Group');
+goog.require('kinyelo.annotate.Anchor');
 goog.require('kinyelo.ui.annotate.GroupRenderer');
 
 
@@ -15,7 +15,7 @@ goog.require('kinyelo.ui.annotate.GroupRenderer');
  * @extends {goog.ui.Control}
  */
 kinyelo.ui.annotate.Group = function(id, group, renderer) {
-    goog.base(this, null /* content */, renderer);
+    goog.base(this);
     //TODO: set the supported states, p231
     this.setSupportedState(goog.ui.Component.State.OPENED, true);
     /**
@@ -24,7 +24,7 @@ kinyelo.ui.annotate.Group = function(id, group, renderer) {
      */
     this.contentId_ = id;
     if(!group) {
-        group = new kinyelo.annotate.Group();
+        group = new kinyelo.annotate.Anchor();
     }
     this.setModel(group);
 

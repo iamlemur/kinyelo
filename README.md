@@ -73,7 +73,8 @@ For more information, see: http://laravel.com/docs/4.2/migrations#database-seedi
 
 # Notes
 
-https://github.com/mitchellh/vagrant/issues/3341 -- fucking huge bug
+http://stackoverflow.com/questions/26482474/vagrant-error-failed-to-mount-folders-in-linux-guest
+
 http://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces -- regarding the chosen IP
 
 Comment out this.book_ or this.post_ in /public/js/kinyelo/app.js depending on what you're viewing

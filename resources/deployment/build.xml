@@ -2,95 +2,163 @@
 
 <!-- can still address unit testing and db migrations, include frontend? less compilation? handling javascripts? rsync staging assets with production -->
 
-<project name="kinyelo" default="build">
+<project name="kinyelo" default="local">
 
-    <property name="basedir"            value="/home/kinyelo/kinyelo.com" />
-    <property name="dir.tmp"             value="/tmp/deploy" />
-    <property name="dir.live"           value="${basedir}"/>
-    <property name="dir.packages"          value="${dir.tmp}/packages"/>
-    <property name="dir.release"          value="${dir.tmp}/release"/>
-    <property name="dir.repo"          value="${dir.tmp}/repository"/>
-    <property name="dir.repo.kinyelo"          value="${dir.repo}/kinyelo"/>
-    <property name="dir.repo.closure"          value="${dir.repo}/closure"/>
-    <property name="dir.repo.templates"          value="${dir.repo}/closure-templates"/>
-    <property name="server" value="braeval.dreamhost.com"/>
-    <property name="username.ftp" value="kinyelo"/>
-
-    <target name="build">
-
-        <delete dir="${dir.tmp}" includeemptydirs="true" failonerror="false" />
-        <delete dir="${dir.release}" includeemptydirs="true" failonerror="false" />
-
-        <mkdir dir="${dir.tmp}"/>
-        <mkdir dir="${dir.packages}"/>
-        <mkdir dir="${dir.repo}"/>
-
-        <propertyprompt propertyName="username.github" useExistingValue="false" promptText="GitHub username" />
-
-        <property name="lib.repo" value="https://${username.github}@github.com/iamlemur/kinyelo" />
-        <property name="lib.strip"          value="0"/>
-
-        <echo msg="Now cloning the GitHub repository"/>
-        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.kinyelo}"/>
-        <exec command="git clone --branch master ${lib.repo} ${dir.repo.kinyelo}"></exec>
-
-        <echo msg="git --work-tree=${dir.repo.kinyelo} --git-dir=${dir.repo.kinyelo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"/>
-        <exec command="git --work-tree=${dir.repo.kinyelo} --git-dir=${dir.repo.kinyelo}/.git archive master | (mkdir ${dir.release} &amp;&amp; tar  -x -C ${dir.release})"></exec>
-
-        <property name="lib.repo" value="https://github.com/google/closure-library" override="true" />
-        <property name="lib.strip" value="1" override="true" />
-        <property name="lib.paths"          value="closure/goog"/>
-
-        <echo msg="Now cloning the GitHub repository"/>
-        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.closure}"/>
-        <exec command="git clone --branch master ${lib.repo} ${dir.repo.closure}"></exec>
-
-        <echo msg="git --work-tree=${dir.repo.closure} --git-dir=${dir.repo.closure}/.git archive master ${lib.paths} | tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js"/>
-        <exec command="git --work-tree=${dir.repo.closure} --git-dir=${dir.repo.closure}/.git archive master ${lib.paths} | tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js"></exec>
-
-        <property name="lib.repo" value="https://github.com/google/closure-templates" override="true" />
-        <property name="lib.strip" value="1" override="true" />
-        <property name="lib.paths"          value="javascript" override="true" />
-
-        <echo msg="Now cloning the GitHub repository"/>
-        <echo msg="git clone --branch master ${lib.repo} ${dir.repo.templates}"/>
-        <exec command="git clone --branch master ${lib.repo} ${dir.repo.templates}"></exec>
-
-        <echo msg="git --work-tree=${dir.repo.templates} --git-dir=${dir.repo.templates}/.git archive master ${lib.paths} | (mkdir ${dir.release}/public/js/soy &amp;&amp; tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js/soy)"/>
-        <exec command="git --work-tree=${dir.repo.templates} --git-dir=${dir.repo.templates}/.git archive master ${lib.paths} | (mkdir ${dir.release}/public/js/soy &amp;&amp; tar --strip-components=${lib.strip} -x -C ${dir.release}/public/js/soy)"></exec>
+    <property name="dir.local.tmp"             value="/tmp/build" />
+    <property name="dir.local.packages"          value="${dir.local.tmp}/packages"/>
+    <property name="dir.local.repos"          value="${dir.local.tmp}/repositories"/>
 
 
-        <echo msg="Compiling CSS" />
-        <!-- the -x option does not work for some reason -->
-        <echo msg="lessc --no-color -x base.less > ${dir.release}/public/css/base.css ------ from ${dir.release}/public/less" />
-        <exec command="lessc --no-color base.less > ${dir.release}/public/css/base.css" dir="${dir.release}/public/less" />
+    <target name="prepare">
 
-        <echo msg="Compiling JS" />
-        <!-- the -x option does not work for some reason -->
-        <echo msg="java -jar /var/www/plovr/plovr.jar build ${dir.release}/plovr/kinyelo-config.js > ${dir.release}/public/js/compiled.js" />
-        <exec command="java -jar /var/www/plovr/plovr.jar build ${dir.release}/plovr/kinyelo-config.js > ${dir.release}/public/js/compiled.js" />
+        <delete dir="${dir.local.tmp}" includeemptydirs="true" failonerror="false" />
+        <mkdir dir="${dir.local.tmp}"/>
+        <mkdir dir="${dir.local.packages}"/>
+        <mkdir dir="${dir.local.repos}"/>
+        <mkdir dir="${dir.local.release}"/>
 
-        <chmod mode="0777">
-            <fileset dir="${dir.release}" >
-                <include name="app/storage/**" />
-            </fileset>
-        </chmod>
+    </target>
 
-        <exec command="composer install" dir="${dir.release}/" />
 
+    <target name="production">
+
+        <property name="basedir"            value="/home/kinyelo/kinyelo.com" />
+        <property name="server" value="braeval.dreamhost.com"/>
+        <property name="username.ftp" value="kinyelo"/>
+        <property name="dir.local.release"          value="${dir.local.tmp}/release"/>
+
+        <phingcall target="prepare" />
+        <propertyprompt propertyName="username.github" promptText="GitHub username" />
+        <propertyprompt propertyName="lib.branch" useExistingValue="false" promptText="Branch to deploy" />
+        <phingcall target="kinyelo" />
+        <phingcall target="closure" />
+        <phingcall target="closure-templates" />
+        <phingcall target="compile" />
+        <phingcall target="switch" />
         <phingcall target="package"/>
-
         <phingcall target="upload"/>
 
     </target>
 
+
+    <target name="local">
+
+        <property name="basedir"            value="/var/www" />
+        <property name="dir.local.release"          value="${basedir}"/>
+
+        <phingcall target="prepare" />
+        <phingcall target="closure" />
+        <phingcall target="closure-templates" />
+        <httpget
+                url="https://plovr.googlecode.com/files/plovr-81ed862.jar"
+                dir="${basedir}/plovr"
+                filename="plovr.jar"
+            />
+        <phingcall target="compile" />
+
+    </target>
+
+
+    <target name="closure">
+
+        <property name="lib.repo" value="https://github.com/google/closure-library" override="true" />
+        <property name="lib.strip" value="1" override="true" />
+        <property name="lib.branch" value="master" override="true" />
+        <property name="lib.paths"          value="closure/goog"/>
+        <property name="lib.destination"          value="${dir.local.release}/public/js"/>
+        <property name="dir.local.repos.this"          value="${dir.local.repos}/closure"/>
+        <phingcall target="getlibrary" />
+
+    </target>
+
+
+    <target name="closure-templates">
+
+        <property name="lib.repo" value="https://github.com/google/closure-templates" override="true" />
+        <property name="lib.strip" value="1" override="true" />
+        <property name="lib.branch" value="master" override="true" />
+        <property name="lib.paths"          value="javascript" override="true" />
+        <property name="lib.destination"          value="${dir.local.release}/public/js/soy"/>
+        <property name="dir.repo.this"          value="${dir.local.repos}/closure-templates"/>
+        <phingcall target="getlibrary" />
+
+    </target>
+
+
+    <target name="kinyelo">
+
+        <property name="lib.repo" value="https://${username.github}@github.com/iamlemur/kinyelo" />
+        <property name="lib.strip"          value="0"/>
+        <property name="lib.paths"          value="" />
+        <property name="lib.destination"          value="${dir.local.release}"/>
+        <property name="dir.repo.this"          value="${dir.local.repos}/kinyelo"/>
+        <propertyprompt propertyName="username.github" useExistingValue="false" promptText="GitHub username" />
+        <phingcall target="getlibrary" />
+
+    </target>
+
+
+    <target name="getlibrary">
+
+        <delete dir="${dir.repo.this}" includeemptydirs="true"/>
+        <echo msg="Now cloning the GitHub repository"/>
+        <echo msg="git clone --branch ${lib.branch} ${lib.repo} ${dir.repo.this}"/>
+        <exec command="git clone --branch ${lib.branch} ${lib.repo} ${dir.repo.this}"></exec>
+        <echo msg="git --work-tree=${dir.local.repos.this} --git-dir=${dir.local.repos.this}/.git archive ${lib.branch} ${lib.paths} | (mkdir ${lib.destination} &amp;&amp; tar --strip-components=${lib.strip} -x -C ${lib.destination})"/>
+        <exec command="git --work-tree=${dir.local.repos.this} --git-dir=${dir.local.repos.this}/.git archive ${lib.branch} ${lib.paths} | (mkdir ${lib.destination} &amp;&amp; tar --strip-components=${lib.strip} -x -C ${lib.destination})"></exec>
+
+    </target>
+
+    <target name="compile">
+
+        <echo msg="Compiling CSS" />
+        <!-- the -x option does not work for some reason -->
+        <echo msg="lessc --no-color -x base.less > ${dir.local.release}/public/css/base.css ------ from ${dir.local.release}/public/less" />
+        <exec command="lessc --no-color base.less > ${dir.local.release}/public/css/base.css" dir="${dir.local.release}/public/less" />
+
+        <echo msg="Compiling JS" />
+        <!-- the -x option does not work for some reason -->
+        <echo msg="java -jar /var/www/plovr/plovr.jar build ${dir.local.release}/plovr/kinyelo-config.js > ${dir.local.release}/public/js/compiled.js" />
+        <exec command="java -jar /var/www/plovr/plovr.jar build ${dir.local.release}/plovr/kinyelo-config.js > ${dir.local.release}/public/js/compiled.js" />
+
+        <chmod mode="0777">
+            <fileset dir="${dir.local.release}" >
+                <include name="app/storage/**" />
+            </fileset>
+        </chmod>
+
+        <exec command="composer install" dir="${dir.local.release}/" />
+
+    </target>
+
+
+
     <target name="package">
 
-        <tar destfile="${dir.packages}/kinyelo.tar.gz" prefix="${dir.live}/" compression="gzip">
-            <fileset dir="${dir.release}">
-                <include name="**" />
+        <tar destfile="${dir.local.packages}/kinyelo.tar.gz" prefix="${basedir}/releases/${lib.branch}/" compression="gzip">
+            <fileset dir="${dir.local.release}">
+                <include name="*.sh" />
+                <include name="src/**" />
+                <include name="libs/**" />
             </fileset>
         </tar>
+
+    </target>
+
+    <target name="switch" description="Prepares the scripts for updating symlinks">
+
+        <copy todir="${dir.local.release}">
+            <filterchain>
+                <expandproperties />
+                <replaceregexp>
+                    <regexp pattern="\r(\n)" replace="\1"/>
+                </replaceregexp>
+            </filterchain>
+
+            <fileset dir="./scripts">
+                <include name="switch.sh" />
+            </fileset>
+        </copy>
 
     </target>
 
@@ -99,17 +167,29 @@
         <echo message="Uploading packages"/>
 
         <exec command="read -s -p &quot;Enter password: &quot; password &amp;&amp; echo &quot;$password&quot; " outputProperty="password"/>
-        <scp username="${username.ftp}" password="${password}" host="${server}" todir="${dir.live}">
-            <fileset dir="${dir.packages}">
+        <scp username="${username.ftp}" password="${password}" host="${server}" todir="${basedir}/releases">
+            <fileset dir="${dir.local.packages}">
                 <include name="*.tar.gz"/>
             </fileset>
         </scp>
         <echo message="deleting the release directory on target machine"/>
         <echo message="extracting uploaded packages"/>
         <echo message="removing uploaded packages"/>
-        <echo message="running commands: tar -Ppzxf ${dir.live}/kinyelo.tar.gz; rm -vf ${dir.live}/kinyelo.tar.gz"/>
-        <ssh username="${username.ftp}" password="${password}" host="${server}" command="tar -Ppzxf ${dir.live}/kinyelo.tar.gz; rm -vf ${dir.live}/kinyelo.tar.gz" />
+        <echo message="running commands: tar -Ppzxf ${basedir}/releases/${lib.branch}.tar.gz; rm -vf ${basedir}/releases/${lib.branch}.tar.gz"/>
+        <ssh username="${username.ftp}" password="${password}" host="${server}" command="tar -Ppzxf ${basedir}/releases/${lib.branch}.tar.gz; rm -vf ${basedir}/releases/${lib.branch}.tar.gz" />
 
+    </target>
+
+
+    <target name="laravel">
+        <!-- the composer task is not in the official documentation and when used, it has a bug that prevents it from working -->
+        <propertyprompt propertyName="action.run.composer" defaultValue="y" useExistingValue="true" promptText="Run composer? (y/n)" />
+        <if>
+            <equals arg1="${action.run.composer}" arg2="y" />
+            <then>
+                <exec command="composer install" dir="${dir.local.release}" />
+            </then>
+        </if>
     </target>
 
 
