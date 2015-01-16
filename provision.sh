@@ -8,16 +8,33 @@ yum -y install httpd.x86_64 gcc make git gettext mod_authz_ldap mod_ssl unzip li
 yum -y install php mysql-server php-pear php-devel httpd-devel pcre-devel php-gd php-ldap php-mbstring php-mysql php-pdo php-soap --enablerepo=remi --disablerepo=epel
 yum -y install libmcrypt nodejs npm --enablerepo=epel
 yum -y install phpmyadmin --enablerepo=remi --disablerepo=epel
+
+sed -i 's/^;date\.timezone =.*$/date.timezone = Asia\/Dubai/' /etc/php.ini
+sed -i 's/^short_open_tag = .*$/short_open_tag = On/' /etc/php.ini
+
+npm install -g bower
+npm install -g grunt-cli
+pushd .
+cd /var/www
+npm install --no-bin-links
+sudo -u vagrant bower install
+popd
+
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin
 mv /bin/composer.phar /bin/composer
-npm install -g less
+
+
 printf "\n" | pecl install apc
 cp -fr /vagrant/resources/apc.ini /etc/php.d/apc.ini
 
 pear channel-discover pear.phing.info
-pear install phing/phing
 pear install VersionControl_Git-0.4.4
 pecl install pecl.php.net/ssh2-0.12
+wget http://www.phing.info/get/phing-latest.phar
+mv phing-latest.phar /vagrant/resources/deployment
+
+wget https://plovr.googlecode.com/files/plovr-81ed862.jar
+mv ./plovr-81ed862.jar /vagrant/resources/plovr/plovr.jar
 
 rm -rf /var/www
 ln -fs /vagrant /var/www
@@ -47,10 +64,8 @@ mysql -u root -pk\!ny3l0 -h localhost test < /vagrant/resources/create_users.sql
 composer -d=/var/www/ install
 
 php /var/www/artisan migrate
+php /var/www/artisan db:seed
 
 echo "1" > /proc/sys/net/ipv4/ip_forward
 iptables -t nat -A PREROUTING -p tcp --dport 9810 -j DNAT --to-destination 10.0.2.2:9810
 iptables -t nat -A POSTROUTING -j MASQUERADE
-
-#/sbin/service sendmail start
-#start closure

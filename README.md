@@ -1,13 +1,57 @@
 
 # Setup Instructions
 
+Create a new project in PhpStorm with the Quickstart option 'Check out from Version Control'.
+
+(note, you no longer need a file watcher for LESS)
+
 Make sure Java 1.7+ is installed and available from the command line (check by running 'java -version')
+
+Configure PhpStorm
+
+This will configure the deployment target
+Tools -> Deployment -> Configuration
+Server type: Local or mounted folder
+Folder: C:\www\kinyelo (this can be any directory, outside your project directory but ensure you have the appropriate permissions)
+Web server root or URL: http://kinyelo.com
+
+Host machine: your computer
+Guest machine: the virtual machine acting as web server
 
 - Make sure you have a hosts entry on the host machine that matches your choice for the hostname in the Vagrantfile for the guest machine
 10.8.8.8 is the IP. To do this on a Mac, open Terminal and navigate to the /private/etc/hosts file.
 - Install VirtualBox
 - Install Vagrant
-- Open the terminal and navigate to the deployed directory, then run: vagrant plugin install vagrant-vbguest
+- Open the terminal and navigate to the deployed directory, then run:
+```
+vagrant plugin install vagrant-vbguest
+```
+This will install the plugin to mount the host machine's deployed directory to a folder on the the guest machine.
+
+NOTE: On a Windows machine, you will need to run Vagrant from a command prompt running as Administrator
+
+Then run:
+```
+vagrant up
+```
+This will start your guest machine and begin to provision it. Provisioning will likely fail as the remote folder on
+the host machine will fail to mount. If this happens, SSH into the machine (either with `vagrant ssh` or using the
+insecure key from Vagrant for your the terminal client of your choice
+(http://stackoverflow.com/questions/9885108/ssh-to-vagrant-box-in-windows)), and run:
+```
+sudo su - root
+yum -y update
+yum -y install kernel-devel
+exit
+exit
+```
+This will run the required updates to compile the plugin for mounting a shared folder. You should now be back to your
+host machine's terminal. From here you will run:
+```
+vagrant reload
+```
+This will reload the vagrant environment where it should successfully mount the shared folder and provision on boot.
+
 ```
 cd ./plovr
 curl -O https://plovr.googlecode.com/files/plovr-81ed862.jar
@@ -78,3 +122,6 @@ http://stackoverflow.com/questions/26482474/vagrant-error-failed-to-mount-folder
 http://en.wikipedia.org/wiki/Private_network#Private_IPv4_address_spaces -- regarding the chosen IP
 
 Comment out this.book_ or this.post_ in /public/js/kinyelo/app.js depending on what you're viewing
+
+
+http://kinyelo.com/phpmyadmin

@@ -111,11 +111,6 @@
 
     <target name="compile">
 
-        <echo msg="Compiling CSS" />
-        <!-- the -x option does not work for some reason -->
-        <echo msg="lessc --no-color -x base.less > ${dir.local.release}/public/css/base.css ------ from ${dir.local.release}/public/less" />
-        <exec command="lessc --no-color base.less > ${dir.local.release}/public/css/base.css" dir="${dir.local.release}/public/less" />
-
         <echo msg="Compiling JS" />
         <!-- the -x option does not work for some reason -->
         <echo msg="java -jar /var/www/plovr/plovr.jar build ${dir.local.release}/plovr/kinyelo-config.js > ${dir.local.release}/public/js/compiled.js" />
@@ -124,6 +119,7 @@
         <chmod mode="0777">
             <fileset dir="${dir.local.release}" >
                 <include name="app/storage/**" />
+                <include name="public/assets/cache/**" />
             </fileset>
         </chmod>
 
@@ -137,9 +133,7 @@
 
         <tar destfile="${dir.local.packages}/kinyelo.tar.gz" prefix="${basedir}/releases/${lib.branch}/" compression="gzip">
             <fileset dir="${dir.local.release}">
-                <include name="*.sh" />
-                <include name="src/**" />
-                <include name="libs/**" />
+                <include name="**" />
             </fileset>
         </tar>
 

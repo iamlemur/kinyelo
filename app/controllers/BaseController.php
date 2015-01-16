@@ -13,6 +13,13 @@ class BaseController extends Controller {
 		{
 			$this->layout = View::make($this->layout);
 		}
+		Casset::container('head')->add('js/head.js');
+		Casset::container('body')->add('js/body.js');
+		Casset::add('styles/base.css');
+	}
+
+	protected function compileStyles() {
+
 	}
 
 }

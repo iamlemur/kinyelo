@@ -10,9 +10,9 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<link rel="stylesheet" href="/css/base.css">
+	{{ Casset::styles() }}
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700|Merriweather:400,300,700' rel='stylesheet' type='text/css'>
-    <script src="/js/vendor/modernizr-2.6.2.min.js"></script>
+	{{ Casset::container('head')->scripts() }}
 </head>
 <body class="{{ $context }}">
 
@@ -80,21 +80,12 @@
 		</nav>
 		-->
 
-<!--script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script-->
-<script src="http://code.jquery.com/jquery-1.9.0.min.js"></script>
-<!--script src="/js/vendor/jquery.nanoscroller.min.js"></script-->
-<script src="/js/vendor/waypoints.min.js"></script>
-<script src="/js/vendor/waypoints-sticky.min.js"></script>
-<script src="/js/vendor/icheck.min.js"></script>
-<!--script>window.jQuery || document.write('<script src="/js/vendor/jquery-1.10.2.min.js"><\/script>')</script-->
-
+		{{ Casset::container('body')->scripts() }}
 @if(App::environment('dev'))
     <script src="http://kinyelo.com:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script>
 @else
     <script src="/js/compiled.js" type="text/javascript"></script>
 @endif
 
-<!--script src="http://kinyelo.com/js/compiled.js" type="text/javascript"></script-->
-<script src="/js/scripts.js" type="text/javascript"></script>
 </body>
 </html>

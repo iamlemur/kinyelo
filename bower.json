@@ -1,0 +1,12 @@
+{
+  "name": "kinyelo",
+  "dependencies": {
+    "jquery": "1.9.*",
+    "closure-library": "https://github.com/google/closure-library.git",
+    "iCheck": "~1.0.2",
+    "closure-compiler": "https://github.com/google/closure-compiler.git",
+    "modernizr": "~2.8.3",
+    "waypoints": "~3.0.1",
+    "closure-templates": "https://github.com/google/closure-templates.git"
+  }
+}
