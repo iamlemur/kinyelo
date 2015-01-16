@@ -12,14 +12,6 @@ yum -y install phpmyadmin --enablerepo=remi --disablerepo=epel
 sed -i 's/^;date\.timezone =.*$/date.timezone = Asia\/Dubai/' /etc/php.ini
 sed -i 's/^short_open_tag = .*$/short_open_tag = On/' /etc/php.ini
 
-npm install -g bower
-npm install -g grunt-cli
-pushd .
-cd /var/www
-npm install --no-bin-links
-sudo -u vagrant bower install
-popd
-
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/bin
 mv /bin/composer.phar /bin/composer
 
@@ -38,6 +30,15 @@ mv ./plovr-81ed862.jar /vagrant/resources/plovr/plovr.jar
 
 rm -rf /var/www
 ln -fs /vagrant /var/www
+
+npm install -g bower
+npm install -g grunt-cli
+pushd .
+cd /var/www
+npm install --no-bin-links
+sudo -u vagrant bower install
+popd
+
 
 openssl req -new -newkey rsa:4096 -days 365 -nodes -x509 -subj "/C=US/ST=New York/L=New York/O=Kinyelo Publishing LLC/CN=*.${HOSTNAME}" -keyout kinyelo.key -out kinyelo.crt
 cp kinyelo.key /etc/pki/tls/private/kinyelo.key

@@ -20,7 +20,7 @@ module.exports = function(grunt) {
         imageEmbed: {
             dist: {
                 src: ["./bower_components/iCheck/skins/flat/flat.css"],
-                dest: "./src/cache/iCheck.css"
+                dest: "./app/assets/cache/iCheck.css"
             }
         },
         concat: {
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
                     './bower_components/iCheck/iCheck.js',
                     './bower_components/waypoints/lib/jquery.waypoints.js',
                     './bower_components/waypoints/lib/shortcuts/sticky.js',
-                    './src/js/scripts.js'
+                    './app/assets/js/scripts.js'
                 ],
                 dest: './public/assets/js/body.js'
             },
@@ -84,7 +84,7 @@ module.exports = function(grunt) {
                 }
             },
             less: {
-                files: ['./src/less/*.less'],  //watched files
+                files: ['./app/assets/less/*.less'],  //watched files
                 tasks: ['imageEmbed', 'less'],                          //tasks to run
                 options: {
                     livereload: false                        //reloads the browser
