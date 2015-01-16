@@ -31,56 +31,10 @@
         <propertyprompt propertyName="username.github" promptText="GitHub username" />
         <propertyprompt propertyName="lib.branch" useExistingValue="false" promptText="Branch to deploy" />
         <phingcall target="kinyelo" />
-        <phingcall target="closure" />
-        <phingcall target="closure-templates" />
         <phingcall target="compile" />
         <phingcall target="switch" />
         <phingcall target="package"/>
         <phingcall target="upload"/>
-
-    </target>
-
-
-    <target name="local">
-
-        <property name="basedir"            value="/var/www" />
-        <property name="dir.local.release"          value="${basedir}"/>
-
-        <phingcall target="prepare" />
-        <phingcall target="closure" />
-        <phingcall target="closure-templates" />
-        <httpget
-                url="https://plovr.googlecode.com/files/plovr-81ed862.jar"
-                dir="${basedir}/plovr"
-                filename="plovr.jar"
-            />
-        <phingcall target="compile" />
-
-    </target>
-
-
-    <target name="closure">
-
-        <property name="lib.repo" value="https://github.com/google/closure-library" override="true" />
-        <property name="lib.strip" value="1" override="true" />
-        <property name="lib.branch" value="master" override="true" />
-        <property name="lib.paths"          value="closure/goog"/>
-        <property name="lib.destination"          value="${dir.local.release}/public/js"/>
-        <property name="dir.local.repos.this"          value="${dir.local.repos}/closure"/>
-        <phingcall target="getlibrary" />
-
-    </target>
-
-
-    <target name="closure-templates">
-
-        <property name="lib.repo" value="https://github.com/google/closure-templates" override="true" />
-        <property name="lib.strip" value="1" override="true" />
-        <property name="lib.branch" value="master" override="true" />
-        <property name="lib.paths"          value="javascript" override="true" />
-        <property name="lib.destination"          value="${dir.local.release}/public/js/soy"/>
-        <property name="dir.repo.this"          value="${dir.local.repos}/closure-templates"/>
-        <phingcall target="getlibrary" />
 
     </target>
 
@@ -93,12 +47,6 @@
         <property name="lib.destination"          value="${dir.local.release}"/>
         <property name="dir.repo.this"          value="${dir.local.repos}/kinyelo"/>
         <propertyprompt propertyName="username.github" useExistingValue="false" promptText="GitHub username" />
-        <phingcall target="getlibrary" />
-
-    </target>
-
-
-    <target name="getlibrary">
 
         <delete dir="${dir.repo.this}" includeemptydirs="true"/>
         <echo msg="Now cloning the GitHub repository"/>
@@ -113,8 +61,8 @@
 
         <echo msg="Compiling JS" />
         <!-- the -x option does not work for some reason -->
-        <echo msg="java -jar /var/www/plovr/plovr.jar build ${dir.local.release}/plovr/kinyelo-config.js > ${dir.local.release}/public/js/compiled.js" />
-        <exec command="java -jar /var/www/plovr/plovr.jar build ${dir.local.release}/plovr/kinyelo-config.js > ${dir.local.release}/public/js/compiled.js" />
+        <echo msg="java -jar /var/www/resources/plovr/plovr.jar build ${dir.local.release}/resources/plovr/kinyelo-config.js > ${dir.local.release}/public/assets/js/compiled.js" />
+        <exec command="java -jar /var/www/resources/plovr/plovr.jar build ${dir.local.release}/resources/plovr/kinyelo-config.js > ${dir.local.release}/public/assets/js/compiled.js" />
 
         <chmod mode="0777">
             <fileset dir="${dir.local.release}" >
@@ -124,6 +72,8 @@
         </chmod>
 
         <exec command="composer install" dir="${dir.local.release}/" />
+        <exec command="grunt install" dir="${dir.local.release}/" />
+        <exec command="bower install" dir="${dir.local.release}/" />
 
     </target>
 
@@ -133,7 +83,17 @@
 
         <tar destfile="${dir.local.packages}/kinyelo.tar.gz" prefix="${basedir}/releases/${lib.branch}/" compression="gzip">
             <fileset dir="${dir.local.release}">
-                <include name="**" />
+                <patternset>
+                    <include name="app/**" />
+                    <include name="bootstrap/**" />
+                    <include name="public/**" />
+                    <include name="vendor/**" />
+                    <exclude name=".git*" />
+                    <exclude name="resources/plovr/plovr.jar" />
+                    <exclude name=".git*" />
+                    <exclude name="bower_components/**" />
+                    <exclude name="/node_modules/**" />
+                </patternset>
             </fileset>
         </tar>
 
@@ -172,18 +132,6 @@
         <echo message="running commands: tar -Ppzxf ${basedir}/releases/${lib.branch}.tar.gz; rm -vf ${basedir}/releases/${lib.branch}.tar.gz"/>
         <ssh username="${username.ftp}" password="${password}" host="${server}" command="tar -Ppzxf ${basedir}/releases/${lib.branch}.tar.gz; rm -vf ${basedir}/releases/${lib.branch}.tar.gz" />
 
-    </target>
-
-
-    <target name="laravel">
-        <!-- the composer task is not in the official documentation and when used, it has a bug that prevents it from working -->
-        <propertyprompt propertyName="action.run.composer" defaultValue="y" useExistingValue="true" promptText="Run composer? (y/n)" />
-        <if>
-            <equals arg1="${action.run.composer}" arg2="y" />
-            <then>
-                <exec command="composer install" dir="${dir.local.release}" />
-            </then>
-        </if>
     </target>
 
 

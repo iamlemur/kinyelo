@@ -11,5 +11,5 @@ grunt concat
 grunt uglify
 grunt imageEmbed
 grunt less
-grunt
+(grunt &)
 popd

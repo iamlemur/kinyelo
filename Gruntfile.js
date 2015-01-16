@@ -11,9 +11,9 @@ module.exports = function(grunt) {
                 },
                 files: {
                     //compiling frontend.less into frontend.css
-                    "./public/assets/styles/base.css":"./src/less/base.less",
+                    "./public/assets/styles/base.css":"./app/assets/less/base.less",
                     //compiling backend.less into backend.css
-                    "./public/assets/styles/teaser.css":"./src/less/teaser.less"
+                    "./public/assets/styles/teaser.css":"./app/assets/less/teaser.less"
                 }
             }
         },

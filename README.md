@@ -3,24 +3,19 @@
 
 Create a new project in PhpStorm with the Quickstart option 'Check out from Version Control'.
 
-(note, you no longer need a file watcher for LESS)
-
 Make sure Java 1.7+ is installed and available from the command line (check by running 'java -version')
 
 Configure PhpStorm
-
-Host machine: your computer
-Guest machine: the virtual machine acting as web server
 
 - Make sure you have a hosts entry on the host machine that matches your choice for the hostname in the Vagrantfile for the guest machine
 10.8.8.8 is the IP. To do this on a Mac, open Terminal and navigate to the /private/etc/hosts file.
 - Install VirtualBox
 - Install Vagrant
-- Open the terminal and navigate to the deployed directory, then run:
+- Open the terminal and navigate to your project's directory, then run:
 ```
 vagrant plugin install vagrant-vbguest
 ```
-This will install the plugin to mount the host machine's deployed directory to a folder on the the guest machine.
+This will install the plugin to mount the host machine's project directory to a folder on the the guest machine.
 
 NOTE: On a Windows machine, you will need to run Vagrant from a command prompt running as Administrator
 
@@ -56,9 +51,9 @@ cp soyutils_usegoog.js <<project directory>>/public/js/soy/
 
 # Starting up the server
 
-From here down, run these commands every time in the deployed directory when starting up.
+From here down, run these commands every time in the project directory when starting up.
 
-In one terminal window, navigate to the deployed directory then the subdirectory 'resources/plovr' and run the command:
+In one terminal window on the host machine, navigate to the project directory then the subdirectory 'resources/plovr' and run the command:
 
 > java -jar plovr.jar serve kinyelo-config.js
 
@@ -69,6 +64,19 @@ In another terminal window, navigate to the deployed directory and run the comma
 > vagrant up
 
 This will start up the guest virtual machine and then return to the host bash prompt
+
+
+-Dependencies are now managed on the front-end
+	-Bower manages frontend dependencies
+	-Grunt runs tasks to compile these dependencies and our own assets (styles/scripts/images)
+-There are no more file watchers
+	-The development environment is configured with file watchers which trigger grunt tasks for compilation when
+	any source changes are detected
+	-The same tasks called by the watcher are called as part of the build script when deploying to a remote host
+-There are no more local deployment (PhpStorm configuration or Phing build)
+	-The guest machine runs from the project directory
+	-Git will ignore all related files to Vagrant or any dependencies from bower and grunt
+
 
 # Notes
 
