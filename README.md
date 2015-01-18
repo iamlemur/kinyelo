@@ -66,16 +66,16 @@ In another terminal window, navigate to the deployed directory and run the comma
 This will start up the guest virtual machine and then return to the host bash prompt
 
 
--Dependencies are now managed on the front-end
-	-Bower manages frontend dependencies
-	-Grunt runs tasks to compile these dependencies and our own assets (styles/scripts/images)
--There are no more file watchers
-	-The development environment is configured with file watchers which trigger grunt tasks for compilation when
+- Dependencies are now managed on the front-end
+	- Bower manages frontend dependencies
+	- Grunt runs tasks to compile these dependencies and our own assets (styles/scripts/images)
+- There are no more file watchers
+	- The development environment is configured with file watchers which trigger grunt tasks for compilation when
 	any source changes are detected
-	-The same tasks called by the watcher are called as part of the build script when deploying to a remote host
--There are no more local deployment (PhpStorm configuration or Phing build)
-	-The guest machine runs from the project directory
-	-Git will ignore all related files to Vagrant or any dependencies from bower and grunt
+	- The same tasks called by the watcher are called as part of the build script when deploying to a remote host
+- There are no more local deployment (PhpStorm configuration or Phing build)
+	- The guest machine runs from the project directory
+	- Git will ignore all related files to Vagrant or any dependencies from bower and grunt
 
 
 # Notes
