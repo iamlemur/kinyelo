@@ -74,8 +74,12 @@ phpMyAdmin URL: http://kinyelo.com/phpmyadmin
 
 Always keep in mind whether your hosts file is pointing to the live domain or your local environment.
 
-php /var/www/artisan migrate
-php /var/www/artisan db:seed
+To run migrations (architectural updates to the database), SSH into the guest machine and run:
+`php /var/www/artisan migrate`
+
+To run seeds, always empty the database first or more easily, drop all the tables, run the migrations again and then
+run the command to seed:
+`php /var/www/artisan db:seed`
 
 # Notes to Michael
 
