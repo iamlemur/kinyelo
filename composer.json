@@ -4,9 +4,7 @@
 	"keywords": ["framework", "laravel"],
 	"license": "MIT",
 	"require": {
-		"laravel/framework": "4.2.4",
-        "fzaninotto/faker": "1.3.*@dev",
-	  	"mmanos/laravel-casset": "dev-master"
+		"laravel/framework": "4.2.4"
 	},
 	"autoload": {
 		"classmap": [

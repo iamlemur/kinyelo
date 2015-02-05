@@ -25,5 +25,13 @@ class Post extends Eloquent {
 		return $this->hasMany('Annotation');
 	}
 
+	public function books() {
+		return $this->belongsToMany('Book');
+	}
+
+	public function characters() {
+		return $this->hasMany('Character');
+	}
+
 }
 

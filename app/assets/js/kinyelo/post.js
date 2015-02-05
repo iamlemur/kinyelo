@@ -30,6 +30,9 @@ kinyelo.Post = function() {
 
     this.title_ = new kinyelo.editor.SingleLineField(kinyelo.Post.POST_TITLE_ID);
     this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.Post.POST_CONTAINER_ID);
+
+    if(goog.isNull(this.title_) || goog.isNull(this.rte_)) throw "Not on posts page";
+
     this.eventRegister_ = new goog.events.EventHandler(this);
 
     this.retrieveAnnotations_();
@@ -134,6 +137,8 @@ kinyelo.Post.prototype.loadAnnotations_ = function(e) {
         var anchors = goog.dom.findNodes(this.rte_.getElement(), kinyelo.Post.isAnnotatableNode);
 
         //go through all the anchors and create objects for them
+        //TODO: why are we using new closure object here but basic objects below?
+        this.anchors = goog.object.create();
         goog.array.forEach(anchors, function(anchor) {
             goog.object.add(this.anchors, anchor.id, new kinyelo.editor.Anchor(anchor.id));
         }, this);
@@ -157,8 +162,10 @@ kinyelo.Post.prototype.loadAnnotations_ = function(e) {
             //then check for existence and add to anchor
             goog.array.forEach(response.annotations, function(annotation) {
                 if(annotation.highlight_id != null) {
+                    //if the the highlights for the document has the highlight associated with the annotation
                     if(goog.object.containsKey(this.highlights, annotation.highlight_id)) {
                         var anchor = goog.object.get(this.anchors, annotation.anchor);
+                        //add the highlight to the anchor, keyed by annotation ID
                         anchor.addHighlight(annotation.id, goog.object.get(this.highlights, annotation.highlight_id));
                     }
                 }
@@ -179,6 +186,7 @@ kinyelo.Post.prototype.loadAnnotations_ = function(e) {
         }
 
         this.markerContainer = new kinyelo.ui.annotate.MarkerContainer();
+        //TODO: implicit dependency that annotation-markers will be available since we know we are on a post page
         this.markerContainer.render(goog.dom.getElement('annotation-markers'));
 
         this.annotationsModel = new kinyelo.annotate.Container(this.currentUser, this.annotations, this.users);

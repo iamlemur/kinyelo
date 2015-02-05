@@ -15,10 +15,10 @@ goog.require('goog.events.EventTarget');
  * @extends {goog.events.EventTarget}
  */
 kinyelo.annotate.Container = function(currentUser, annotations, users) {
-    /**
-     * @type {Object}
-     * @private
-     */
+
+    //TODO: if we are requiring these elements, then no need to check for defined and not null
+    //TODO: consider other checks and throwing errors
+
     if(goog.isDefAndNotNull(annotations)) {
         this.annotations = annotations;
     } else {

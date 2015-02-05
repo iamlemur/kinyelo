@@ -11,17 +11,18 @@ class CreateBookPostsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('book_posts', function($table)
+		Schema::create('book_post', function($table)
 		{
 			$table->engine = 'InnoDB';
-			$table->integer('ordinal')->index();
+			$table->integer('ordinal')->unsigned()->index();
 			$table->integer('book_id')->unsigned();
 			$table->integer('post_id')->unsigned();
 			$table->primary(array('book_id', 'post_id'));
 			$table->foreign('book_id')->references('id')->on('books');
 			$table->foreign('post_id')->references('id')->on('posts');
-			$table->timestamp('added_on');
-			//cascade on deletion of books
+			/*do not cascade on deletion of books and posts, we want to see if for some reason in the future the
+			relationship still needs to be tracked (i.e. this post is no longer available but used to be part of
+			this book)*/
 		});
 	}
 
@@ -32,7 +33,7 @@ class CreateBookPostsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('book_posts');
+		Schema::drop('book_post');
 	}
 
 }

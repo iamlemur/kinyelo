@@ -28,14 +28,12 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('/policies/terms', 'PolicyController@terms');
 
 	Route::resource('/user', 'UserController');
-
 	Route::get('/dashboard', 'UserController@dashboard');
 	Route::get('/user', 'UserController@show');
-
 	Route::get('/logout', 'UserController@logout');
-
 	Route::get('/user/edit', 'UserController@edit');
 	Route::post('/user/edit', 'UserController@update');
+
 
 	Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
 	Route::get('/posts/lists/{filter?}', 'PostController@listing');
@@ -45,5 +43,11 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::get('/books/lists/{filter?}', 'BookController@listing');
 	Route::resource('/books', 'BookController');
+
+	Route::get('/authors/lists/{filter?}', 'AuthorController@listing');
+	Route::resource('/authors', 'AuthorController', array('only' => array('show', 'index')));
+
+	Route::get('/characters/lists/{filter?}', 'CharacterController@listing');
+	Route::resource('/characters', 'CharacterController');
 
 });

@@ -24,6 +24,7 @@ class BookController extends \BaseController {
 	public function listing($filter = 'recent')
 	{
 		$books = Book::with('author')->get();
+		//TODO: actually filter
 		$this->layout->content = View::make('book/index')->with('books', $books);
 	}
 
@@ -68,7 +69,7 @@ class BookController extends \BaseController {
 	 */
 	public function show($id)
 	{
-		$this->book = Book::with('author')->findOrFail($id);
+		$this->book = Book::with('author', 'posts.author')->findOrFail($id);
 		$this->layout->content = View::make('book/show')->with('book', $this->book);
 	}
 

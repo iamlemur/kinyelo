@@ -10,9 +10,9 @@
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	{{ Casset::styles() }}
+	<link rel="stylesheet" href="/assets/styles/base.css" type="text/css" />
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700|Merriweather:400,300,700' rel='stylesheet' type='text/css'>
-	{{ Casset::container('head')->scripts() }}
+	<script src="/assets/js/head.js" type="text/javascript"></script>
 </head>
 <body class="{{ $context }}">
 
@@ -80,7 +80,7 @@
 		</nav>
 		-->
 
-		{{ Casset::container('body')->scripts() }}
+		<script src="/assets/js/body.js" type="text/javascript"></script>
 @if(App::environment('dev'))
     <script src="http://kinyelo.com:9810/compile?id=kinyelo&mode=raw&level=verbose" type="text/javascript"></script>
 @else

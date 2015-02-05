@@ -25,5 +25,9 @@ class Book extends Eloquent {
 		return $this->hasOne('BookCover');
 	}
 
+	public function posts() {
+		return $this->belongsToMany('Post');
+	}
+
 }
 

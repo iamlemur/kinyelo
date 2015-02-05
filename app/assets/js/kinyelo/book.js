@@ -19,6 +19,9 @@ kinyelo.Book = function() {
      * @private
      */
     this.container_ = goog.dom.getElementByClass('book-container');
+    if(goog.isNull(this.container_)) {
+        throw "Not on book page";
+    }
     if(goog.dom.classes.has(this.container_, 'book-edit')) {
         this.initEditMode();
     } else if (goog.dom.classes.has(this.container_, 'book-create')) {

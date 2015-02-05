@@ -24,6 +24,7 @@ class PostController extends \BaseController {
 	public function listing($filter = 'recent')
 	{
 		$posts = Post::with('author')->get();
+		//TODO: actually filter
 		$this->layout->content = View::make('post/index')->with('posts', $posts);
 	}
 

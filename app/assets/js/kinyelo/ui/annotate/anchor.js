@@ -41,4 +41,4 @@ kinyelo.ui.annotate.Anchor.prototype.enterDocument = function() {
     //TODO: add listeners
 }
 
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Anchor, kinyelo.ui.annotate.AnchorRenderer);
+//goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Anchor, kinyelo.ui.annotate.AnchorRenderer);

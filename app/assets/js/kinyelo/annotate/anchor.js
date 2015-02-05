@@ -18,7 +18,7 @@ kinyelo.annotate.Anchor = function(parent, id, annotations) {
     } else { this.annotations = []; }
     this.setParentEventTarget(parent);
 }
-goog.inherits()
+//goog.inherits()
 
 /**
  * @type {string}

@@ -36,17 +36,18 @@
 			<h2><button>in this book</button></h2>
 			<div class="details">
 				<ol class="posts with-details">
-					<li>
-						<div class="item">
-							<span class="title">The Dissipation of Hunter Feyman</span>
-							<small>published by iamlemur on <time>May 1, 2014</time></small>
-							<button></button>
-						</div>
-						<div class="details">
-							<p>Etiam a mi gravida, scelerisque magna vel, dignissim lectus. Nam tincidunt in nulla faucibus porta. Proin venenatis, enim at gravida convallis, justo orci blandit nisl, sed ullamcorper mi tellus et ante. Aliquam erat volutpat. Vivamus gravida dignissim metus, id dictum quam placerat in. In hac habitasse platea dictumst. Mauris venenatis viverra elit id scelerisque. Vestibulum sed laoreet sapien. Donec a ante dignissim, eleifend enim id, aliquet orci. Maecenas scelerisque odio at magna interdum, in ultrices leo pulvinar. Vivamus scelerisque arcu vel luctus pharetra. Aenean rutrum viverra leo sed rutrum. </p>
-							<p>Etiam a mi gravida, scelerisque magna vel, dignissim lectus. Nam tincidunt in nulla faucibus porta. Proin venenatis, enim at gravida convallis, justo orci blandit nisl, sed ullamcorper mi tellus et ante. Aliquam erat volutpat. Vivamus gravida dignissim metus, id dictum quam placerat in. In hac habitasse platea dictumst. Mauris venenatis viverra elit id scelerisque. Vestibulum sed laoreet sapien. Donec a ante dignissim, eleifend enim id, aliquet orci. Maecenas scelerisque odio at magna interdum, in ultrices leo pulvinar. Vivamus scelerisque arcu vel luctus pharetra. Aenean rutrum viverra leo sed rutrum. </p>
-						</div>
-					</li>
+					@foreach($book->posts as $post)
+						<li>
+							<div class="item">
+								<span class="title">{{ $post->title }}</span>
+								<small>published by {{ $post->author->username }} on <time>{{ $post->published_at }}</time></small>
+								<button></button>
+							</div>
+							<div class="details">
+								<p>Etiam a mi gravida, scelerisque magna vel, dignissim lectus. Nam tincidunt in nulla faucibus porta. Proin venenatis, enim at gravida convallis, justo orci blandit nisl, sed ullamcorper mi tellus et ante. Aliquam erat volutpat. Vivamus gravida dignissim metus, id dictum quam placerat in. In hac habitasse platea dictumst. Mauris venenatis viverra elit id scelerisque. Vestibulum sed laoreet sapien. Donec a ante dignissim, eleifend enim id, aliquet orci. Maecenas scelerisque odio at magna interdum, in ultrices leo pulvinar. Vivamus scelerisque arcu vel luctus pharetra. Aenean rutrum viverra leo sed rutrum. </p>
+							</div>
+						</li>
+					@endforeach
 				</ol>
 			</div>
 		</li>
