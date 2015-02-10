@@ -2,6 +2,7 @@
 /vendor
 /resources/plovr/plovr.jar
 /bower_components
+/boilerplate
 /node_modules
 /.idea
 composer.phar

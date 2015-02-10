@@ -37,9 +37,9 @@ Route::group(array('before' => 'auth'), function() {
 
 	Route::get('/posts/search/title', 'PostController@searchPostsByTitle');
 	Route::get('/posts/lists/{filter?}', 'PostController@listing');
+	Route::get('/posts/{id}/metadata', 'PostController@getMetadata');
 	Route::resource('/posts', 'PostController');
 
-	Route::get('/posts/{id}/annotations', 'AnnotationController@getAnnotationsForPost');
 
 	Route::get('/books/lists/{filter?}', 'BookController@listing');
 	Route::resource('/books', 'BookController');

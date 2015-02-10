@@ -136,4 +136,22 @@ class PostController extends \BaseController {
 
 	}
 
+	public function getMetadata($id) {
+		$post = Post::findOrFail($id);
+
+		$replies = AnnotationReply::whereIn('annotation_id', $post->annotations->modelKeys())->get();
+		$participants = User::findMany(array_values(array_unique(array_merge($replies->lists('user_id'), $post->annotations->lists('user_id'), $post->lists('user_id')))));
+
+		$payload = array(
+			'annotations' => $post->annotations->toArray(),
+			'participants' => $participants->toArray(),
+			'replies' => $replies->toArray(),
+			//TODO: move this to persistent storage on front-end
+			'author' => $post->author->toArray(),
+			'user' => Auth::user()->toArray()
+		);
+
+		return Response::json($payload);
+	}
+
 }

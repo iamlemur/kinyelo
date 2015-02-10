@@ -1,74 +1,83 @@
 goog.provide('kinyelo.ui.annotate.MarkerContainer');
 
-goog.require('kinyelo.ui.annotate.MarkerContainerRenderer');
-goog.require('goog.ui.Container');
-goog.require('goog.events');
-goog.require('kinyelo.events.annotations');
+goog.require('goog.object');
+goog.require('goog.ui.Container.Orientation');
+
+goog.require('kinyelo.ui.Control');
 goog.require('kinyelo.ui.Container');
 goog.require('kinyelo.ui.annotate.Marker');
+goog.require('kinyelo.ui.annotate.MarkerContainerRenderer');
 
 /**
  *
  * @constructor
  * @extends {kinyelo.ui.Container}
  */
-kinyelo.ui.annotate.MarkerContainer = function() {
+kinyelo.ui.annotate.MarkerContainer = function(model) {
     goog.base(this, goog.ui.Container.Orientation.VERTICAL, kinyelo.ui.annotate.MarkerContainerRenderer.getInstance());
+
+    this.setModel(model || []);
+    this.setId('marker-container');
     this.setFocusable(false);
-    this.markers = {};
 }
 goog.inherits(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.Container);
 
-
+goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.annotate.MarkerContainerRenderer);
+goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.MarkerContainerRenderer.CSS_CLASS,
+    function() { return new kinyelo.ui.annotate.MarkerContainer(); });
 
 /**
- * @return {null}
- * @override
+ * @param element
+ * @returns {boolean}
+ * @inheritDoc
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.getModel;
+kinyelo.ui.annotate.MarkerContainer.prototype.canDecorate = function(element) {
+    return false;
+}
 
 /**
+ * @const
  * @type {string}
  */
-kinyelo.ui.annotate.MarkerContainer.CONTAINER_ID = 'annotation-markers';
+kinyelo.ui.annotate.MarkerContainer.CONTAINER_ID = 'post-markers';
 
-/**
- * @type {Object}
- */
-kinyelo.ui.annotate.MarkerContainer.prototype.markers;
 
-/**
- *
- * @param e {goog.events.Event}
- * @public
- */
-kinyelo.ui.annotate.MarkerContainer.prototype.handleNewAnnotation = function(e) {
-
-    /** @type {kinyelo.ui.annotate.Marker} */
-    var target = e.target;
-    /** @type {string} */
-    var anchor = e.target.getModel().anchor;
-    var marker;
-    if(!goog.object.containsKey(this.markers, anchor)) {
-        marker = new kinyelo.ui.annotate.Marker(anchor);
-        goog.object.add(this.markers, anchor, marker);
-        console.log('adding child');
-        this.addChild(marker, true);
-    } else {
-        marker = goog.object.get(this.markers, anchor);
-        console.log('updating count');
-        marker.updateCount();
-    }
-
+kinyelo.ui.annotate.MarkerContainer.prototype.enterDocument = function() {
+    goog.base(this, 'enterDocument');
+    //TODO: add event listeners
 }
 
 
 
 
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.annotate.MarkerContainerRenderer);
+//
+///**
+// *
+// * @param e {goog.events.Event}
+// * @public
+// */
+//kinyelo.ui.annotate.MarkerContainer.prototype.handleNewAnnotation = function(e) {
+//
+//    /** @type {kinyelo.ui.annotate.Marker} */
+//    var target = e.target;
+//    /** @type {string} */
+//    var anchor = e.target.getModel().anchor;
+//    var marker;
+//    if(!goog.object.containsKey(this.markers, anchor)) {
+//        marker = new kinyelo.ui.annotate.Marker(anchor);
+//        goog.object.add(this.markers, anchor, marker);
+//        console.log('adding child');
+//        this.addChild(marker, true);
+//    } else {
+//        marker = goog.object.get(this.markers, anchor);
+//        console.log('updating count');
+//        marker.updateCount();
+//    }
+//
+//}
 
-goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.MarkerContainerRenderer.CSS_CLASS,
-    function() { return new kinyelo.ui.annotate.MarkerContainer(); });
+
+
 
 
 /**

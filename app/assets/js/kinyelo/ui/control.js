@@ -9,36 +9,37 @@ goog.require('goog.ui.Component');
  */
 kinyelo.ui.Control = function() {
     goog.ui.Control.call(this);
-    this.setSupportedState(goog.ui.Component.State.HOVER, true);
-    this.setAutoStates(goog.ui.Component.State.HOVER, false);
+    //this.setSupportedState(goog.ui.Component.State.HOVER, true);
+    //this.setAutoStates(goog.ui.Component.State.HOVER, false);
 }
 goog.inherits(kinyelo.ui.Control, goog.ui.Control);
 
-
-kinyelo.ui.Control.IdFragment = {
-    ICON: 'ic',
-    LABEL: 'la'
-};
-
-/**
- * @inheritDoc
- */
-kinyelo.ui.Control.prototype.enterDocument = function() {
-    goog.base(this, 'enterDocument');
-    var icon = this.getElementByFragment(kinyelo.ui.Control.IdFragment.ICON);
-    this.getHandler().listen(icon, [goog.ui.Component.EventType.HIGHLIGHT,
-        goog.ui.Component.EventType.UNHIGHLIGHT], function(e) { console.log('hovered over icon'); });
-}
-
-kinyelo.ui.Control.prototype.createDom = function() {
-
-}
-
-kinyelo.ui.Control.prototype.canDecorate = goog.functions.FALSE;
-
-/*
- kinyelo.ui.Test.prototype.getContentElement = function() {
- //override this when adding children because this is used to determine the parent element of where the children
- //are added, for example, when adding a reply thread control of an annotation, the child reply thread
- //will need to be added in a particular place in the DOM structure
- }*/
+//
+//
+//kinyelo.ui.Control.IdFragment = {
+//    ICON: 'ic',
+//    LABEL: 'la'
+//};
+//
+///**
+// * @inheritDoc
+// */
+//kinyelo.ui.Control.prototype.enterDocument = function() {
+//    goog.base(this, 'enterDocument');
+//    var icon = this.getElementByFragment(kinyelo.ui.Control.IdFragment.ICON);
+//    this.getHandler().listen(icon, [goog.ui.Component.EventType.HIGHLIGHT,
+//        goog.ui.Component.EventType.UNHIGHLIGHT], function(e) { console.log('hovered over icon'); });
+//}
+//
+//kinyelo.ui.Control.prototype.createDom = function() {
+//
+//}
+//
+//kinyelo.ui.Control.prototype.canDecorate = goog.functions.FALSE;
+//
+///*
+// kinyelo.ui.Test.prototype.getContentElement = function() {
+// //override this when adding children because this is used to determine the parent element of where the children
+// //are added, for example, when adding a reply thread control of an annotation, the child reply thread
+// //will need to be added in a particular place in the DOM structure
+// }*/

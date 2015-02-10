@@ -15,7 +15,6 @@
 	<script src="/assets/js/head.js" type="text/javascript"></script>
 </head>
 <body class="{{ $context }}">
-
 		<nav class="site-nav" role="navigation">
 			<div class="site-nav-scrollable-container">
 				<h1>kinyelo.</h1>
@@ -70,8 +69,8 @@
 				@yield('upcoming')
 			</div>
 		</main>
-		<div id="annotations">
-		</div>
+		<!--div id="annotations-container" class="annotations-container">
+		</div-->
 
 		<!--
         <nav id="dev-nav">
@@ -86,6 +85,5 @@
 @else
     <script src="/js/compiled.js" type="text/javascript"></script>
 @endif
-
 </body>
 </html>

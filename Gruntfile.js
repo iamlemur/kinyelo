@@ -100,7 +100,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-image-embed");
 
     // Task definition
-    grunt.registerTask('init', ['copy', 'less', 'concat', 'uglify']);
+    grunt.registerTask('init', ['less', 'concat', 'uglify']);
     grunt.registerTask('default', ['watch']);
 
 };

@@ -1,47 +1,47 @@
 goog.provide('kinyelo.ui.annotate.Marker');
 
-goog.require('kinyelo.ui.annotate.MarkerRenderer');
 goog.require('goog.dom');
-goog.require('goog.ui.Component');
+goog.require('goog.object');
+goog.require('goog.style');
 goog.require('goog.ui.registry');
 goog.require('kinyelo.ui.Control');
-goog.require('goog.ui.ControlRenderer');
-goog.require('goog.ui.Control');
-goog.require('kinyelo.events.annotations');
+goog.require('kinyelo.ui.annotate.MarkerRenderer');
 
 /**
  *
- * @param {string} anchor
+ * @param {Node} anchor
  * @constructor
- * @extends {goog.ui.Control}
+ * @extends {kinyelo.ui.Control}
  */
 kinyelo.ui.annotate.Marker = function(anchor) {
-    goog.ui.Control.call(this);
-    /**
-     *
-     * @type {string}
-     * @private
-     */
-    this.contentId_ = anchor;
+
+    kinyelo.ui.Control.call(this);
+
+    this.setModel(goog.object.create());
+
+    this.getModel().contentId = anchor.id;
+    this.getModel().count = null;
+    this.contentItem = anchor;
+
     this.updateCount();
 
-    this.eventRegister_ = new goog.events.EventHandler(this);
-
-    this.eventRegister_.listen(this, goog.ui.Component.EventType.ACTION, this.handleClick);
-
 }
-goog.inherits(kinyelo.ui.annotate.Marker, goog.ui.Control);
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Marker, kinyelo.ui.annotate.MarkerRenderer);
+goog.inherits(kinyelo.ui.annotate.Marker, kinyelo.ui.Control);
 
-kinyelo.ui.annotate.Marker.prototype.count = 0;
-
+/**
+ * @param {boolean=} decrement
+ */
 kinyelo.ui.annotate.Marker.prototype.updateCount = function(decrement) {
-    if(decrement) {
-        this.count--;
+    if(goog.isNull(this.getModel().count)) {
+        this.getModel().count = 0;
     } else {
-        this.count++;
+        if(goog.isDefAndNotNull(decrement) && decrement) {
+            this.getModel().count--;
+        } else {
+            this.getModel().count++;
+        }
     }
-    this.setCaption("" + this.count);
+    this.setCaption("" + this.getModel().count);
     if(this.isInDocument()) {
         this.updatePosition();
     }
@@ -49,57 +49,45 @@ kinyelo.ui.annotate.Marker.prototype.updateCount = function(decrement) {
 
 /**
  * @returns {number}
- * @public
  */
 kinyelo.ui.annotate.Marker.prototype.getCount = function() {
-    return this.count;
+    return this.getModel().count;
 }
 
-kinyelo.ui.annotate.Marker.prototype.updatePosition = function() {
-    var anchor = goog.dom.getElement(this.contentId_);
-    var position = goog.style.getPosition(anchor);
-    goog.style.setPosition(this.getContentElement(), null, position.y);
-}
-
-kinyelo.ui.annotate.Marker.prototype.handleClick = function(e) {
-    this.dispatchEvent(kinyelo.events.annotations.EventType.MARKER_CLICKED);
-}
 
 /**
  * @returns {number}
  */
 kinyelo.ui.annotate.Marker.prototype.getCaption = function() {
-    console.log('returning count of ' + this.count);
-    return this.count;
+    return this.getModel().count;
+}
+
+/**
+ * @returns {Node}
+ */
+kinyelo.ui.annotate.Marker.prototype.getContentItem = function() {
+    return this.contentItem;
 }
 
 /**
  * Gets the unique ID for the instance of this component.  If the instance
  * doesn't already have an ID, generates one on the fly.
+ * this way we can retrieve marker by content element ID
  * @return {string} Unique component ID.
  */
 kinyelo.ui.annotate.Marker.prototype.getId = function() {
-    return this.contentId_;
+    return 'marker-' + this.getModel().contentId;
 };
 
+/** @inheritDoc */
+kinyelo.ui.annotate.Marker.prototype.enterDocument = function() {
+    goog.base(this, 'enterDocument');
+    this.getRenderer().updatePosition(this);
+    //TODO: add listeners
+    //TODO: listen on contentItem for an increment of the count or the position
+}
 
-
-/**
- *
- * @returns {string}
- */
-//kinyelo.ui.annotate.Marker.prototype.getRelatedContentElementId = function() {
-//    return this.contentNodeId_;
-//}
-
-/**
- *
- * @returns {boolean}
- */
-//kinyelo.ui.annotate.Marker.prototype.isStillValid = function() {
-//    if(!goog.dom.getElement(this.contentNodeId_)) {
-//        return false;
-//    }
-//    return true;
-//}
-
+goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Marker, kinyelo.ui.annotate.MarkerRenderer);
+goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.MarkerRenderer.CSS_CLASS, function() {
+    return new kinyelo.ui.annotate.Marker(null);
+});
