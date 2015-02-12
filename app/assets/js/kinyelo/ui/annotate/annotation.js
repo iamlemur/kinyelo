@@ -2,6 +2,7 @@ goog.provide('kinyelo.ui.annotate.Annotation');
 
 goog.require('kinyelo.ui.annotate.AnnotationRenderer');
 goog.require('kinyelo.annotate.Annotation');
+goog.require('goog.events');
 
 /**
  *
@@ -15,9 +16,6 @@ kinyelo.ui.annotate.Annotation = function(model, opt_domHelper) {
 
     this.setModel(model || null);
 
-    //TODO: set the supported states, p231
-    //this.setSupportedState(goog.ui.Component.State.OPENED, true);
-
 }
 goog.inherits(kinyelo.ui.annotate.Annotation, kinyelo.ui.Component);
 
@@ -27,10 +25,6 @@ goog.inherits(kinyelo.ui.annotate.Annotation, kinyelo.ui.Component);
  */
 kinyelo.ui.annotate.Annotation.CSS_CLASS = 'annotation';
 
-/** @inheritDoc */
-//kinyelo.ui.annotate.Annotation.prototype.getId = function() {
-//    return 'annotation-' + this.getModel().id;
-//}
 
 /** @inheritDoc */
 kinyelo.ui.annotate.Annotation.prototype.canDecorate = function() {
@@ -48,4 +42,9 @@ kinyelo.ui.annotate.Annotation.prototype.createDom = function() {
 kinyelo.ui.annotate.Annotation.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners
+    this.dispatchEvent(kinyelo.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED);
+}
+
+kinyelo.ui.annotate.Annotation.EventType = {
+    ANNOTATION_RENDERED: goog.events.getUniqueId('annotation-rendered')
 }

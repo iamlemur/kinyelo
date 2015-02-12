@@ -1,6 +1,7 @@
 goog.provide('kinyelo.ui.annotate.MarkerContainer');
 
 goog.require('goog.object');
+goog.require('goog.ui.Component');
 goog.require('goog.ui.Container.Orientation');
 
 goog.require('kinyelo.ui.Control');
@@ -18,6 +19,13 @@ kinyelo.ui.annotate.MarkerContainer = function(model) {
 
     this.setModel(model || []);
     this.setId('marker-container');
+    /**
+     *
+     * @type {kinyelo.ui.annotate.Marker}
+     * @private
+     */
+    this.activeMarker_ = null;
+
     this.setFocusable(false);
 }
 goog.inherits(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.Container);
@@ -45,7 +53,76 @@ kinyelo.ui.annotate.MarkerContainer.CONTAINER_ID = 'post-markers';
 kinyelo.ui.annotate.MarkerContainer.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add event listeners
+    this.getHandler().listen(
+        this,
+        goog.ui.Component.EventType.CHECK,
+        this.handleMarkerCheck,
+        false,
+        this
+    );
 }
+
+
+/**
+ * @param {kinyelo.ui.annotate.Marker=} marker
+ */
+kinyelo.ui.annotate.MarkerContainer.prototype.setActiveMarker = function(marker) {
+    this.activeMarker_ = marker || null;
+}
+
+/**
+ * @returns {kinyelo.ui.annotate.Marker}
+ */
+kinyelo.ui.annotate.MarkerContainer.prototype.getActiveMarker = function() {
+    return this.activeMarker_;
+}
+
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+kinyelo.ui.annotate.MarkerContainer.prototype.handleMarkerCheck = function(e) {
+    //if(e.type == goog.ui.Component.EventType.CHECK) {
+    console.log('handle marker check', this.getActiveMarker(), e);
+    if(!goog.isNull(this.getActiveMarker())) {
+        var previousMarker = this.getActiveMarker();
+        previousMarker.setChecked(false);
+    }
+    this.setActiveMarker(e.target);
+    //}
+}
+
+
+/**
+ * @param {goog.events.Event} e
+ */
+kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationsHidden = function(e) {
+    console.log('handle annotations hidden', this.getActiveMarker(), e);
+    this.getActiveMarker().setChecked(false);
+    this.setActiveMarker();
+}
+
+
+/**
+*
+* @param e {goog.events.Event}
+*/
+kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = function(e) {
+
+    /** @type {kinyelo.ui.annotate.Annotation} */
+    var target = e.target;
+    /** @type {Node} */
+    var annotatable = target.getModel().getAnnotatable();
+    var childId = kinyelo.ui.Container.generateChildId(annotatable.id, kinyelo.ui.annotate.Marker.ID_FRAGMENT);
+    var marker = this.getChild(childId);
+    if(!goog.isNull(marker)) {
+        marker.updateCount();
+    } else {
+        //TODO: create marker here? or elsewhere to ensure it is always available here?
+    }
+
+}
+
 
 
 

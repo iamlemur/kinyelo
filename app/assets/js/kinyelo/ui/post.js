@@ -12,6 +12,7 @@ goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.AdvancedField');
 goog.require('kinyelo.ui.annotate.Container');
 goog.require('kinyelo.ui.annotate.MarkerContainer');
+goog.require('kinyelo.ui.annotate.Annotation');
 goog.require('kinyelo.ui.Component');
 goog.require('kinyelo.model.Post');
 goog.require('kinyelo.model.Annotation');
@@ -136,7 +137,7 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
          * Map of all annotatable nodes in the RTE
          * @type {!object}
          */
-        this.anchors = goog.array.toObject(
+        this.annotatables = goog.array.toObject(
             nodes,
             function(node) {
                 return node.id;
@@ -197,6 +198,22 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
         }
 
         this.ui_.annotationsContainer = new kinyelo.ui.annotate.Container(this.metadata_.annotations);
+
+        this.getHandler().listen(this.ui_.annotationsContainer, kinyelo.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED,
+            goog.bind(this.ui_.markerContainer.handleAnnotationRendered, this.ui_.markerContainer),
+            false
+        );
+
+        this.getHandler().listen(this.ui_.markerContainer, goog.ui.Component.EventType.CHECK,
+            goog.bind(this.ui_.annotationsContainer.activateAnnotatable, this.ui_.annotationsContainer),
+            false
+        );
+
+        this.getHandler().listen(this.ui_.annotationsContainer, kinyelo.ui.annotate.Container.EventType.ANNOTATIONS_HIDDEN,
+            goog.bind(this.ui_.markerContainer.handleAnnotationsHidden, this.ui_.markerContainer),
+            false
+        );
+
         this.ui_.annotationsContainer.render();
 
 
@@ -211,11 +228,11 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
  * @returns {?kinyelo.model.Annotation}
  */
 kinyelo.ui.Post.prototype.loadAnnotation = function(a) {
-    if(goog.object.containsKey(this.anchors, a.anchor)) {
+    if(goog.object.containsKey(this.annotatables, a.anchor)) {
         if(goog.object.containsKey(this.metadata_.participants, a.author_id)) {
-            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.anchors, a.anchor), goog.object.get(this.metadata_.participants, a.author_id), a.content, a.highlight);
+            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatables, a.anchor), goog.object.get(this.metadata_.participants, a.author_id), a.content, a.highlight);
         } else {
-            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.anchors, a.anchor), new kinyelo.model.Author(), a.content, a.highlight);
+            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatables, a.anchor), new kinyelo.model.Author(), a.content, a.highlight);
         }
     }
     return null;

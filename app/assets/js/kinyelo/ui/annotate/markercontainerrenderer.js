@@ -28,9 +28,9 @@ kinyelo.ui.annotate.MarkerContainerRenderer.prototype.createDom = function(conta
     //var el = goog.base(this, 'createDom', container);
     container.setElementInternal(el);
 
-    var anchors = container.getModel();
-    goog.array.forEach(anchors, function(anchor) {
-        var control = new kinyelo.ui.annotate.Marker(anchor);
+    var annotatables = container.getModel();
+    goog.array.forEach(annotatables, function(annotatable) {
+        var control = new kinyelo.ui.annotate.Marker(annotatable);
         container.addChild(control, true);
     });
 

@@ -6,13 +6,13 @@ goog.require('kinyelo.model.Reply');
 /**
  * @param {!kinyelo.model.Post} post
  * @param {?number} id
- * @param {!HTMLElement} anchor
+ * @param {!HTMLElement} annotatable
  * @param {!kinyelo.model.Author} author
  * @param {!string} content
  * @param {string=} highlight
  * @constructor
  */
-kinyelo.model.Annotation = function(post, id, anchor, author, content, highlight) {
+kinyelo.model.Annotation = function(post, id, annotatable, author, content, highlight) {
     /**
      * we do this because we want to check the anchor even exists before creating the annotation
      * and when checking, we already have the reference
@@ -20,7 +20,7 @@ kinyelo.model.Annotation = function(post, id, anchor, author, content, highlight
      * @type {!HTMLElement}
      * @private
      */
-    this.anchor_ = anchor;
+    this.annotatable_ = annotatable;
 
     /**
      *
@@ -74,6 +74,6 @@ kinyelo.model.Annotation.prototype.addReply = function(reply) {
 /**
  * @returns {!HTMLElement}
  */
-kinyelo.model.Annotation.prototype.getAnchor = function() {
-    return this.anchor_;
+kinyelo.model.Annotation.prototype.getAnnotatable = function() {
+    return this.annotatable_;
 }

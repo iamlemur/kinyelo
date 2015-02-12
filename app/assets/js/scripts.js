@@ -4,7 +4,7 @@ $(document).ready(function() {
         $("html").toggleClass('js-site-nav');
     });
     $("#active-nav-overlay").click(function() {
-        $("html").removeClass('js-site-nav').removeClass('js-annotations');
+        $("html").removeClass('js-site-nav');//.removeClass('js-annotations');
     });
     $("#openUtils").click(function(e) {
         e.preventDefault();

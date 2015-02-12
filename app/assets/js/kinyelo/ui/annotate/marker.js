@@ -5,23 +5,30 @@ goog.require('goog.object');
 goog.require('goog.style');
 goog.require('goog.ui.registry');
 goog.require('kinyelo.ui.Control');
+goog.require('goog.ui.Component');
 goog.require('kinyelo.ui.annotate.MarkerRenderer');
 
 /**
  *
- * @param {Node} anchor
+ * @param {Node} annotatable
  * @constructor
  * @extends {kinyelo.ui.Control}
  */
-kinyelo.ui.annotate.Marker = function(anchor) {
+kinyelo.ui.annotate.Marker = function(annotatable) {
 
     kinyelo.ui.Control.call(this);
 
-    this.setModel(goog.object.create());
+    /**
+     *
+     * @type {number}
+     * @private
+     */
+    this.count_ = null;
 
-    this.getModel().contentId = anchor.id;
-    this.getModel().count = null;
-    this.contentItem = anchor;
+    /**
+     * @type {Node}
+     */
+    this.annotatable = annotatable;
 
     this.updateCount();
 
@@ -29,21 +36,21 @@ kinyelo.ui.annotate.Marker = function(anchor) {
 goog.inherits(kinyelo.ui.annotate.Marker, kinyelo.ui.Control);
 
 /**
- * @param {boolean=} decrement
+ * @param {boolean=} opt_decrement
  */
-kinyelo.ui.annotate.Marker.prototype.updateCount = function(decrement) {
-    if(goog.isNull(this.getModel().count)) {
-        this.getModel().count = 0;
+kinyelo.ui.annotate.Marker.prototype.updateCount = function(opt_decrement) {
+    if(goog.isNull(this.getCount())) {
+        this.count_ = 0;
     } else {
-        if(goog.isDefAndNotNull(decrement) && decrement) {
-            this.getModel().count--;
+        if(goog.isDefAndNotNull(opt_decrement) && opt_decrement) {
+            this.count_--;
         } else {
-            this.getModel().count++;
+            this.count_++;
         }
     }
-    this.setCaption("" + this.getModel().count);
+    this.setCaption("" + this.getCount());
     if(this.isInDocument()) {
-        this.updatePosition();
+        this.getRenderer().updatePosition(this);
     }
 }
 
@@ -51,7 +58,7 @@ kinyelo.ui.annotate.Marker.prototype.updateCount = function(decrement) {
  * @returns {number}
  */
 kinyelo.ui.annotate.Marker.prototype.getCount = function() {
-    return this.getModel().count;
+    return this.count_;
 }
 
 
@@ -65,26 +72,39 @@ kinyelo.ui.annotate.Marker.prototype.getCaption = function() {
 /**
  * @returns {Node}
  */
-kinyelo.ui.annotate.Marker.prototype.getContentItem = function() {
-    return this.contentItem;
+kinyelo.ui.annotate.Marker.prototype.getAnnotatable = function() {
+    return this.annotatable;
 }
 
 /**
- * Gets the unique ID for the instance of this component.  If the instance
- * doesn't already have an ID, generates one on the fly.
- * this way we can retrieve marker by content element ID
  * @return {string} Unique component ID.
  */
-kinyelo.ui.annotate.Marker.prototype.getId = function() {
-    return 'marker-' + this.getModel().contentId;
+kinyelo.ui.annotate.Marker.prototype.getIdInternal = function() {
+    return this.annotatable.id;
 };
+
+
 
 /** @inheritDoc */
 kinyelo.ui.annotate.Marker.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     this.getRenderer().updatePosition(this);
     //TODO: add listeners
-    //TODO: listen on contentItem for an increment of the count or the position
+    this.getHandler().listen(this, [goog.ui.Component.EventType.CHECK, goog.ui.Component.EventType.UNCHECK], function(e) {
+        console.log('marker has been checked/unchecked', e);
+    });
+}
+
+/**
+ * @type {string}
+ */
+kinyelo.ui.annotate.Marker.ID_FRAGMENT = 'marker-';
+
+/**
+ * @returns {string}
+ */
+kinyelo.ui.annotate.Marker.prototype.getIdFragment = function() {
+    return kinyelo.ui.annotate.Marker.ID_FRAGMENT;
 }
 
 goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Marker, kinyelo.ui.annotate.MarkerRenderer);

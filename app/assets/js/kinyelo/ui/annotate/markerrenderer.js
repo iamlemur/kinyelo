@@ -1,6 +1,7 @@
 goog.provide('kinyelo.ui.annotate.MarkerRenderer');
 
 goog.require('kinyelo.ui.ControlRenderer');
+goog.require('goog.ui.Component');
 
 /**
  * @constructor
@@ -26,6 +27,11 @@ kinyelo.ui.annotate.MarkerRenderer.prototype.createDom = function(marker) {
     var el = goog.base(this, 'createDom', marker);
     marker.setElementInternal(el);
 
+    //set supported transition events
+    marker.setSupportedState(goog.ui.Component.State.CHECKED, true);
+
+    marker.setDispatchTransitionEvents(goog.ui.Component.State.CHECKED, true);
+
     return el;
 }
 
@@ -34,6 +40,6 @@ kinyelo.ui.annotate.MarkerRenderer.prototype.createDom = function(marker) {
  * @param {kinyelo.ui.annotate.Marker} marker
  */
 kinyelo.ui.annotate.MarkerRenderer.prototype.updatePosition = function(marker) {
-    var position = goog.style.getPosition(/** @type {HTMLElement} */ marker.getContentItem());
+    var position = goog.style.getPosition(/** @type {HTMLElement} */ marker.getAnnotatable());
     goog.style.setPosition(marker.getContentElement(), null, position.y);
 }

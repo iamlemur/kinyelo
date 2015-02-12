@@ -14,6 +14,33 @@ kinyelo.ui.Control = function() {
 }
 goog.inherits(kinyelo.ui.Control, goog.ui.Control);
 
+/**
+ * @type {string}
+ */
+kinyelo.ui.Control.ID_FRAGMENT;
+
+/**
+ * @returns {string}
+ */
+kinyelo.ui.Control.prototype.getIdFragment = function() {
+    return goog.isDefAndNotNull(kinyelo.ui.Control.ID_FRAGMENT) ? kinyelo.ui.Control.ID_FRAGMENT : '';
+}
+
+/**
+ * @returns {string}
+ */
+kinyelo.ui.Control.prototype.getId = function() {
+    return this.getIdFragment() + this.getIdInternal();
+}
+
+/**
+ * @returns {string}
+ * @protected
+ */
+kinyelo.ui.Control.prototype.getIdInternal = function() {
+    return goog.base(this, 'getId');
+}
+
 //
 //
 //kinyelo.ui.Control.IdFragment = {
