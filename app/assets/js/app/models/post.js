@@ -1,16 +1,19 @@
-goog.provide('kinyelo.model.Post');
+goog.provide('app.model.Post');
 
-goog.require('kinyelo.model.Author');
-goog.require('kinyelo.model.Annotation');
+goog.require('app.model.Author');
+goog.require('app.model.Annotation');
+
+goog.require('kinyelo.Model');
 
 /**
  * @param {number} id
  * @param {!Element} title
  * @param {!Element} content
- * @param {?kinyelo.model.Author=} author
+ * @param {?app.model.Author=} author
  * @constructor
+ * @extends {kinyelo.Model}
  */
-kinyelo.model.Post = function(id, title, content, author) {
+app.model.Post = function(id, title, content, author) {
 
     /**
      *
@@ -35,24 +38,25 @@ kinyelo.model.Post = function(id, title, content, author) {
 
     /**
      *
-     * @type {kinyelo.model.Author}
+     * @type {app.model.Author}
      * @private
      */
     this.author_ = goog.isDefAndNotNull(author) ? author: null;
 
     /**
      *
-     * @type {Array.<kinyelo.model.Annotation>}
+     * @type {Array.<app.model.Annotation>}
      * @private
      */
     this.annotations_ = [];
 }
+goog.inherits(app.model.Post, kinyelo.Model);
 
 /**
  *
  * @returns {string}
  */
-kinyelo.model.Post.prototype.getTitle = function() {
+app.model.Post.prototype.getTitle = function() {
     return this.title_.innerHTML;
 }
 
@@ -60,32 +64,32 @@ kinyelo.model.Post.prototype.getTitle = function() {
  *
  * @returns {string}
  */
-kinyelo.model.Post.prototype.getContent = function() {
+app.model.Post.prototype.getContent = function() {
     return this.content_.innerHTML;
 }
 
 /**
  *
- * @returns {Array.<kinyelo.model.Annotation>}
+ * @returns {Array.<app.model.Annotation>}
  */
-kinyelo.model.Post.prototype.getAnnotations = function() {
+app.model.Post.prototype.getAnnotations = function() {
     //TODO: do we want a live reference?
     return goog.array.clone(this.annotations_);
 }
 
 /**
  *
- * @returns {!kinyelo.model.Author}
+ * @returns {!app.model.Author}
  */
-kinyelo.model.Post.prototype.getAuthor = function() {
+app.model.Post.prototype.getAuthor = function() {
     return this.author_;
 }
 
 /**
  *
- * @param {!kinyelo.model.Author} author
+ * @param {!app.model.Author} author
  */
-kinyelo.model.Post.prototype.setAuthor = function(author) {
+app.model.Post.prototype.setAuthor = function(author) {
     this.author_ = author;
 }
 
@@ -93,13 +97,13 @@ kinyelo.model.Post.prototype.setAuthor = function(author) {
  *
  * @type {boolean}
  */
-kinyelo.model.Post.prototype.published = false;
+app.model.Post.prototype.published = false;
 
 /**
  *
- * @param {!kinyelo.model.Annotation} annotation
+ * @param {!app.model.Annotation} annotation
  */
-kinyelo.model.Post.prototype.addAnnotation = function(annotation) {
+app.model.Post.prototype.addAnnotation = function(annotation) {
     annotation.setPost(this);
     this.annotations_.push(annotation);
 }

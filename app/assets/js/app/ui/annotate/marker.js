@@ -1,4 +1,4 @@
-goog.provide('kinyelo.ui.annotate.Marker');
+goog.provide('app.ui.annotate.Marker');
 
 goog.require('goog.dom');
 goog.require('goog.object');
@@ -6,7 +6,7 @@ goog.require('goog.style');
 goog.require('goog.ui.registry');
 goog.require('kinyelo.ui.Control');
 goog.require('goog.ui.Component');
-goog.require('kinyelo.ui.annotate.MarkerRenderer');
+goog.require('app.ui.annotate.MarkerRenderer');
 
 /**
  *
@@ -14,7 +14,7 @@ goog.require('kinyelo.ui.annotate.MarkerRenderer');
  * @constructor
  * @extends {kinyelo.ui.Control}
  */
-kinyelo.ui.annotate.Marker = function(annotatable) {
+app.ui.annotate.Marker = function(annotatable) {
 
     kinyelo.ui.Control.call(this);
 
@@ -33,12 +33,12 @@ kinyelo.ui.annotate.Marker = function(annotatable) {
     this.updateCount();
 
 }
-goog.inherits(kinyelo.ui.annotate.Marker, kinyelo.ui.Control);
+goog.inherits(app.ui.annotate.Marker, kinyelo.ui.Control);
 
 /**
  * @param {boolean=} opt_decrement
  */
-kinyelo.ui.annotate.Marker.prototype.updateCount = function(opt_decrement) {
+app.ui.annotate.Marker.prototype.updateCount = function(opt_decrement) {
     if(goog.isNull(this.getCount())) {
         this.count_ = 0;
     } else {
@@ -57,7 +57,7 @@ kinyelo.ui.annotate.Marker.prototype.updateCount = function(opt_decrement) {
 /**
  * @returns {number}
  */
-kinyelo.ui.annotate.Marker.prototype.getCount = function() {
+app.ui.annotate.Marker.prototype.getCount = function() {
     return this.count_;
 }
 
@@ -65,28 +65,28 @@ kinyelo.ui.annotate.Marker.prototype.getCount = function() {
 /**
  * @returns {number}
  */
-kinyelo.ui.annotate.Marker.prototype.getCaption = function() {
+app.ui.annotate.Marker.prototype.getCaption = function() {
     return this.getModel().count;
 }
 
 /**
  * @returns {Node}
  */
-kinyelo.ui.annotate.Marker.prototype.getAnnotatable = function() {
+app.ui.annotate.Marker.prototype.getAnnotatable = function() {
     return this.annotatable;
 }
 
 /**
  * @return {string} Unique component ID.
  */
-kinyelo.ui.annotate.Marker.prototype.getIdInternal = function() {
+app.ui.annotate.Marker.prototype.getIdInternal = function() {
     return this.annotatable.id;
 };
 
 
 
 /** @inheritDoc */
-kinyelo.ui.annotate.Marker.prototype.enterDocument = function() {
+app.ui.annotate.Marker.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     this.getRenderer().updatePosition(this);
     //TODO: add listeners
@@ -96,18 +96,26 @@ kinyelo.ui.annotate.Marker.prototype.enterDocument = function() {
 }
 
 /**
+ *
+ * @returns {boolean}
+ */
+app.ui.annotate.Marker.prototype.isValid = function() {
+    return /** @type {boolean} */ this.annotatable.parentNode;
+}
+
+/**
  * @type {string}
  */
-kinyelo.ui.annotate.Marker.ID_FRAGMENT = 'marker-';
+app.ui.annotate.Marker.ID_FRAGMENT = 'marker-';
 
 /**
  * @returns {string}
  */
-kinyelo.ui.annotate.Marker.prototype.getIdFragment = function() {
-    return kinyelo.ui.annotate.Marker.ID_FRAGMENT;
+app.ui.annotate.Marker.prototype.getIdFragment = function() {
+    return app.ui.annotate.Marker.ID_FRAGMENT;
 }
 
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.Marker, kinyelo.ui.annotate.MarkerRenderer);
-goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.MarkerRenderer.CSS_CLASS, function() {
-    return new kinyelo.ui.annotate.Marker(null);
+goog.ui.registry.setDefaultRenderer(app.ui.annotate.Marker, app.ui.annotate.MarkerRenderer);
+goog.ui.registry.setDecoratorByClassName(app.ui.annotate.MarkerRenderer.CSS_CLASS, function() {
+    return new app.ui.annotate.Marker(null);
 });

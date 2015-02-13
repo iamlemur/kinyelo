@@ -1,4 +1,4 @@
-goog.provide('kinyelo.ui.annotate.AnnotationRenderer');
+goog.provide('app.ui.annotate.AnnotationRenderer');
 
 goog.require('goog.ui.ControlRenderer');
 goog.require('goog.dom');
@@ -9,31 +9,33 @@ goog.require('goog.dom');
  * @constructor
  * @extends {goog.ui.ControlRenderer}
  */
-kinyelo.ui.annotate.AnnotationRenderer = function() {
+app.ui.annotate.AnnotationRenderer = function() {
     goog.base(this);
 }
-goog.inherits(kinyelo.ui.annotate.AnnotationRenderer, goog.ui.ControlRenderer);
-goog.addSingletonGetter(kinyelo.ui.annotate.AnnotationRenderer);
+goog.inherits(app.ui.annotate.AnnotationRenderer, goog.ui.ControlRenderer);
+goog.addSingletonGetter(app.ui.annotate.AnnotationRenderer);
 
 /** @type {string} */
-kinyelo.ui.annotate.AnnotationRenderer.CSS_CLASS = 'annotation-item';
+app.ui.annotate.AnnotationRenderer.CSS_CLASS = 'annotation-item';
 
 /** @inheritDoc */
-kinyelo.ui.annotate.AnnotationRenderer.prototype.getCssClass = function() {
-    return kinyelo.ui.annotate.AnnotationRenderer.CSS_CLASS;
+app.ui.annotate.AnnotationRenderer.prototype.getCssClass = function() {
+    return app.ui.annotate.AnnotationRenderer.CSS_CLASS;
 }
 
 /**
  *
- * @param {kinyelo.ui.annotate.Annotation} annotation
+ * @param {app.ui.annotate.Annotation} annotation
  * @returns {Element}
  */
-kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation) {
+app.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation) {
 
-    this.annotation = annotation.getModel();
     this.domHelper = annotation.getDomHelper();
 
-    var div = this.domHelper.createDom(goog.dom.TagName.DIV, 'entry', [this.getAvatar(this.annotation), this.getAuthorLink(this.annotation), this.getContent(this.annotation)]);
+    var div = this.domHelper.createDom(
+        goog.dom.TagName.DIV,
+        'entry',
+        [this.getAvatar(annotation), this.getAuthorLink(annotation), this.getContent(annotation)]);
 
     var el = this.domHelper.createDom(
         'li', this.getClassNames(annotation).join(' '), div);
@@ -46,18 +48,18 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.createDom = function(annotation
 
 /**
  *
- * @param {kinyelo.annotate.Annotation} annotation
+ * @param {app.ui.annotate.Annotation} annotation
  * @returns {Element}
  * @protected
  */
-kinyelo.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation) {
+app.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation) {
 
     var avatarImage = this.domHelper.createDom(goog.dom.TagName.IMG, {
-        'src': annotation.author.avatar
+        'src': annotation.getModel().getAuthor().getAvatarURL()
     });
     var avatar = this.domHelper.createDom(goog.dom.TagName.A, {
-        'href': annotation.author.url,
-        'title': 'Go to the profile of ' + annotation.author.username,
+        'href': annotation.getModel().getAuthor().getURL(),
+        'title': 'Go to the profile of ' + annotation.getModel().getAuthor().getUsername(),
         'class': 'avatar',
         'rel': 'nofollow'
     }, avatarImage);
@@ -68,16 +70,16 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.getAvatar = function(annotation
 
 /**
  *
- * @param {kinyelo.annotate.Annotation} annotation
+ * @param {app.ui.annotate.Annotation} annotation
  * @returns {Element}
  * @protected
  */
-kinyelo.ui.annotate.AnnotationRenderer.prototype.getAuthorLink = function(annotation) {
+app.ui.annotate.AnnotationRenderer.prototype.getAuthorLink = function(annotation) {
     var link = this.domHelper.createDom(goog.dom.TagName.A, {
-        'href': annotation.author.url,
-        'title': 'Go to the profile of ' + annotation.author.username,
+        'href': annotation.getModel().getAuthor().getURL(),
+        'title': 'Go to the profile of ' + annotation.getModel().getAuthor().getUsername(),
         'class': 'author'
-    }, annotation.author.username);
+    }, annotation.getModel().getAuthor().getUsername());
 
     return link;
 
@@ -85,13 +87,13 @@ kinyelo.ui.annotate.AnnotationRenderer.prototype.getAuthorLink = function(annota
 
 /**
  *
- * @param {kinyelo.annotate.Annotation} annotation
+ * @param {app.ui.annotate.Annotation} annotation
  * @returns {Element}
  * @protected
  */
-kinyelo.ui.annotate.AnnotationRenderer.prototype.getContent = function(annotation) {
+app.ui.annotate.AnnotationRenderer.prototype.getContent = function(annotation) {
 
-    var content = this.domHelper.createDom(goog.dom.TagName.P, 'content', annotation.content);
+    var content = this.domHelper.createDom(goog.dom.TagName.P, 'content', annotation.getModel().getContent());
     return content;
 
 }

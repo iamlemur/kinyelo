@@ -6,7 +6,7 @@ goog.require('goog.ui.ToolbarButton');
 goog.require('goog.ui.Container.Orientation');
 goog.require('goog.ui.Component.State');
 goog.require('goog.style');
-goog.require('kinyelo.ui.ToolbarRenderer');
+goog.require('kinyelo.ui.editor.ToolbarRenderer');
 goog.require('kinyelo.ui.CustomButtonRenderer');
 goog.require('goog.string.Unicode');
 goog.require('goog.userAgent');
@@ -29,7 +29,7 @@ kinyelo.ui.editor.ToolbarFactory.makeToolbar = function(items, elem,
     var domHelper = goog.dom.getDomHelper(elem);
 
     // Create an empty horizontal toolbar using the default renderer.
-    var toolbar = new goog.ui.Toolbar(kinyelo.ui.ToolbarRenderer.getInstance(),
+    var toolbar = new goog.ui.Toolbar(kinyelo.ui.editor.ToolbarRenderer.getInstance(),
         goog.ui.Container.Orientation.HORIZONTAL, domHelper);
 
     // Optimization:  Explicitly test for the directionality of the parent

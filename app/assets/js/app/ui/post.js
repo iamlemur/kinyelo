@@ -1,4 +1,4 @@
-goog.provide('kinyelo.ui.Post');
+goog.provide('app.ui.Post');
 
 goog.require('goog.dom');
 goog.require('goog.array');
@@ -10,15 +10,15 @@ goog.require('goog.Uri');
 
 goog.require('kinyelo.editor.SingleLineField');
 goog.require('kinyelo.editor.AdvancedField');
-goog.require('kinyelo.ui.annotate.Container');
-goog.require('kinyelo.ui.annotate.MarkerContainer');
-goog.require('kinyelo.ui.annotate.Annotation');
+goog.require('app.ui.annotate.Container');
+goog.require('app.ui.annotate.MarkerContainer');
+goog.require('app.ui.annotate.Annotation');
 goog.require('kinyelo.ui.Component');
-goog.require('kinyelo.model.Post');
-goog.require('kinyelo.model.Annotation');
-goog.require('kinyelo.model.Reply');
-goog.require('kinyelo.model.Author');
-goog.require('kinyelo.model.Post');
+goog.require('app.model.Post');
+goog.require('app.model.Annotation');
+goog.require('app.model.Reply');
+goog.require('app.model.Author');
+goog.require('app.model.Post');
 
 
 /**
@@ -27,7 +27,7 @@ goog.require('kinyelo.model.Post');
  * @constructor
  * @extends {kinyelo.ui.Component}
  */
-kinyelo.ui.Post = function(id, opt_domHelper) {
+app.ui.Post = function(id, opt_domHelper) {
 
     kinyelo.ui.Component.call(this, opt_domHelper);
 
@@ -41,72 +41,85 @@ kinyelo.ui.Post = function(id, opt_domHelper) {
      * @type {kinyelo.editor.SingleLineField}
      * @private
      */
-    this.title_ = new kinyelo.editor.SingleLineField(kinyelo.ui.Post.POST_TITLE_ID);
+    this.title_ = new kinyelo.editor.SingleLineField(app.ui.Post.POST_TITLE_ID);
 
     /**
      * @type {kinyelo.editor.AdvancedField}
      * @private
      */
-    this.rte_ = new kinyelo.editor.AdvancedField(kinyelo.ui.Post.POST_BODY_ID);
+    this.rte_ = new kinyelo.editor.AdvancedField(app.ui.Post.POST_BODY_ID);
 
     this.setId(id);
 
 
     if(goog.isNull(this.title_) || goog.isNull(this.rte_)) throw "Not on posts page";
 
-    this.model_ = new kinyelo.model.Post(this.id_, this.title_.getOriginalElement(), this.rte_.getOriginalElement());
+    this.model_ = new app.model.Post(this.id_, this.title_.getOriginalElement(), this.rte_.getOriginalElement());
 
     this.getMetadata_();
 
 }
-goog.inherits(kinyelo.ui.Post, kinyelo.ui.Component);
+goog.inherits(app.ui.Post, kinyelo.ui.Component);
 
 /**
  * @type {string}
  * @const
  */
-kinyelo.ui.Post.POST_BODY_ID = 'post-body';
+app.ui.Post.POST_BODY_ID = 'post-body';
 
 /**
  * @type {string}
  * @const
  */
-kinyelo.ui.Post.POST_TITLE_ID = 'post-title';
+app.ui.Post.POST_TITLE_ID = 'post-title';
 
 /**
  * @type {string}
  * @const
  */
-kinyelo.ui.Post.POST_CONTAINER_ID = 'opus';
+app.ui.Post.POST_CONTAINER_ID = 'opus';
 
 
 /**
  * @type {goog.structs.Map}
  * @const
  */
-kinyelo.ui.Post.postHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
+app.ui.Post.postHeaders = new goog.structs.Map(goog.net.XhrIo.CONTENT_TYPE_HEADER, goog.net.XhrIo.FORM_CONTENT_TYPE);
 
 /** @inheritDoc */
-kinyelo.ui.Post.prototype.canDecorate = function() {
+app.ui.Post.prototype.canDecorate = function() {
     return true;
 }
 
 /** @inheritDoc */
-kinyelo.ui.Post.prototype.decorateInternal = function(element) {
+app.ui.Post.prototype.decorateInternal = function(element) {
     goog.base(this, 'decorateInternal', element);
 }
 
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+app.ui.Post.prototype.handleDelayedChange = function(e) {
+    if(!goog.isNull(this.ui_.markerContainer)) {
+        //this.ui_.markerContainer.handleDelayedChange(e)
+    }
+}
+
+
+
 /** @inheritDoc */
-kinyelo.ui.Post.prototype.enterDocument = function() {
+app.ui.Post.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners
+    this.getHandler().listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, goog.bind(this.handleDelayedChange, this), false);
 }
 
 /**
  * sends the request for bundled data we need to initialize UI
  * @private
  */
-kinyelo.ui.Post.prototype.getMetadata_ = function() {
+app.ui.Post.prototype.getMetadata_ = function() {
     //TODO: fix these hard-coded urls
     var url = "/posts/1/metadata";
 
@@ -127,17 +140,17 @@ kinyelo.ui.Post.prototype.getMetadata_ = function() {
  * load bundled data
  * @private
  */
-kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
+app.ui.Post.prototype.loadMetadata_ = function(e) {
 
     var xhr = e.target;
     if(xhr.isComplete()) {
 
-        var nodes = goog.dom.findNodes(this.rte_.getElement(), kinyelo.ui.Post.isAnnotatableNode);
+        var nodes = this.rte_.getAnnotatableNodes();
         /**
          * Map of all annotatable nodes in the RTE
          * @type {!object}
          */
-        this.annotatables = goog.array.toObject(
+        this.annotatableNodes = goog.array.toObject(
             nodes,
             function(node) {
                 return node.id;
@@ -151,7 +164,7 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
          */
         this.ui_ = goog.object.create();
 
-        this.ui_.markerContainer = new kinyelo.ui.annotate.MarkerContainer(nodes);
+        this.ui_.markerContainer = new app.ui.annotate.MarkerContainer(this.rte_);
 
         this.addChild(this.ui_.markerContainer, true);
 
@@ -169,27 +182,27 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
 
         //get all the contributors to this project
         this.metadata_.participants = goog.object.map(
-            goog.array.toObject(response.participants, kinyelo.ui.Post.mapResults),
-            function(e) { return new kinyelo.model.Author(e.id, e.username, e.avatar) }
+            goog.array.toObject(response.participants, app.ui.Post.mapResults),
+            function(e) { return new app.model.Author(e.id, e.username, e.avatar) }
         );
 
         //get all the replies to later link with annotation models
         this.metadata_.annotations = goog.object.map(
-            goog.array.toObject(response.annotations, kinyelo.ui.Post.mapResults),
+            goog.array.toObject(response.annotations, app.ui.Post.mapResults),
             this.loadAnnotation,
             this
         );
 
         //get all the replies to later link with annotation models
         this.metadata_.replies = goog.object.map(
-            goog.array.toObject(response.replies, kinyelo.ui.Post.mapResults),
+            goog.array.toObject(response.replies, app.ui.Post.mapResults),
             this.loadReply,
             this
         );
 
         //TODO: we need to load the current user data somewhere else
-        var app = kinyelo.App.getInstance();
-        app.setUser(response.user);
+        var appInstance = kinyelo.App.getInstance();
+        appInstance.setUser(response.user);
 
 
         //set the author of the post from the list of contributors
@@ -197,9 +210,9 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
             this.getModel().setAuthor(goog.object.get(this.metadata_.participants, response.author.id));
         }
 
-        this.ui_.annotationsContainer = new kinyelo.ui.annotate.Container(this.metadata_.annotations);
+        this.ui_.annotationsContainer = new app.ui.annotate.Container(this.metadata_.annotations);
 
-        this.getHandler().listen(this.ui_.annotationsContainer, kinyelo.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED,
+        this.getHandler().listen(this.ui_.annotationsContainer, app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED,
             goog.bind(this.ui_.markerContainer.handleAnnotationRendered, this.ui_.markerContainer),
             false
         );
@@ -209,7 +222,7 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
             false
         );
 
-        this.getHandler().listen(this.ui_.annotationsContainer, kinyelo.ui.annotate.Container.EventType.ANNOTATIONS_HIDDEN,
+        this.getHandler().listen(this.ui_.annotationsContainer, app.ui.annotate.Container.EventType.ANNOTATIONS_HIDDEN,
             goog.bind(this.ui_.markerContainer.handleAnnotationsHidden, this.ui_.markerContainer),
             false
         );
@@ -225,14 +238,14 @@ kinyelo.ui.Post.prototype.loadMetadata_ = function(e) {
 /**
  *
  * @param {!object} a
- * @returns {?kinyelo.model.Annotation}
+ * @returns {?app.model.Annotation}
  */
-kinyelo.ui.Post.prototype.loadAnnotation = function(a) {
-    if(goog.object.containsKey(this.annotatables, a.anchor)) {
-        if(goog.object.containsKey(this.metadata_.participants, a.author_id)) {
-            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatables, a.anchor), goog.object.get(this.metadata_.participants, a.author_id), a.content, a.highlight);
+app.ui.Post.prototype.loadAnnotation = function(a) {
+    if(goog.object.containsKey(this.annotatableNodes, a.anchor)) {
+        if(goog.object.containsKey(this.metadata_.participants, a.user_id)) {
+            return new app.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatableNodes, a.anchor), goog.object.get(this.metadata_.participants, a.user_id), a.content, a.highlight);
         } else {
-            return new kinyelo.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatables, a.anchor), new kinyelo.model.Author(), a.content, a.highlight);
+            return new app.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatableNodes, a.anchor), new app.model.Author(), a.content, a.highlight);
         }
     }
     return null;
@@ -241,18 +254,18 @@ kinyelo.ui.Post.prototype.loadAnnotation = function(a) {
 /**
  *
  * @param {!object} r
- * @returns {?kinyelo.model.Reply}
+ * @returns {?app.model.Reply}
  */
-kinyelo.ui.Post.prototype.loadReply = function(r) {
+app.ui.Post.prototype.loadReply = function(r) {
     //TODO: do I need to clean up this code by cloning na de-referencing?
     if(goog.object.containsKey(this.metadata_.annotations, r.annotation_id)) {
         var annotation = goog.object.get(this.metadata_.annotations, r.annotation_id);
-        if(goog.object.containsKey(this.metadata_.participants, r.author_id)) {
-            var author = goog.object.get(this.metadata_.participants, r.author_id);
+        if(goog.object.containsKey(this.metadata_.participants, r.user_id)) {
+            var author = goog.object.get(this.metadata_.participants, r.user_id);
         } else {
-            var author = new kinyelo.model.Author();
+            var author = new app.model.Author();
         }
-        var reply = new kinyelo.model.Reply(annotation, author, r.content);
+        var reply = new app.model.Reply(annotation, author, r.content);
         annotation.addReply(reply);
         return reply;
     }
@@ -264,7 +277,7 @@ kinyelo.ui.Post.prototype.loadReply = function(r) {
 * @param node {Node}
 * @returns {boolean}
 */
-kinyelo.ui.Post.isAnnotatableNode = function(node) {
+app.ui.Post.isAnnotatableNode = function(node) {
     return goog.editor.node.isBlockTag(node)
     && goog.editor.node.isEditable(node) &&
     node.tagName != goog.dom.TagName.SECTION;
@@ -275,7 +288,7 @@ kinyelo.ui.Post.isAnnotatableNode = function(node) {
  * @param {!object} result
  * @returns {string}
  */
-kinyelo.ui.Post.mapResults = function(result) {
+app.ui.Post.mapResults = function(result) {
     return result.id;
 }
 
@@ -299,22 +312,22 @@ kinyelo.ui.Post.mapResults = function(result) {
 ///**
 // * @type {Object}
 // */
-//kinyelo.ui.Post.prototype.highlights;
+//app.ui.Post.prototype.highlights;
 //
 ///**
 // * @type {Object}
 // */
-//kinyelo.ui.Post.prototype.anchors;
+//app.ui.Post.prototype.anchors;
 //
 ///**
 // * @type {Object}
 // */
-//kinyelo.ui.Post.prototype.users;
+//app.ui.Post.prototype.users;
 //
 ///**
 // * @type {Object}
 // */
-//kinyelo.ui.Post.prototype.annotations;
+//app.ui.Post.prototype.annotations;
 //
 //
 //
@@ -325,13 +338,13 @@ kinyelo.ui.Post.mapResults = function(result) {
 // *
 // * @private
 // */
-//kinyelo.ui.Post.prototype.loadAnnotations_ = function(e) {
+//app.ui.Post.prototype.loadAnnotations_ = function(e) {
 //
 //    var xhr = e.target;
 //    if(xhr.isComplete()) {
 //
 //        //get all anchors in the RTE of post ready
-//        var anchors = goog.dom.findNodes(this.rte_.getElement(), kinyelo.ui.Post.isAnnotatableNode);
+//        var anchors = goog.dom.findNodes(this.rte_.getElement(), app.ui.Post.isAnnotatableNode);
 //
 //        //go through all the anchors and create objects for them
 //        //TODO: why are we using new closure object here but basic objects below?
@@ -382,12 +395,12 @@ kinyelo.ui.Post.mapResults = function(result) {
 //            }, this);
 //        }
 //
-//        this.markerContainer = new kinyelo.ui.annotate.MarkerContainer();
+//        this.markerContainer = new app.ui.annotate.MarkerContainer();
 //        //TODO: implicit dependency that annotation-markers will be available since we know we are on a post page
 //        this.markerContainer.render(goog.dom.getElement('annotation-markers'));
 //
 //        this.annotationsModel = new kinyelo.annotate.Container(this.currentUser, this.annotations, this.users);
-//        this.annotationsContainer = new kinyelo.ui.annotate.Container(this.annotationsModel);
+//        this.annotationsContainer = new app.ui.annotate.Container(this.annotationsModel);
 //
 //        this.eventRegister_.listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, this.handleDelayedChange_);
 //        this.eventRegister_.listen(window, 'beforeunload', this.handleUnload_);
@@ -403,7 +416,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 //
 //}
 //
-//kinyelo.ui.Post.prototype.initListeners = function() {
+//app.ui.Post.prototype.initListeners = function() {
 //    //clear all first
 //
 //    /*
@@ -433,7 +446,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 // * @param {goog.events.Event} e
 // * @private
 // */
-//kinyelo.ui.Post.prototype.handleDelayedChange_ = function(e) {
+//app.ui.Post.prototype.handleDelayedChange_ = function(e) {
 //
 //    // auto save
 //    this.savePost_(e);
@@ -445,7 +458,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 // * @param {goog.events.Event} e
 // * @private
 // */
-//kinyelo.ui.Post.prototype.savePost_ = function(e) {
+//app.ui.Post.prototype.savePost_ = function(e) {
 //    //TODO: fix these hard-coded urls
 //    var url = "/posts";
 //    var callback = null;
@@ -465,7 +478,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 //
 //    }
 //    var postData = goog.Uri.QueryData.createFromMap(postMap);
-//    goog.net.XhrIo.send(url, callback, 'POST', postData.toString(), kinyelo.ui.Post.postHeaders);
+//    goog.net.XhrIo.send(url, callback, 'POST', postData.toString(), app.ui.Post.postHeaders);
 //}
 //
 //
@@ -473,21 +486,21 @@ kinyelo.ui.Post.mapResults = function(result) {
 // *
 // * @param {goog.events.Event} e
 // */
-//kinyelo.ui.Post.prototype.handleHover_ = function(e) {
-//    var ancestor = goog.dom.getAncestor(e.target, kinyelo.ui.Post.isAnnotatableNode, true);
+//app.ui.Post.prototype.handleHover_ = function(e) {
+//    var ancestor = goog.dom.getAncestor(e.target, app.ui.Post.isAnnotatableNode, true);
 //    //ancestor.id
 //    console.log(e);
 //}
 //
 //
-//kinyelo.ui.Post.prototype.handleUnload_ = function() {
+//app.ui.Post.prototype.handleUnload_ = function() {
 //    if(this.rte_.isModified()) {
 //        console.log('modified');
 //        return goog.getMsg('You have unsaved changes. Click cancel to return to the page and save them or click OK to discard');
 //    }
 //}
 //
-//kinyelo.ui.Post.prototype.handleCreateResponse_ = function(e) {
+//app.ui.Post.prototype.handleCreateResponse_ = function(e) {
 //    var xhr = e.target;
 //    if(xhr.isComplete()) {
 //        var response = xhr.getResponseJson();
@@ -498,7 +511,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 //    }
 //}
 //
-//kinyelo.ui.Post.prototype.handleSaveResponse_ = function(e) {
+//app.ui.Post.prototype.handleSaveResponse_ = function(e) {
 //    var xhr = e.target;
 //    if(xhr.isComplete()) {
 //        console.log('complete');
@@ -510,7 +523,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 //    }
 //}
 ///*
-//kinyelo.ui.Post.prototype.loadPost = function(post) {
+//app.ui.Post.prototype.loadPost = function(post) {
 //    goog.dom.setTextContent(this.title_, post.title);
 //    this.post_id_ = post.id;
 //    if(this.rte_.queryCommandValue(goog.editor.Command.USING_LOREM)) {
@@ -521,7 +534,7 @@ kinyelo.ui.Post.mapResults = function(result) {
 
 
 
-kinyelo.ui.Post.sampleAnnotations = {
+app.ui.Post.sampleAnnotations = {
     "self": {
         "id": "dce2602520fb",
         "username": "asiral",

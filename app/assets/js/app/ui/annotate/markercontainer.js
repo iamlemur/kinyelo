@@ -1,45 +1,49 @@
-goog.provide('kinyelo.ui.annotate.MarkerContainer');
+goog.provide('app.ui.annotate.MarkerContainer');
 
 goog.require('goog.object');
+goog.require('goog.editor.Field.EventType');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.Container.Orientation');
 
 goog.require('kinyelo.ui.Control');
 goog.require('kinyelo.ui.Container');
-goog.require('kinyelo.ui.annotate.Marker');
-goog.require('kinyelo.ui.annotate.MarkerContainerRenderer');
+goog.require('app.ui.annotate.Marker');
+goog.require('app.ui.annotate.MarkerContainerRenderer');
 
 /**
- *
+ * @param {!kinyelo.editor.AdvancedField} field
  * @constructor
  * @extends {kinyelo.ui.Container}
  */
-kinyelo.ui.annotate.MarkerContainer = function(model) {
-    goog.base(this, goog.ui.Container.Orientation.VERTICAL, kinyelo.ui.annotate.MarkerContainerRenderer.getInstance());
+app.ui.annotate.MarkerContainer = function(field) {
+    goog.base(this, goog.ui.Container.Orientation.VERTICAL, app.ui.annotate.MarkerContainerRenderer.getInstance());
 
-    this.setModel(model || []);
+    /**
+     * @type {!kinyelo.editor.AdvancedField}
+     * @private
+     */
+    this.field_ = field;
+
     this.setId('marker-container');
     /**
      *
-     * @type {kinyelo.ui.annotate.Marker}
+     * @type {app.ui.annotate.Marker}
      * @private
      */
     this.activeMarker_ = null;
 
     this.setFocusable(false);
 }
-goog.inherits(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.Container);
+goog.inherits(app.ui.annotate.MarkerContainer, kinyelo.ui.Container);
 
-goog.ui.registry.setDefaultRenderer(kinyelo.ui.annotate.MarkerContainer, kinyelo.ui.annotate.MarkerContainerRenderer);
-goog.ui.registry.setDecoratorByClassName(kinyelo.ui.annotate.MarkerContainerRenderer.CSS_CLASS,
-    function() { return new kinyelo.ui.annotate.MarkerContainer(); });
+goog.ui.registry.setDefaultRenderer(app.ui.annotate.MarkerContainer, app.ui.annotate.MarkerContainerRenderer);
 
 /**
  * @param element
  * @returns {boolean}
  * @inheritDoc
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.canDecorate = function(element) {
+app.ui.annotate.MarkerContainer.prototype.canDecorate = function(element) {
     return false;
 }
 
@@ -47,10 +51,20 @@ kinyelo.ui.annotate.MarkerContainer.prototype.canDecorate = function(element) {
  * @const
  * @type {string}
  */
-kinyelo.ui.annotate.MarkerContainer.CONTAINER_ID = 'post-markers';
+app.ui.annotate.MarkerContainer.CONTAINER_ID = 'post-markers';
 
 
-kinyelo.ui.annotate.MarkerContainer.prototype.enterDocument = function() {
+/**
+ *
+ * @returns {!kinyelo.editor.AdvancedField}
+ */
+app.ui.annotate.MarkerContainer.prototype.getField = function() {
+    return this.field_;
+}
+
+
+/** @inheritDoc */
+app.ui.annotate.MarkerContainer.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add event listeners
     this.getHandler().listen(
@@ -60,20 +74,58 @@ kinyelo.ui.annotate.MarkerContainer.prototype.enterDocument = function() {
         false,
         this
     );
+    this.getHandler().listen(
+        this.getField(),
+        goog.editor.Field.EventType.DELAYEDCHANGE,
+        this.handleDelayedChange,
+        false,
+        this
+    );
+}
+
+/**
+ *
+ * @param {Node} annotatableNode
+ */
+app.ui.annotate.MarkerContainer.prototype.addMarker = function(annotatableNode) {
+    var control = new app.ui.annotate.Marker(annotatableNode);
+    this.addChild(control, true);
+}
+
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+app.ui.annotate.MarkerContainer.prototype.handleDelayedChange = function(e) {
+    goog.array.forEach(this.getField().getAnnotatableNodes(), function(node) {
+        var child = this.getChild(app.ui.Container.generateChildId(node.id, app.ui.annotate.Marker.ID_FRAGMENT));
+        if(goog.isNull(child)) {
+            this.addMarker(node);
+        }
+    }, this);
+    this.forEachChild(function(child) {
+        if(!child.isValid()) {
+            console.log('removing dead marker');
+            this.removeChild(child, true);
+        } else {
+            child.getRenderer().updatePosition(child);
+        }
+    }, this);
+
 }
 
 
 /**
- * @param {kinyelo.ui.annotate.Marker=} marker
+ * @param {app.ui.annotate.Marker=} marker
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.setActiveMarker = function(marker) {
+app.ui.annotate.MarkerContainer.prototype.setActiveMarker = function(marker) {
     this.activeMarker_ = marker || null;
 }
 
 /**
- * @returns {kinyelo.ui.annotate.Marker}
+ * @returns {app.ui.annotate.Marker}
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.getActiveMarker = function() {
+app.ui.annotate.MarkerContainer.prototype.getActiveMarker = function() {
     return this.activeMarker_;
 }
 
@@ -81,9 +133,8 @@ kinyelo.ui.annotate.MarkerContainer.prototype.getActiveMarker = function() {
  *
  * @param {goog.events.Event} e
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.handleMarkerCheck = function(e) {
+app.ui.annotate.MarkerContainer.prototype.handleMarkerCheck = function(e) {
     //if(e.type == goog.ui.Component.EventType.CHECK) {
-    console.log('handle marker check', this.getActiveMarker(), e);
     if(!goog.isNull(this.getActiveMarker())) {
         var previousMarker = this.getActiveMarker();
         previousMarker.setChecked(false);
@@ -96,8 +147,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleMarkerCheck = function(e) {
 /**
  * @param {goog.events.Event} e
  */
-kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationsHidden = function(e) {
-    console.log('handle annotations hidden', this.getActiveMarker(), e);
+app.ui.annotate.MarkerContainer.prototype.handleAnnotationsHidden = function(e) {
     this.getActiveMarker().setChecked(false);
     this.setActiveMarker();
 }
@@ -107,13 +157,13 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationsHidden = function
 *
 * @param e {goog.events.Event}
 */
-kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = function(e) {
+app.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = function(e) {
 
-    /** @type {kinyelo.ui.annotate.Annotation} */
+    /** @type {app.ui.annotate.Annotation} */
     var target = e.target;
     /** @type {Node} */
     var annotatable = target.getModel().getAnnotatable();
-    var childId = kinyelo.ui.Container.generateChildId(annotatable.id, kinyelo.ui.annotate.Marker.ID_FRAGMENT);
+    var childId = app.ui.Container.generateChildId(annotatable.id, app.ui.annotate.Marker.ID_FRAGMENT);
     var marker = this.getChild(childId);
     if(!goog.isNull(marker)) {
         marker.updateCount();
@@ -121,6 +171,15 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
         //TODO: create marker here? or elsewhere to ensure it is always available here?
     }
 
+}
+
+/**
+ *
+ * @returns {HTMLElement}
+ * @overrides
+ */
+app.ui.annotate.MarkerContainer.prototype.getContentElement = function() {
+    return this.getElement().firstElementChild;
 }
 
 
@@ -133,15 +192,15 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
 // * @param e {goog.events.Event}
 // * @public
 // */
-//kinyelo.ui.annotate.MarkerContainer.prototype.handleNewAnnotation = function(e) {
+//app.ui.annotate.MarkerContainer.prototype.handleNewAnnotation = function(e) {
 //
-//    /** @type {kinyelo.ui.annotate.Marker} */
+//    /** @type {app.ui.annotate.Marker} */
 //    var target = e.target;
 //    /** @type {string} */
 //    var anchor = e.target.getModel().anchor;
 //    var marker;
 //    if(!goog.object.containsKey(this.markers, anchor)) {
-//        marker = new kinyelo.ui.annotate.Marker(anchor);
+//        marker = new app.ui.annotate.Marker(anchor);
 //        goog.object.add(this.markers, anchor, marker);
 //        console.log('adding child');
 //        this.addChild(marker, true);
@@ -162,7 +221,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
  * @param e {goog.events.Event}
  * @private
  */
-/*kinyelo.Post.prototype.handleHover_ = function(e) {
+/*kinyelo.ui.Post.prototype.handleHover_ = function(e) {
     this.usingLorem = this.usingLorem ? this.field_.queryCommandValue(goog.editor.Command.USING_LOREM) : this.usingLorem;
     if(!this.usingLorem) {
         var node = goog.editor.node.findHighestMatchingAncestor(e.target, this.isAnnotatableNode_);
@@ -184,25 +243,25 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
 /**
  * @type {Array}
  */
-//kinyelo.ui.annotate.MarkerContainer.prototype.nodeList;
+//app.ui.annotate.MarkerContainer.prototype.nodeList;
 
 /**
  * @type {Object}
  */
 
-//kinyelo.ui.annotate.MarkerContainer.prototype.markers;
+//app.ui.annotate.MarkerContainer.prototype.markers;
 
 /**
  * @type {Node=}
  */
-//kinyelo.ui.annotate.MarkerContainer.prototype.focusedNode;
+//app.ui.annotate.MarkerContainer.prototype.focusedNode;
 
 /**
  *
  * @param {!goog.events.Event} e
  * @private
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.handleDelayedChange_ = function(e) {
+/*app.ui.annotate.MarkerContainer.prototype.handleDelayedChange_ = function(e) {
     this.updateMarkers();
 }*/
 
@@ -210,7 +269,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
  *
  * @type {boolean}
  */
-//kinyelo.ui.annotate.MarkerContainer.prototype.usingLorem = true;
+//app.ui.annotate.MarkerContainer.prototype.usingLorem = true;
 
 
 /**
@@ -218,7 +277,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
  * @param {goog.events.Event} e
  * @private
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.handleHover_ = function(e) {
+/*app.ui.annotate.MarkerContainer.prototype.handleHover_ = function(e) {
     this.usingLorem = this.usingLorem ? this.field_.queryCommandValue(goog.editor.Command.USING_LOREM) : this.usingLorem;
     if(!this.usingLorem) {
         var node = goog.editor.node.findHighestMatchingAncestor(e.target, this.isAnnotatableNode_);
@@ -242,7 +301,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
  * @param {number} id
  * @param {boolean=} opt_hide
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.highlightMarker = function(id, opt_hide) {
+/*app.ui.annotate.MarkerContainer.prototype.highlightMarker = function(id, opt_hide) {
     var marker = goog.object.get(this.markers, id);
     if(goog.isDef(marker)) {
         if(opt_hide) {
@@ -256,13 +315,13 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
 /**
  *
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.updateMarkers = function() {
+/*app.ui.annotate.MarkerContainer.prototype.updateMarkers = function() {
     this.nodeList = goog.dom.findNodes(this.field_.getElement(), this.isAnnotatableNode_);
     if(this.getChildCount() != this.nodeList.length) {
         this.forEachChild(this.checkForDeletedNodes, this);
         goog.array.forEach(this.nodeList, function(node) {
             if(!goog.object.containsKey(this.markers, node.id)) {
-                var marker = new kinyelo.ui.annotate.Marker(node);
+                var marker = new app.ui.annotate.Marker(node);
                 goog.object.set(this.markers, node.id, marker);
                 this.addChild(marker);
             }
@@ -272,10 +331,10 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
 
 /**
  *
- * @param {kinyelo.ui.annotate.Marker} control
+ * @param {app.ui.annotate.Marker} control
  * @param {number} index
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.checkForDeletedNodes = function(control, index) {
+/*app.ui.annotate.MarkerContainer.prototype.checkForDeletedNodes = function(control, index) {
     if(!control.isStillValid()) {
         goog.object.remove(this.markers, control.getRelatedContentElementId());
         this.removeChild(control);
@@ -287,7 +346,7 @@ kinyelo.ui.annotate.MarkerContainer.prototype.handleAnnotationRendered = functio
  * @param {Node} node
  * @private
  */
-/*kinyelo.ui.annotate.MarkerContainer.prototype.isAnnotatableNode_ = function(node) {
+/*app.ui.annotate.MarkerContainer.prototype.isAnnotatableNode_ = function(node) {
     if(goog.editor.node.isBlockTag(node) &&
         node.tagName != goog.dom.TagName.SECTION) return node;
 }*/

@@ -1,5 +1,5 @@
 
-goog.provide('kinyelo.ui.ToolbarRenderer');
+goog.provide('kinyelo.ui.editor.ToolbarRenderer');
 
 goog.require('goog.ui.ToolbarRenderer');
 
@@ -11,11 +11,11 @@ goog.require('goog.ui.ToolbarRenderer');
  * @constructor
  * @extends {goog.ui.ToolbarRenderer}
  */
-kinyelo.ui.ToolbarRenderer = function() {
+kinyelo.ui.editor.ToolbarRenderer = function() {
     goog.ui.ToolbarRenderer.call(this);
 };
-goog.inherits(kinyelo.ui.ToolbarRenderer, goog.ui.ToolbarRenderer);
-goog.addSingletonGetter(kinyelo.ui.ToolbarRenderer);
+goog.inherits(kinyelo.ui.editor.ToolbarRenderer, goog.ui.ToolbarRenderer);
+goog.addSingletonGetter(kinyelo.ui.editor.ToolbarRenderer);
 
 
 /**
@@ -23,7 +23,7 @@ goog.addSingletonGetter(kinyelo.ui.ToolbarRenderer);
  * by this renderer.
  * @type {string}
  */
-kinyelo.ui.ToolbarRenderer.CSS_CLASS = goog.getCssName('k-rte-toolbar');
+kinyelo.ui.editor.ToolbarRenderer.CSS_CLASS = goog.getCssName('k-rte-toolbar');
 
 /**
  * Returns the CSS class to be applied to the root element of containers
@@ -31,8 +31,8 @@ kinyelo.ui.ToolbarRenderer.CSS_CLASS = goog.getCssName('k-rte-toolbar');
  * @return {string} Renderer-specific CSS class.
  * @override
  */
-kinyelo.ui.ToolbarRenderer.prototype.getCssClass = function() {
-    return kinyelo.ui.ToolbarRenderer.CSS_CLASS;
+kinyelo.ui.editor.ToolbarRenderer.prototype.getCssClass = function() {
+    return kinyelo.ui.editor.ToolbarRenderer.CSS_CLASS;
 };
 
 
@@ -43,6 +43,6 @@ kinyelo.ui.ToolbarRenderer.prototype.getCssClass = function() {
  * @param {goog.ui.Container} container Container to render.
  * @return {Element} Root element for the container.
  */
-kinyelo.ui.ToolbarRenderer.prototype.createDom = function(container) {
+kinyelo.ui.editor.ToolbarRenderer.prototype.createDom = function(container) {
     return container.getDomHelper().createDom('ul');
 };

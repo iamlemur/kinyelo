@@ -158,3 +158,23 @@ kinyelo.editor.AdvancedField.prototype.getToolbar = function() {
 kinyelo.editor.AdvancedField.prototype.getToolbarElement = function() {
     return this.toolbarElement_;
 }
+
+/**
+ *
+ * @returns {!Array.<!Node>}
+ */
+kinyelo.editor.AdvancedField.prototype.getAnnotatableNodes = function() {
+    return goog.dom.findNodes(this.getElement(), kinyelo.editor.AdvancedField.isAnnotatableNode);
+
+}
+
+/**
+ *
+ * @param {Node} node
+ * @returns {boolean}
+ */
+kinyelo.editor.AdvancedField.isAnnotatableNode = function(node) {
+    return goog.editor.node.isBlockTag(node)
+        && goog.editor.node.isEditable(node) &&
+        node.tagName != goog.dom.TagName.SECTION;
+}

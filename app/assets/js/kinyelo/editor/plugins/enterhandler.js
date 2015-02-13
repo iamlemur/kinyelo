@@ -174,13 +174,13 @@ kinyelo.editor.plugins.EnterHandler.prototype.
     var isEmptyLi = (li &&
         li.innerHTML.match(
             kinyelo.editor.emptyNodeRegExp));
-    var isEmptyP = (p &&
-        p.innerHTML.match(
-            kinyelo.editor.emptyNodeRegExp));
+    //var isEmptyP = (p &&
+        //p.innerHTML.match(
+          //  kinyelo.editor.emptyNodeRegExp));
     var elementAfterCursor = isEmptyLi ?
         this.breakOutOfEmptyListItemGecko_(li) :
-        isEmptyP ?
-            this.splitSection_(p) :
+        //isEmptyP ?
+          //  this.splitSection_(p) :
             this.handleRegularEnterGecko_();
 
     // Move the cursor in front of "nodeAfterCursor", and make sure it
@@ -224,6 +224,10 @@ kinyelo.editor.plugins.EnterHandler.prototype.splitSection_ =
         var newNode;
         var section = goog.dom.getAncestorByTagNameAndClass(p, goog.dom.TagName.SECTION);
         if(section) {
+            if(section.firstElementChild == p) {
+                console.log('first element in section is blank p where enter was pressed');
+                return null;
+            }
             var position = goog.editor.range.getDeepEndPoint(range, true);
             newNode = kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_(
                 position.node, position.offset, section);
@@ -427,6 +431,8 @@ kinyelo.editor.plugins.EnterHandler.trimTabsAndLineBreaks_ = function(
  */
 kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
     function() {
+        //we want to return the node with the content
+        //and when splitting, we want to insertbefore the new node
         var range = this.getFieldObject().getRange();
         var container =
             goog.editor.style.getContainer(range.getContainerElement());
@@ -449,6 +455,11 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
 
             var position = goog.editor.range.getDeepEndPoint(range, true);
             container = this.ensureNodeIsWrappedW3c_(position.node, container);
+
+            if(goog.editor.node.getLeftMostLeaf(container) == position.node && position.offset == 0) {
+                //we return the container because in this case we want focus to remain with the container
+                var returnNode = container;
+            }
 
             newNode = kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_(
                 position.node, position.offset, container);
@@ -477,9 +488,11 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleRegularEnterGecko_ =
                     leftAnchor : rightAnchor;
                 goog.dom.flattenElement(/** @type {Element} */ (anchorToRemove));
             }
+
+
         }
         this.getFieldObject().addUniqueID(newNode, true);
-        return /** @type {Element} */ (newNode);
+        return /** @type {Element} */ (goog.isDefAndNotNull(returnNode) ? returnNode : newNode);
     };
 
 
@@ -619,12 +632,24 @@ kinyelo.editor.plugins.EnterHandler.splitDom_ = function(
  */
 kinyelo.editor.plugins.EnterHandler.splitDomAndAppend_ = function(
     positionNode, positionOffset, node) {
-    var newNode = kinyelo.editor.plugins.EnterHandler.splitDom_(
-        positionNode, positionOffset, node);
-    if(goog.array.contains(kinyelo.editor.plugins.EnterHandler.TRANSIENT_FORMATS, newNode.tagName) && newNode.textContent == '') {
-        newNode = /** @type {Node} */ goog.dom.createDom(goog.dom.TagName.P, { id: newNode.id }, goog.dom.getChildren(newNode));
+
+    var newNode;
+
+    //TODO: how affect headings H1 H2?
+    if(goog.editor.node.getLeftMostLeaf(node) == positionNode && positionOffset == 0) {
+        var dom = goog.dom.getDomHelper(node);
+        newNode = dom.createDom(goog.dom.TagName.P);
+        goog.dom.append(newNode, dom.createTextNode(''), dom.createDom(goog.dom.TagName.BR));
+        goog.dom.insertSiblingBefore(newNode, node);
+    } else {
+        newNode = kinyelo.editor.plugins.EnterHandler.splitDom_(
+            positionNode, positionOffset, node);
+        if(goog.array.contains(kinyelo.editor.plugins.EnterHandler.TRANSIENT_FORMATS, newNode.tagName) && newNode.textContent == '') {
+            newNode = /** @type {Node} */ goog.dom.createDom(goog.dom.TagName.P, { id: newNode.id }, goog.dom.getChildren(newNode));
+        }
+        goog.dom.insertSiblingAfter(newNode, node);
     }
-    goog.dom.insertSiblingAfter(newNode, node);
+
     return newNode;
 };
 
@@ -716,9 +741,11 @@ kinyelo.editor.plugins.EnterHandler.prototype.handleKeyPress = function(e) {
                 // Behave similarly to IE's content editable return carriage:
                 // If the shift key is down or specified by the application, insert a
                 // BR, otherwise split paragraphs
-                this.handleEnterGecko_(e);
+                //e.preventDefault();
+                this.handleEnterAtCursorGeckoInternal(e);
             }
     } else if (e.keyCode == goog.events.KeyCodes.DELETE) {
+        console.log('we have delete, here is event', e);
         this.handleDeleteGecko(e);
     }
 
