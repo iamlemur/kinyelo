@@ -11,7 +11,7 @@ goog.require('app.ui.annotate.Annotation');
 /**
  *
  * @param {!string} annotatableId
- * @param {Array.<app.model.Annotation>=} model
+ * @param {Array.<app.models.Annotation>=} model
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}

@@ -26,7 +26,7 @@ class CreateAnnotationsTable extends Migration {
 			$table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade');
 			$table->integer('linked_post_id')->unsigned()->nullable();
 			$table->foreign('linked_post_id')->references('id')->on('posts')->onDelete('cascade');
-			$table->string('anchor', 4);
+			$table->string('annotatable_id', 4);
 			$table->text('content');
 			$table->enum('type', array('COMMENT', 'POST', 'CHARACTER'))->index();
 			$table->enum('state', array('PRIVATE', 'PUBLIC'))->index();

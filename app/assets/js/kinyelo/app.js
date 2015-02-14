@@ -2,7 +2,7 @@ goog.provide('kinyelo.App');
 
 goog.require('goog.Uri');
 
-goog.require('app.model.Author');
+goog.require('app.models.Author');
 goog.require('app.ui.Post');
 
 goog.require('kinyelo.events.EventTarget');
@@ -34,7 +34,7 @@ kinyelo.App.prototype.user_ = null;
  */
 kinyelo.App.prototype.setUser = function(data) {
     //TODO: eventually make this a child class of author as the user model
-    this.user_ = new app.model.Author(data.id, data.username);
+    this.user_ = new app.models.Author(data.id, data.username);
 }
 
 /**

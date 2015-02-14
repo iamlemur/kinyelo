@@ -6,7 +6,7 @@ goog.require('kinyelo.ui.Component');
 
 /**
  *
- * @param {app.model.Annotation=} model
+ * @param {app.models.Annotation=} model
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}

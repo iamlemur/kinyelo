@@ -1,23 +1,28 @@
-goog.provide('app.model.Annotation');
+goog.provide('app.models.Annotation');
 
-goog.require('kinyelo.Model');
+goog.require('kinyelo.models.Model');
 
-goog.require('app.model.Author');
-goog.require('app.model.Reply');
+goog.require('app.models.Author');
+goog.require('app.models.Reply');
 
 goog.require('goog.events');
 
 /**
- * @param {!app.model.Post} post
+ * @param {!app.models.Post} post
  * @param {?number} id
  * @param {!HTMLElement} annotatable
- * @param {!app.model.Author} author
+ * @param {app.models.Author} author
  * @param {!string} content
  * @param {string=} highlight
  * @constructor
- * @extends {kinyelo.Model}
+ * @extends {kinyelo.models.Model}
  */
-app.model.Annotation = function(post, id, annotatable, author, content, highlight) {
+app.models.Annotation = function(post, id, annotatable, author,  content, highlight) {
+
+    kinyelo.models.Model.call(this);
+
+    this.setParentEventTarget(post);
+
     /**
      * we do this because we want to check the anchor even exists before creating the annotation
      * and when checking, we already have the reference
@@ -29,7 +34,7 @@ app.model.Annotation = function(post, id, annotatable, author, content, highligh
 
     /**
      *
-     * @type {!app.model.Author}
+     * @type {!app.models.Author}
      * @private
      */
     this.author_ = author;
@@ -50,7 +55,7 @@ app.model.Annotation = function(post, id, annotatable, author, content, highligh
 
     /**
      *
-     * @type {Array.<app.model.Reply>}
+     * @type {Array.<app.models.Reply>}
      * @private
      */
     this.replies_ = [];
@@ -62,44 +67,45 @@ app.model.Annotation = function(post, id, annotatable, author, content, highligh
     this.id_ = id;
 
     /**
-     * @type {!app.model.Post}
+     * @type {!app.models.Post}
      * @private
      */
     this.post_ = post;
 
+    this.dispatchEvent(app.models.Annotation.EventType.CREATE);
 
-    this.dispatchEvent(app.model.Annotation.EventType.CREATED);
 }
-goog.inherits(app.model.Annotation, kinyelo.Model);
+goog.inherits(app.models.Annotation, kinyelo.models.Model);
 
 /**
  *
  * @type {Object}
  */
-app.model.Annotation.EventType = {
-    CREATED: goog.events.getUniqueId('created')
+app.models.Annotation.EventType = {
+    CREATE: goog.events.getUniqueId('create'),
+    DELETE: goog.events.getUniqueId('delete')
 }
 
 /**
- * @param {!app.model.Reply} reply
+ * @param {!app.models.Reply} reply
  */
-app.model.Annotation.prototype.addReply = function(reply) {
+app.models.Annotation.prototype.addReply = function(reply) {
     this.replies_.push(reply);
 }
 
 /**
  * @returns {!HTMLElement}
  */
-app.model.Annotation.prototype.getAnnotatable = function() {
+app.models.Annotation.prototype.getAnnotatable = function() {
     return this.annotatable_;
 }
 
 
 /**
  *
- * @returns {!app.model.Author}
+ * @returns {!app.models.Author}
  */
-app.model.Annotation.prototype.getAuthor = function() {
+app.models.Annotation.prototype.getAuthor = function() {
     return this.author_;
 }
 
@@ -107,14 +113,22 @@ app.model.Annotation.prototype.getAuthor = function() {
  *
  * @returns {!string}
  */
-app.model.Annotation.prototype.getContent = function() {
+app.models.Annotation.prototype.getContent = function() {
     return this.content_;
 }
 
 /**
  *
- * @returns {Array.<app.model.Reply>}
+ * @returns {Array.<app.models.Reply>}
  */
-app.model.Annotation.prototype.getReplies = function() {
+app.models.Annotation.prototype.getReplies = function() {
     return this.replies_;
+}
+
+/**
+ *
+ * @returns {!app.models.Post}
+ */
+app.models.Annotation.prototype.getPost = function() {
+    return this.post_;
 }

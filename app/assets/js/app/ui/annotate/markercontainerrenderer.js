@@ -1,13 +1,12 @@
 goog.provide('app.ui.annotate.MarkerContainerRenderer');
 
 goog.require('kinyelo.ui.ContainerRenderer');
-goog.require('app.ui.annotate.Marker');
 goog.require('goog.array');
 
 /**
  *
  * @constructor
- * @extend {kinyelo.ui.ContainerRenderer}
+ * @extends {kinyelo.ui.ContainerRenderer}
  */
 app.ui.annotate.MarkerContainerRenderer = function() {
     goog.base(this);
@@ -37,10 +36,8 @@ app.ui.annotate.MarkerContainerRenderer.prototype.createDom = function(container
     var el = dom.createDom('div', this.getClassNames(container).join(' '));
     var wrapper = dom.createDom('div', app.ui.annotate.MarkerContainerRenderer.WRAPPER_CLASS);
     dom.appendChild(el, wrapper);
-    //var el = goog.base(this, 'createDom', container);
-    container.setElementInternal(el);
 
-    goog.array.forEach(container.getField().getAnnotatableNodes(), goog.bind(container.addMarker, container));
+    container.setElementInternal(el);
 
     return el;
 }

@@ -116,7 +116,7 @@ class AnnotationsTableSeeder extends Seeder {
 		Annotation::create(array(
 			'user_id' => '2',
 			'post_id' => '1',
-			'anchor' => '558b',
+			'annotatable_id' => '558b',
 			'state' => 'PUBLIC',
 			'content' => 'This is an awesome article dude!',
 			'type' => 'COMMENT'
@@ -130,7 +130,7 @@ class AnnotationsTableSeeder extends Seeder {
 		Annotation::create(array(
 			'user_id' => '2',
 			'post_id' => '1',
-			'anchor' => '558b',
+			'annotatable_id' => '558b',
 			'state' => 'PUBLIC',
 			'content' => 'I need to re-emphasize that this is awesome!',
 			'type' => 'COMMENT'

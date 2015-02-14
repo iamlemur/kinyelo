@@ -1,26 +1,28 @@
-goog.provide('app.model.Reply');
+goog.provide('app.models.Reply');
 
-goog.require('app.model.Author');
-goog.require('kinyelo.Model');
+goog.require('app.models.Author');
+goog.require('kinyelo.models.Model');
 
 /**
  *
- * @param {!app.model.Annotation} annotation
- * @param {!app.model.Author} author
+ * @param {!app.models.Annotation} annotation
+ * @param {!app.models.Author} author
  * @param {string} content
  * @constructor
- * @extends {kinyelo.Model}
+ * @extends {kinyelo.models.Model}
  */
-app.model.Reply = function(annotation, author, content) {
+app.models.Reply = function(annotation, author, content) {
+
+    kinyelo.models.Model.call(this);
 
     /**
-     * @type {?app.model.Annotation}
+     * @type {?app.models.Annotation}
      * @private
      */
     this.annotation_ = annotation;
 
     /**
-     * @type {!app.model.Author}
+     * @type {!app.models.Author}
      * @private
      */
     this.author_ = author;
@@ -31,4 +33,4 @@ app.model.Reply = function(annotation, author, content) {
      */
     this.content_ = content;
 }
-goog.inherits(app.model.Reply, kinyelo.Model);
+goog.inherits(app.models.Reply, kinyelo.models.Model);

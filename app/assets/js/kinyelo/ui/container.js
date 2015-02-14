@@ -12,15 +12,7 @@ kinyelo.ui.Container = function(opt_orientation, opt_renderer, opt_domHelper) {
 }
 goog.inherits(kinyelo.ui.Container, goog.ui.Container);
 
-/**
- *
- * @param {!string} id
- * @param {string} opt_fragment
- * @returns {string}
- */
-kinyelo.ui.Container.generateChildId = function(id, opt_fragment) {
-    return (opt_fragment || '') + id;
-}
+
 //
 ///**
 // * @inheritDoc

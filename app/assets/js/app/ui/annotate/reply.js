@@ -4,7 +4,7 @@ goog.require('kinyelo.ui.Component');
 
 /**
  *
- * @param {app.model.Reply} model
+ * @param {app.models.Reply} model
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}

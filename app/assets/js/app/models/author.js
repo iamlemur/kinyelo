@@ -1,6 +1,6 @@
-goog.provide('app.model.Author');
+goog.provide('app.models.Author');
 
-goog.require('kinyelo.Model');
+goog.require('kinyelo.models.Model');
 
 /**
  *
@@ -8,9 +8,12 @@ goog.require('kinyelo.Model');
  * @param {string=} username
  * @param {string=} avatarURL
  * @constructor
- * @extends {kinyelo.Model}
+ * @extends {kinyelo.models.Model}
  */
-app.model.Author = function(id, username, avatarURL) {
+app.models.Author = function(id, username, avatarURL) {
+
+    kinyelo.models.Model.call(this);
+
     /**
      *
      * @type {number}
@@ -30,14 +33,14 @@ app.model.Author = function(id, username, avatarURL) {
      */
     this.avatarURL_ = goog.isDefAndNotNull(avatarURL) ? avatarURL : null;
 }
-goog.inherits(app.model.Author, kinyelo.Model);
+goog.inherits(app.models.Author, kinyelo.models.Model);
 
 
 /**
  *
  * @returns {string}
  */
-app.model.Author.prototype.getAvatarURL = function() {
+app.models.Author.prototype.getAvatarURL = function() {
     return this.avatarURL_;
 }
 
@@ -45,7 +48,7 @@ app.model.Author.prototype.getAvatarURL = function() {
  *
  * @returns {string}
  */
-app.model.Author.prototype.getUsername = function() {
+app.models.Author.prototype.getUsername = function() {
     return this.username_;
 }
 
@@ -53,7 +56,7 @@ app.model.Author.prototype.getUsername = function() {
  *
  * @returns {number}
  */
-app.model.Author.prototype.getId = function() {
+app.models.Author.prototype.getId = function() {
     return this.id_;
 }
 
@@ -61,6 +64,6 @@ app.model.Author.prototype.getId = function() {
  *
  * @returns {string}
  */
-app.model.Author.prototype.getURL = function() {
+app.models.Author.prototype.getURL = function() {
     return 'http://www.google.com';
 }

@@ -7,10 +7,12 @@ goog.require('goog.ui.registry');
 goog.require('kinyelo.ui.Control');
 goog.require('goog.ui.Component');
 goog.require('app.ui.annotate.MarkerRenderer');
+goog.require('app.models.Annotatable');
+goog.require('app.models.Annotation');
 
 /**
  *
- * @param {Node} annotatable
+ * @param {app.models.Annotatable} annotatable
  * @constructor
  * @extends {kinyelo.ui.Control}
  */
@@ -19,68 +21,28 @@ app.ui.annotate.Marker = function(annotatable) {
     kinyelo.ui.Control.call(this);
 
     /**
-     *
-     * @type {number}
+     * @type {app.models.Annotatable}
      * @private
      */
-    this.count_ = null;
+    this.annotatable_ = annotatable;
 
-    /**
-     * @type {Node}
-     */
-    this.annotatable = annotatable;
-
-    this.updateCount();
 
 }
 goog.inherits(app.ui.annotate.Marker, kinyelo.ui.Control);
 
 /**
- * @param {boolean=} opt_decrement
- */
-app.ui.annotate.Marker.prototype.updateCount = function(opt_decrement) {
-    if(goog.isNull(this.getCount())) {
-        this.count_ = 0;
-    } else {
-        if(goog.isDefAndNotNull(opt_decrement) && opt_decrement) {
-            this.count_--;
-        } else {
-            this.count_++;
-        }
-    }
-    this.setCaption("" + this.getCount());
-    if(this.isInDocument()) {
-        this.getRenderer().updatePosition(this);
-    }
-}
-
-/**
- * @returns {number}
- */
-app.ui.annotate.Marker.prototype.getCount = function() {
-    return this.count_;
-}
-
-
-/**
- * @returns {number}
- */
-app.ui.annotate.Marker.prototype.getCaption = function() {
-    return this.getModel().count;
-}
-
-/**
- * @returns {Node}
+ *
+ * @returns {app.models.Annotatable}
  */
 app.ui.annotate.Marker.prototype.getAnnotatable = function() {
-    return this.annotatable;
+    return this.annotatable_;
 }
 
 /**
  * @return {string} Unique component ID.
  */
 app.ui.annotate.Marker.prototype.getIdInternal = function() {
-    return this.annotatable.id;
+    return this.annotatable_.getNode().id;
 };
 
 
@@ -93,20 +55,27 @@ app.ui.annotate.Marker.prototype.enterDocument = function() {
     this.getHandler().listen(this, [goog.ui.Component.EventType.CHECK, goog.ui.Component.EventType.UNCHECK], function(e) {
         console.log('marker has been checked/unchecked', e);
     });
-}
-
-/**
- *
- * @returns {boolean}
- */
-app.ui.annotate.Marker.prototype.isValid = function() {
-    return /** @type {boolean} */ this.annotatable.parentNode;
+    this.getHandler().listen(this.getAnnotatable().getParent(),
+        [app.models.Annotation.EventType.CREATE, app.models.Annotation.EventType.DELETE],
+        this.handleAnnotationCreatedDeleted,
+        false
+    );
 }
 
 /**
  * @type {string}
  */
 app.ui.annotate.Marker.ID_FRAGMENT = 'marker-';
+
+
+
+app.ui.annotate.Marker.prototype.handleAnnotationCreatedDeleted = function(e) {
+    console.log('marker gets new annotation event');
+    var annotation = e.target;
+    if(annotation && annotation.getAnnotatable() == this.getAnnotatable()) {
+        this.getRenderer().setContent(this.getContentElement(), this.getAnnotatable().getAnnotationsCount().toString());
+    }
+}
 
 /**
  * @returns {string}

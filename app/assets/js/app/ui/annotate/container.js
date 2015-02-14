@@ -10,26 +10,18 @@ goog.require('app.ui.annotate.Annotatable');
 
 /**
  *
- * @param {Object=} model
+ * @param {kinyelo.ui.Component} parent
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}
  */
 
-app.ui.annotate.Container = function(model, opt_domHelper) {
+app.ui.annotate.Container = function(parent, opt_domHelper) {
     goog.base(this, opt_domHelper);
-    this.setModel(model || null);
 
-    /**
-     * @type {!Object}
-     * @private
-     */
-    this.contentMap_ = goog.array.bucket(
-        goog.object.getValues(this.getModel()),
-        function(annotation) {
-            return annotation.getAnnotatable().id;
-        }
-    );
+    this.setParentEventTarget(parent);
+
+    this.setModel(null);;
 
 }
 goog.inherits(app.ui.annotate.Container, kinyelo.ui.Component);

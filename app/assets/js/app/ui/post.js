@@ -14,11 +14,11 @@ goog.require('app.ui.annotate.Container');
 goog.require('app.ui.annotate.MarkerContainer');
 goog.require('app.ui.annotate.Annotation');
 goog.require('kinyelo.ui.Component');
-goog.require('app.model.Post');
-goog.require('app.model.Annotation');
-goog.require('app.model.Reply');
-goog.require('app.model.Author');
-goog.require('app.model.Post');
+goog.require('app.models.Post');
+goog.require('app.models.Annotation');
+goog.require('app.models.Reply');
+goog.require('app.models.Author');
+goog.require('app.models.Post');
 
 
 /**
@@ -51,10 +51,9 @@ app.ui.Post = function(id, opt_domHelper) {
 
     this.setId(id);
 
-
     if(goog.isNull(this.title_) || goog.isNull(this.rte_)) throw "Not on posts page";
 
-    this.model_ = new app.model.Post(this.id_, this.title_.getOriginalElement(), this.rte_.getOriginalElement());
+    this.model_ = new app.models.Post(this, this.id_, this.title_, this.rte_);
 
     this.getMetadata_();
 
@@ -96,23 +95,35 @@ app.ui.Post.prototype.decorateInternal = function(element) {
     goog.base(this, 'decorateInternal', element);
 }
 
-/**
- *
- * @param {goog.events.Event} e
- */
-app.ui.Post.prototype.handleDelayedChange = function(e) {
-    if(!goog.isNull(this.ui_.markerContainer)) {
-        //this.ui_.markerContainer.handleDelayedChange(e)
-    }
-}
-
-
-
 /** @inheritDoc */
 app.ui.Post.prototype.enterDocument = function() {
+    //called immediately because post will always be in the document and is therefore always decorated
     goog.base(this, 'enterDocument');
-    //TODO: add listeners
-    this.getHandler().listen(this.rte_, goog.editor.Field.EventType.DELAYEDCHANGE, goog.bind(this.handleDelayedChange, this), false);
+    //TODO: add listeners;
+
+    /**
+     * @type {!Object}
+     * @private
+     */
+    this.ui_ = goog.object.create();
+
+    this.ui_.markerContainer = new app.ui.annotate.MarkerContainer(this.getModel());
+    this.addChild(this.ui_.markerContainer, true);
+
+    this.ui_.markerContainer.init();
+
+    this.getModel().update();
+
+    this.ui_.annotationsContainer = new app.ui.annotate.Container(this);
+    this.ui_.annotationsContainer.render();
+
+/*
+    this.getHandler().listen(this.getModel(), app.models.Annotation.EventType.CREATED,
+        function(e) { console.log('post model hears that annotation model was created', e); },
+        false
+    );
+*/
+
 }
 
 /**
@@ -145,6 +156,7 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
     var xhr = e.target;
     if(xhr.isComplete()) {
 
+
         var nodes = this.rte_.getAnnotatableNodes();
         /**
          * Map of all annotatable nodes in the RTE
@@ -159,17 +171,6 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
 
 
         /**
-         * @type {!Object}
-         * @private
-         */
-        this.ui_ = goog.object.create();
-
-        this.ui_.markerContainer = new app.ui.annotate.MarkerContainer(this.rte_);
-
-        this.addChild(this.ui_.markerContainer, true);
-
-
-        /**
          * All the data flatly initialized in their models
          * @type {!Object}
          * @private
@@ -181,24 +182,30 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
         var response = xhr.getResponseJson();
 
         //get all the contributors to this project
-        this.metadata_.participants = goog.object.map(
+        var participants = goog.object.map(
             goog.array.toObject(response.participants, app.ui.Post.mapResults),
-            function(e) { return new app.model.Author(e.id, e.username, e.avatar) }
+            function(e) { return new app.models.Author(e.id, e.username, e.avatar) }
         );
 
+        this.getModel().setParticipants(participants);
+
+        //TODO: highlights
+
         //get all the replies to later link with annotation models
-        this.metadata_.annotations = goog.object.map(
+        var annotations = goog.object.map(
             goog.array.toObject(response.annotations, app.ui.Post.mapResults),
-            this.loadAnnotation,
+            goog.bind(this.getModel().addAnnotation, this.getModel()),
             this
         );
 
+        //TODO: replies
+/*
         //get all the replies to later link with annotation models
         this.metadata_.replies = goog.object.map(
             goog.array.toObject(response.replies, app.ui.Post.mapResults),
             this.loadReply,
             this
-        );
+        );*/
 
         //TODO: we need to load the current user data somewhere else
         var appInstance = kinyelo.App.getInstance();
@@ -206,17 +213,17 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
 
 
         //set the author of the post from the list of contributors
-        if(goog.object.containsKey(this.metadata_.participants, response.author.id)) {
-            this.getModel().setAuthor(goog.object.get(this.metadata_.participants, response.author.id));
+        if(goog.object.containsKey(participants, response.author.id)) {
+            this.getModel().setAuthor(goog.object.get(participants, response.author.id));
         }
 
-        this.ui_.annotationsContainer = new app.ui.annotate.Container(this.metadata_.annotations);
-
+/*
         this.getHandler().listen(this.ui_.annotationsContainer, app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED,
             goog.bind(this.ui_.markerContainer.handleAnnotationRendered, this.ui_.markerContainer),
             false
         );
-
+*/
+/*
         this.getHandler().listen(this.ui_.markerContainer, goog.ui.Component.EventType.CHECK,
             goog.bind(this.ui_.annotationsContainer.activateAnnotatable, this.ui_.annotationsContainer),
             false
@@ -226,35 +233,20 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
             goog.bind(this.ui_.markerContainer.handleAnnotationsHidden, this.ui_.markerContainer),
             false
         );
+*/
+        this.getModel().update();
 
-        this.ui_.annotationsContainer.render();
-
+        console.log(this.getModel());
 
     }
 
 }
 
-
-/**
- *
- * @param {!object} a
- * @returns {?app.model.Annotation}
- */
-app.ui.Post.prototype.loadAnnotation = function(a) {
-    if(goog.object.containsKey(this.annotatableNodes, a.anchor)) {
-        if(goog.object.containsKey(this.metadata_.participants, a.user_id)) {
-            return new app.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatableNodes, a.anchor), goog.object.get(this.metadata_.participants, a.user_id), a.content, a.highlight);
-        } else {
-            return new app.model.Annotation(this.getModel(), a.id, goog.object.get(this.annotatableNodes, a.anchor), new app.model.Author(), a.content, a.highlight);
-        }
-    }
-    return null;
-}
 
 /**
  *
  * @param {!object} r
- * @returns {?app.model.Reply}
+ * @returns {?app.models.Reply}
  */
 app.ui.Post.prototype.loadReply = function(r) {
     //TODO: do I need to clean up this code by cloning na de-referencing?
@@ -263,24 +255,13 @@ app.ui.Post.prototype.loadReply = function(r) {
         if(goog.object.containsKey(this.metadata_.participants, r.user_id)) {
             var author = goog.object.get(this.metadata_.participants, r.user_id);
         } else {
-            var author = new app.model.Author();
+            var author = new app.models.Author();
         }
-        var reply = new app.model.Reply(annotation, author, r.content);
+        var reply = new app.models.Reply(annotation, author, r.content);
         annotation.addReply(reply);
         return reply;
     }
     return null;
-}
-
-/**
-*
-* @param node {Node}
-* @returns {boolean}
-*/
-app.ui.Post.isAnnotatableNode = function(node) {
-    return goog.editor.node.isBlockTag(node)
-    && goog.editor.node.isEditable(node) &&
-    node.tagName != goog.dom.TagName.SECTION;
 }
 
 /**

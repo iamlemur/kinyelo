@@ -24,7 +24,8 @@ app.ui.annotate.MarkerRenderer.prototype.getCssClass = function() {
 
 /** @inheritDoc */
 app.ui.annotate.MarkerRenderer.prototype.createDom = function(marker) {
-    var el = goog.base(this, 'createDom', marker);
+    var el = goog.base(this, 'createDom', marker)
+    marker.getDomHelper().append(el, marker.getDomHelper().createTextNode('0'));
     marker.setElementInternal(el);
 
     //set supported transition events
@@ -40,6 +41,6 @@ app.ui.annotate.MarkerRenderer.prototype.createDom = function(marker) {
  * @param {app.ui.annotate.Marker} marker
  */
 app.ui.annotate.MarkerRenderer.prototype.updatePosition = function(marker) {
-    var position = goog.style.getPosition(/** @type {HTMLElement} */ marker.getAnnotatable());
+    var position = goog.style.getPosition(/** @type {HTMLElement} */ marker.getAnnotatable().getNode());
     goog.style.setPosition(marker.getContentElement(), null, position.y);
 }
