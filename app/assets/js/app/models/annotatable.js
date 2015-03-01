@@ -99,3 +99,10 @@ app.models.Annotatable.prototype.addAnnotation = function(e) {
 app.models.Annotatable.prototype.getAnnotationsCount = function() {
     return this.annotations_.length;
 }
+
+/**
+ * @returns {Array.<app.models.Annotation>}
+ */
+app.models.Annotatable.prototype.getAnnotations = function() {
+    return this.annotations_;
+}

@@ -52,9 +52,6 @@ app.ui.annotate.Marker.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     this.getRenderer().updatePosition(this);
     //TODO: add listeners
-    this.getHandler().listen(this, [goog.ui.Component.EventType.CHECK, goog.ui.Component.EventType.UNCHECK], function(e) {
-        console.log('marker has been checked/unchecked', e);
-    });
     this.getHandler().listen(this.getAnnotatable().getParent(),
         [app.models.Annotation.EventType.CREATE, app.models.Annotation.EventType.DELETE],
         this.handleAnnotationCreatedDeleted,

@@ -9,19 +9,19 @@ goog.require('kinyelo.ui.Component');
 goog.require('app.ui.annotate.Annotatable');
 
 /**
- *
+ * @param {app.models.Post} post
  * @param {kinyelo.ui.Component} parent
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}
  */
 
-app.ui.annotate.Container = function(parent, opt_domHelper) {
+app.ui.annotate.Container = function(post, parent, opt_domHelper) {
     goog.base(this, opt_domHelper);
 
     this.setParentEventTarget(parent);
 
-    this.setModel(null);;
+    this.setModel(post);
 
 }
 goog.inherits(app.ui.annotate.Container, kinyelo.ui.Component);
@@ -62,6 +62,7 @@ app.ui.annotate.Container.prototype.enterDocument = function(container) {
     if(!goog.isNull(overlay)) {
         this.getHandler().listen(overlay, 'click', this.hideAnnotations);
     }
+
 }
 
 /** @inheritDoc */
@@ -74,6 +75,22 @@ app.ui.annotate.Container.prototype.getContentElement = function() {
     return this.getElement().firstElementChild;
 }
 
+/**
+ *
+ * @param {goog.events.Event} e
+ */
+app.ui.annotate.Container.prototype.handleMarkerClick = function(e) {
+    console.log('annotations container is handling marker click', this, e);
+    /**
+     * @type {app.models.Annotatable}
+     */
+    var annotatable = e.target.getAnnotatable();
+    var child = new app.ui.annotate.Annotatable(annotatable);
+    this.addChild(child, true);
+    this.activeChild = child;
+    this.showAnnotations();
+}
+
 /** @overrides */
 app.ui.annotate.Container.prototype.createDom = function() {
     var dom = this.getDomHelper();
@@ -83,23 +100,9 @@ app.ui.annotate.Container.prototype.createDom = function() {
     dom.appendChild(el, wrapper);
     this.setElementInternal(el);
 
-    goog.object.forEach(this.contentMap_, function(annotations, annotatableId) {
-        this.createChild(annotatableId, annotations);
-    }, this);
 
 }
 
-app.ui.annotate.Container.prototype.createChild = function(annotatableId, annotations) {
-    var control = new app.ui.annotate.Annotatable(annotatableId, annotations);
-    this.addChild(control, false);
-    return control;
-}
-
-
-/**
- * @type {app.ui.annotate.Annotatable}
- */
-app.ui.annotate.Container.prototype.activeChild = null;
 
 /**
  * will lazily instantiate an annotable in the annotations container

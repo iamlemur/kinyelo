@@ -6,7 +6,7 @@ goog.require('kinyelo.ui.Component');
 
 /**
  *
- * @param {app.models.Annotation=} model
+ * @param {app.models.Annotation} model
  * @param {goog.dom.DomHelper=} opt_domHelper
  * @constructor
  * @extends {kinyelo.ui.Component}
@@ -42,11 +42,11 @@ app.ui.annotate.Annotation.prototype.createDom = function() {
         goog.dom.TagName.DIV,
         'entry',
         [this.getAvatar(), this.getAuthorLink(), this.getContent()]);
-
+/*
     goog.array.forEach(this.getModel().getReplies(), function(reply) {
         var control = '';
     }, this);
-
+*/
     var element = dom.createDom('li', app.ui.annotate.Annotation.CSS_CLASS, this.entryDiv);
 
     this.setElementInternal(element);
@@ -56,7 +56,7 @@ app.ui.annotate.Annotation.prototype.createDom = function() {
 app.ui.annotate.Annotation.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners
-    this.dispatchEvent(app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED);
+    //this.dispatchEvent(app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED);
 }
 
 app.ui.annotate.Annotation.EventType = {

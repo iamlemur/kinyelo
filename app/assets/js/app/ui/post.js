@@ -114,8 +114,15 @@ app.ui.Post.prototype.enterDocument = function() {
 
     this.getModel().update();
 
-    this.ui_.annotationsContainer = new app.ui.annotate.Container(this);
+    this.ui_.annotationsContainer = new app.ui.annotate.Container(this.getModel(), this);
     this.ui_.annotationsContainer.render();
+
+    this.getHandler().listen(
+        this.ui_.markerContainer,
+        goog.ui.Component.EventType.CHECK,
+        goog.bind(this.ui_.annotationsContainer.handleMarkerClick, this.ui_.annotationsContainer),
+        false
+    );
 
 /*
     this.getHandler().listen(this.getModel(), app.models.Annotation.EventType.CREATED,
@@ -191,7 +198,6 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
 
         //TODO: highlights
 
-        //get all the replies to later link with annotation models
         var annotations = goog.object.map(
             goog.array.toObject(response.annotations, app.ui.Post.mapResults),
             goog.bind(this.getModel().addAnnotation, this.getModel()),
@@ -199,6 +205,7 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
         );
 
         //TODO: replies
+        //get all the replies to later link with annotation models
 /*
         //get all the replies to later link with annotation models
         this.metadata_.replies = goog.object.map(
