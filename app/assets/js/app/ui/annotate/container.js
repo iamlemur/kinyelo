@@ -38,12 +38,6 @@ app.ui.annotate.Container.ELEMENT_ID = 'annotations';
  */
 app.ui.annotate.Container.WRAPPER_CLASS = 'annotations-container';
 
-/**
- * @const
- * @type {string}
- */
-app.ui.annotate.Container.OVERLAY_ID = 'active-nav-overlay';
-
 
 /** @inheritDoc */
 app.ui.annotate.Container.prototype.canDecorate = function() {
@@ -57,13 +51,15 @@ app.ui.annotate.Container.prototype.enterDocument = function(container) {
 
     //TODO: listen for esc key?
 
-    var dom = this.getDomHelper();
-    var overlay = dom.getElement(app.ui.annotate.Container.OVERLAY_ID);
-    if(!goog.isNull(overlay)) {
-        this.getHandler().listen(overlay, 'click', this.hideAnnotations);
-    }
+    this.getHandler().listen(
+        this.getModel(),
+        app.models.Annotatable.EventType.ACTIVATE,
+        goog.bind(this.addChild, this),
+        false
+    );
 
 }
+
 
 /** @inheritDoc */
 app.ui.annotate.Container.prototype.getModel = function() {
@@ -75,24 +71,26 @@ app.ui.annotate.Container.prototype.getContentElement = function() {
     return this.getElement().firstElementChild;
 }
 
+
 /**
  *
  * @param {goog.events.Event} e
+ * @override
  */
-app.ui.annotate.Container.prototype.handleMarkerClick = function(e) {
-    console.log('annotations container is handling marker click', this, e);
+app.ui.annotate.Container.prototype.addChild = function(e) {
+
     /**
      * @type {app.models.Annotatable}
      */
-    var annotatable = e.target.getAnnotatable();
-    var child = new app.ui.annotate.Annotatable(annotatable);
-    this.addChild(child, true);
-    this.activeChild = child;
-    this.showAnnotations();
+    var annotatable = e.target;
+    var annotatableUI = new app.ui.annotate.Annotatable(annotatable);
+    goog.base(this, 'addChild', annotatableUI, true);
+
 }
 
 /** @overrides */
 app.ui.annotate.Container.prototype.createDom = function() {
+
     var dom = this.getDomHelper();
     var el = dom.createDom('div');
     el.id = app.ui.annotate.Container.ELEMENT_ID;
@@ -100,66 +98,4 @@ app.ui.annotate.Container.prototype.createDom = function() {
     dom.appendChild(el, wrapper);
     this.setElementInternal(el);
 
-
-}
-
-
-/**
- * will lazily instantiate an annotable in the annotations container
- * @param {goog.events.Event} e
- */
-app.ui.annotate.Container.prototype.activateAnnotatable = function(e) {
-    e.stopPropagation();
-    if(!goog.isNull(this.activeChild)) {
-        this.activeChild.setActive(false);
-    }
-
-    var annotatable = e.target.getAnnotatable();
-    //TODO: handle error better here?
-    if(goog.isNull(annotatable)) return;
-    console.log('activateAnnotatable','annotatable',annotatable);
-
-    var child = this.getChild(annotatable.id);
-    console.log('activateAnnotatable','child',child);
-    if(goog.isNull(child)) {
-        //goog.object.add(this.contentMap_, annotatable.id, []);
-        child = this.createChild(annotatable.id);
-    }
-    this.activeChild = child;
-
-    var position = goog.style.getClientPosition(/** @type {HTMLElement} */ e.target.getAnnotatable());
-    goog.style.setPosition(this.activeChild.getElement(), null, position.y);
-    this.activeChild.setActive(true);
-
-    this.showAnnotations();
-}
-
-/**
- * @type {string}
- */
-app.ui.annotate.Container.TOGGLE_CLASS = 'js-annotations';
-
-/**
- *
- */
-app.ui.annotate.Container.prototype.showAnnotations = function() {
-    var dom = this.getDomHelper();
-    var html = dom.getDocument().documentElement;
-    goog.dom.classes.add(html, app.ui.annotate.Container.TOGGLE_CLASS);
-}
-
-
-app.ui.annotate.Container.EventType = {
-    ANNOTATIONS_HIDDEN: goog.events.getUniqueId('annotations-hidden')
-}
-
-/**
- *
- * @param {goog.events.Event} opt_e
- */
-app.ui.annotate.Container.prototype.hideAnnotations = function(opt_e) {
-    var dom = this.getDomHelper();
-    var html = dom.getDocument().documentElement;
-    goog.dom.classes.remove(html, app.ui.annotate.Container.TOGGLE_CLASS);
-    this.dispatchEvent(app.ui.annotate.Container.EventType.ANNOTATIONS_HIDDEN);
 }

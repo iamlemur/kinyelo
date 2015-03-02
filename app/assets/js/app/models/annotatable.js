@@ -21,12 +21,20 @@ app.models.Annotatable = function(parent, node) {
 
     /**
      *
+     * @type {Object}
+     * @private
+     */
+    this.state_ = goog.object.create();
+    this.state_.active = false;
+
+    /**
+     *
      * @type {Array.<app.models.Annotation>}
      * @private
      */
     this.annotations_ = [];
 
-    this.getHandler().listen(this.getParent(),
+    this.getHandler().listen(this,
         app.models.Annotation.EventType.CREATE,
         this.addAnnotation,
         false
@@ -73,7 +81,9 @@ app.models.Annotatable.prototype.delete = function() {
 
 app.models.Annotatable.EventType = {
     DELETE: goog.events.getUniqueId('delete'),
-    CREATE: goog.events.getUniqueId('create')
+    CREATE: goog.events.getUniqueId('create'),
+    ACTIVATE: goog.events.getUniqueId('activate'),
+    DEACTIVATE: goog.events.getUniqueId('deactivate')
 }
 
 /**
@@ -105,4 +115,23 @@ app.models.Annotatable.prototype.getAnnotationsCount = function() {
  */
 app.models.Annotatable.prototype.getAnnotations = function() {
     return this.annotations_;
+}
+
+
+/**
+ *
+ * @param {boolean} opt_active
+ */
+app.models.Annotatable.prototype.setActive = function(opt_active) {
+    console.log('model changing active state', opt_active);
+    this.state_.active = opt_active ? opt_active : false;
+    if(opt_active) {
+        this.dispatchEvent(app.models.Annotatable.EventType.ACTIVATE);
+    } else {
+        this.dispatchEvent(app.models.Annotatable.EventType.DEACTIVATE);
+    }
+}
+
+app.models.Annotatable.prototype.isActive = function() {
+    return this.state_.active;
 }

@@ -24,25 +24,35 @@ app.ui.annotate.Marker = function(annotatable) {
      * @type {app.models.Annotatable}
      * @private
      */
-    this.annotatable_ = annotatable;
+    this.model_ = annotatable;
 
 
 }
 goog.inherits(app.ui.annotate.Marker, kinyelo.ui.Control);
+
+
+/**
+ *
+ * @param {goog.events.Event} e
+ * @override
+ */
+app.ui.annotate.Marker.prototype.handleMouseUp = function(e) {
+    this.getAnnotatable().setActive(true);
+}
 
 /**
  *
  * @returns {app.models.Annotatable}
  */
 app.ui.annotate.Marker.prototype.getAnnotatable = function() {
-    return this.annotatable_;
+    return this.model_;
 }
 
 /**
  * @return {string} Unique component ID.
  */
 app.ui.annotate.Marker.prototype.getIdInternal = function() {
-    return this.annotatable_.getNode().id;
+    return this.getAnnotatable().getNode().id;
 };
 
 
@@ -52,7 +62,7 @@ app.ui.annotate.Marker.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     this.getRenderer().updatePosition(this);
     //TODO: add listeners
-    this.getHandler().listen(this.getAnnotatable().getParent(),
+    this.getHandler().listen(this.getAnnotatable(),
         [app.models.Annotation.EventType.CREATE, app.models.Annotation.EventType.DELETE],
         this.handleAnnotationCreatedDeleted,
         false
@@ -67,7 +77,7 @@ app.ui.annotate.Marker.ID_FRAGMENT = 'marker-';
 
 
 app.ui.annotate.Marker.prototype.handleAnnotationCreatedDeleted = function(e) {
-    console.log('marker gets new annotation event');
+    console.log('marker gets new annotation event, updating the count for the annotatable');
     var annotation = e.target;
     if(annotation && annotation.getAnnotatable() == this.getAnnotatable()) {
         this.getRenderer().setContent(this.getContentElement(), this.getAnnotatable().getAnnotationsCount().toString());

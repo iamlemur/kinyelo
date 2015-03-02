@@ -112,17 +112,10 @@ app.ui.Post.prototype.enterDocument = function() {
 
     this.ui_.markerContainer.init();
 
-    this.getModel().update();
-
     this.ui_.annotationsContainer = new app.ui.annotate.Container(this.getModel(), this);
     this.ui_.annotationsContainer.render();
 
-    this.getHandler().listen(
-        this.ui_.markerContainer,
-        goog.ui.Component.EventType.CHECK,
-        goog.bind(this.ui_.annotationsContainer.handleMarkerClick, this.ui_.annotationsContainer),
-        false
-    );
+    this.getModel().update();
 
 /*
     this.getHandler().listen(this.getModel(), app.models.Annotation.EventType.CREATED,
