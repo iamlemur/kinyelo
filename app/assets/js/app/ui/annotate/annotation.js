@@ -47,7 +47,7 @@ app.ui.annotate.Annotation.prototype.createDom = function() {
         var control = '';
     }, this);
 */
-    var element = dom.createDom('li', app.ui.annotate.Annotation.CSS_CLASS, this.entryDiv);
+    var element = dom.createDom('li', app.ui.annotate.Annotation.CSS_CLASS, [this.entryDiv, this.getReplyButton()]);
 
     this.setElementInternal(element);
 }
@@ -57,10 +57,22 @@ app.ui.annotate.Annotation.prototype.enterDocument = function() {
     goog.base(this, 'enterDocument');
     //TODO: add listeners
     //this.dispatchEvent(app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED);
+    this.getHandler().listen(
+        this.getElement(),
+        goog.events.EventType.CLICK,
+        function(e) {
+            console.log('annotation clicked', e);
+        },
+        false
+    );
 }
 
 app.ui.annotate.Annotation.EventType = {
     ANNOTATION_RENDERED: goog.events.getUniqueId('annotation-rendered')
+}
+
+app.ui.annotate.Annotation.prototype.handleMouseUp = function(e) {
+    console.log(e);
 }
 
 
@@ -112,4 +124,9 @@ app.ui.annotate.Annotation.prototype.getContent = function() {
     var content = this.getDomHelper().createDom(goog.dom.TagName.P, 'content', this.getModel().getContent());
     return content;
 
+}
+
+app.ui.annotate.Annotation.prototype.getReplyButton = function() {
+    var content = this.getDomHelper().createDom(goog.dom.TagName.BUTTON, 'reply start-reply', this.getDomHelper().createTextNode('reply'));
+    return content;
 }

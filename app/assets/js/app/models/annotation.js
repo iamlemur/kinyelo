@@ -79,7 +79,7 @@ goog.inherits(app.models.Annotation, kinyelo.models.Model);
 
 /**
  *
- * @type {Object}
+ * @enum {string}
  */
 app.models.Annotation.EventType = {
     CREATE: goog.events.getUniqueId('create'),
@@ -131,4 +131,14 @@ app.models.Annotation.prototype.getReplies = function() {
  */
 app.models.Annotation.prototype.getPost = function() {
     return this.post_;
+}
+
+/**
+ *
+ * @enum {string}
+ */
+app.models.Annotation.Type = {
+    COMMENT: "comment",
+    POST: "post",
+    CHARACTER: "character"
 }

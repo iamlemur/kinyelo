@@ -35,7 +35,8 @@
 	}
 }
 
-.annotations-container {
+.annotatable-wrapper {
+	position: relative;
 	font-family: @sansFontFamily;
 	font-size: 13px;
 	line-height: 18px;
@@ -112,13 +113,13 @@
 						border-radius: 35px;
 						color: @grayLight;
 					}
-					&.add-comment:before {
+					&.comment:before {
 						content: "\e03b";
 					}
-					&.suggest-character:before {
+					&.character:before {
 						content: "\e0ca";
 					}
-					&.connect-post:before {
+					&.post:before {
 						content: "\e0bb";
 					}
 				}

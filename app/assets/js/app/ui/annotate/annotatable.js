@@ -44,8 +44,9 @@ app.ui.annotate.Annotatable.prototype.canDecorate = function() {
 app.ui.annotate.Annotatable.prototype.createDom = function() {
     var dom = this.getDomHelper();
     var element = dom.createDom('ul', app.ui.annotate.Annotatable.CSS_CLASS);
+    var wrapper = dom.createDom('div', app.ui.annotate.Annotatable.WRAPPER_CLASS, [element, this.getButtons()]);
     //TODO: add data-id here?
-    this.setElementInternal(element);
+    this.setElementInternal(wrapper);
 
     goog.array.forEach(this.getModel().getAnnotations(), function(annotation) {
         var control = new app.ui.annotate.Annotation(annotation);
@@ -55,10 +56,81 @@ app.ui.annotate.Annotatable.prototype.createDom = function() {
 
 }
 
+app.ui.annotate.Annotatable.prototype.getButtons = function() {
+    var dom = this.getDomHelper();
+    var buttons = dom.createDom(
+        goog.dom.TagName.UL,
+        app.ui.annotate.Annotatable.ACTION_BUTTON_CLASS,
+        [
+            this.getButton(app.models.Annotation.Type.COMMENT),
+            this.getButton(app.models.Annotation.Type.CHARACTER),
+            this.getButton(app.models.Annotation.Type.POST)
+        ]
+    );
+    return buttons;
+}
+
+/**
+ *
+ * @param {!string} type
+ * @returns {}
+ */
+app.ui.annotate.Annotatable.prototype.getButton = function(type) {
+    var dom = this.getDomHelper();
+
+    var label = "";
+    switch(type) {
+        case app.models.Annotation.Type.COMMENT:
+            label = "add a comment";
+            break;
+        case app.models.Annotation.Type.CHARACTER:
+            label = "suggest a character";
+            break;
+        case app.models.Annotation.Type.POST:
+            label = "connect a post";
+            break;
+    }
+
+    var button = dom.createDom(
+        goog.dom.TagName.BUTTON,
+        type,
+        dom.createTextNode(label)
+    );
+
+    var li = dom.createDom(
+        goog.dom.TagName.LI,
+        null,
+        button
+    );
+
+    return li;
+
+
+}
+
+/**
+ *
+ * @returns {Node}
+ * @inheritDoc
+ */
+app.ui.annotate.Annotatable.prototype.getContentElement = function() {
+    return this.getElement().firstChild;
+}
+
 /**
  * @type {string}
  */
 app.ui.annotate.Annotatable.TOGGLE_CLASS = 'js-annotations';
+
+/**
+ * @type {string}
+ */
+app.ui.annotate.Annotatable.ACTION_BUTTON_CLASS = 'actions';
+
+/**
+ * @type {string}
+ */
+app.ui.annotate.Annotatable.WRAPPER_CLASS = 'annotatable-wrapper';
 
 
 /**
