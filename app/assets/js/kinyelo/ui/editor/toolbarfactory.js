@@ -7,7 +7,7 @@ goog.require('goog.ui.Container.Orientation');
 goog.require('goog.ui.Component.State');
 goog.require('goog.style');
 goog.require('kinyelo.ui.editor.ToolbarRenderer');
-goog.require('kinyelo.ui.CustomButtonRenderer');
+goog.require('kinyelo.ui.editor.CustomButtonRenderer');
 goog.require('goog.string.Unicode');
 goog.require('goog.userAgent');
 
@@ -69,7 +69,7 @@ kinyelo.ui.editor.ToolbarFactory.makeToolbar = function(items, elem,
  * @param {string=} opt_classNames CSS class name(s) to apply to the caption
  *     element.
  * @param {goog.ui.ButtonRenderer=} opt_renderer Button renderer; defaults to
- *     {@link kinyelo.ui.CustomButtonRenderer} if unspecified.
+ *     {@link kinyelo.ui.editor.CustomButtonRenderer} if unspecified.
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper, used for DOM
  *     creation; defaults to the current document if unspecified.
  * @return {!goog.ui.Button} A toggle button.
@@ -94,14 +94,14 @@ kinyelo.ui.editor.ToolbarFactory.makeToggleButton = function(id, tooltip, captio
  * @param {string=} opt_classNames CSS class name(s) to apply to the caption
  *     element.
  * @param {goog.ui.ButtonRenderer=} opt_renderer Button renderer; defaults to
- *     {@link kinyelo.ui.CustomButtonRenderer} if unspecified.
+ *     {@link kinyelo.ui.editor.CustomButtonRenderer} if unspecified.
  * @param {goog.dom.DomHelper=} opt_domHelper DOM helper, used for DOM
  *     creation; defaults to the current document if unspecified.
  * @return {!goog.ui.Button} A toolbar button.
  */
 kinyelo.ui.editor.ToolbarFactory.makeButton = function(id, tooltip, caption,
                                                     opt_classNames, opt_renderer, opt_domHelper) {
-    opt_renderer = goog.isDef(opt_renderer) ? opt_renderer : kinyelo.ui.CustomButtonRenderer.getInstance();
+    opt_renderer = goog.isDef(opt_renderer) ? opt_renderer : kinyelo.ui.editor.CustomButtonRenderer.getInstance();
     var button = new goog.ui.ToolbarButton(
         kinyelo.ui.editor.ToolbarFactory.createContent_(caption, opt_classNames,
             opt_domHelper),

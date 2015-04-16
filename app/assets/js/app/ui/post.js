@@ -115,6 +115,13 @@ app.ui.Post.prototype.enterDocument = function() {
     this.ui_.annotationsContainer = new app.ui.annotate.Container(this.getModel(), this);
     this.ui_.annotationsContainer.render();
 
+    //decided to put code that involves the two containers here
+    this.getHandler().listen(this.ui_.markerContainer,
+        app.ui.annotate.Marker.EventType.CLICK,
+        goog.bind(this.ui_.annotationsContainer.addChild, this.ui_.annotationsContainer),
+        false
+    );
+
     this.getModel().update();
 
 /*
@@ -217,23 +224,6 @@ app.ui.Post.prototype.loadMetadata_ = function(e) {
             this.getModel().setAuthor(goog.object.get(participants, response.author.id));
         }
 
-/*
-        this.getHandler().listen(this.ui_.annotationsContainer, app.ui.annotate.Annotation.EventType.ANNOTATION_RENDERED,
-            goog.bind(this.ui_.markerContainer.handleAnnotationRendered, this.ui_.markerContainer),
-            false
-        );
-*/
-/*
-        this.getHandler().listen(this.ui_.markerContainer, goog.ui.Component.EventType.CHECK,
-            goog.bind(this.ui_.annotationsContainer.activateAnnotatable, this.ui_.annotationsContainer),
-            false
-        );
-
-        this.getHandler().listen(this.ui_.annotationsContainer, app.ui.annotate.Container.EventType.ANNOTATIONS_HIDDEN,
-            goog.bind(this.ui_.markerContainer.handleAnnotationsHidden, this.ui_.markerContainer),
-            false
-        );
-*/
         this.getModel().update();
 
         console.log(this.getModel());

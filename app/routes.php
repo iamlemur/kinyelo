@@ -39,6 +39,7 @@ Route::group(array('before' => 'auth'), function() {
 	Route::get('/posts/lists/{filter?}', 'PostController@listing');
 	Route::get('/posts/{id}/metadata', 'PostController@getMetadata');
 	Route::resource('/posts', 'PostController');
+	Route::resource('posts.annotations', 'AnnotationController');
 
 
 	Route::get('/books/lists/{filter?}', 'BookController@listing');

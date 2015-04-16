@@ -55,6 +55,22 @@ app.models.Annotatable.prototype.getNode = function() {
 
 /**
  *
+ * @returns {!Element}
+ */
+app.models.Annotatable.prototype.getElement = function() {
+    return /** @type {Element} */ this.node_;
+}
+
+/**
+ *
+ * @returns {!app.models.Post}
+ */
+app.models.Annotatable.prototype.getPost = function() {
+    return /** @type {app.models.Post} */ this.getParent();
+}
+
+/**
+ *
  * @returns {boolean}
  */
 app.models.Annotatable.prototype.isValid = function() {

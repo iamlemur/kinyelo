@@ -24,16 +24,14 @@ goog.addSingletonGetter(kinyelo.App);
 goog.exportSymbol('kinyelo.App', kinyelo.App);
 
 /**
- * @type {?app.model.Author}
- */
-kinyelo.App.prototype.user_ = null;
-
-/**
  *
  * @param {!object} data
  */
 kinyelo.App.prototype.setUser = function(data) {
     //TODO: eventually make this a child class of author as the user model
+    /**
+     * @type {app.models.Author}
+     */
     this.user_ = new app.models.Author(data.id, data.username);
 }
 
@@ -54,7 +52,7 @@ kinyelo.App.prototype.changePage = function() {
 
 /**
  *
- * @returns {?app.model.Author}
+ * @returns {app.models.Author}
  */
 kinyelo.App.prototype.getUser = function() {
     return this.user_;

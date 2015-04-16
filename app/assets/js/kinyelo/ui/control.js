@@ -1,7 +1,6 @@
 goog.provide('kinyelo.ui.Control');
 
 goog.require('goog.ui.Control');
-goog.require('goog.ui.Component');
 
 /**
  * @inheritDoc
@@ -21,6 +20,7 @@ kinyelo.ui.Control.ID_FRAGMENT;
 
 /**
  * @returns {string}
+ * @protected
  */
 kinyelo.ui.Control.prototype.getIdFragment = function() {
     return goog.isDefAndNotNull(kinyelo.ui.Control.ID_FRAGMENT) ? kinyelo.ui.Control.ID_FRAGMENT : '';

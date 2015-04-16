@@ -30,6 +30,14 @@ app.ui.annotate.Marker = function(annotatable) {
 }
 goog.inherits(app.ui.annotate.Marker, kinyelo.ui.Control);
 
+/**
+ *
+ * @enum {string}
+ */
+app.ui.annotate.Marker.EventType = {
+    CLICK: goog.events.getUniqueId('click')
+}
+
 
 /**
  *
@@ -37,7 +45,7 @@ goog.inherits(app.ui.annotate.Marker, kinyelo.ui.Control);
  * @override
  */
 app.ui.annotate.Marker.prototype.handleMouseUp = function(e) {
-    this.getAnnotatable().setActive(true);
+    this.dispatchEvent(app.ui.annotate.Marker.EventType.CLICK);
 }
 
 /**

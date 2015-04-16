@@ -9,6 +9,7 @@ class Annotation extends Eloquent {
 	protected $table = 'annotations';
 	protected $guarded = array('id', 'user_id', 'post_id', 'state_updated_at', 'updated_at', 'created_at', 'deleted_at');
 	public $timestamps = true;
+	//protected $hidden = array('password');
 	public static $statuses = array('private' => 'PRIVATE', 'public' => 'PUBLIC');
 
 	protected $dates = ['deleted_at'];

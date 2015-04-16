@@ -19,4 +19,12 @@ class BaseController extends Controller {
 
 	}
 
+	protected function getJsonResponse($success, $payload, $message = null) {
+		return Response::json(array(
+			"success" => $success,
+			"payload" => $payload != null ? $payload->toArray() : null,
+			"message" => $message
+		));
+	}
+
 }

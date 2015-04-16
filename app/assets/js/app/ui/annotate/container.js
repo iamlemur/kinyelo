@@ -7,6 +7,8 @@ goog.require('goog.events');
 
 goog.require('kinyelo.ui.Component');
 goog.require('app.ui.annotate.Annotatable');
+goog.require('app.ui.annotate.create.CreationContainer');
+//goog.require('app.ui.annotate.form.Form');
 
 /**
  * @param {app.models.Post} post
@@ -36,6 +38,17 @@ app.ui.annotate.Container.ELEMENT_ID = 'annotations';
  * @const
  * @type {string}
  */
+app.ui.annotate.Container.OVERLAY_ID = 'active-nav-overlay';
+
+/**
+ * @type {string}
+ */
+app.ui.annotate.Container.TOGGLE_CLASS = 'js-annotations';
+
+/**
+ * @const
+ * @type {string}
+ */
 app.ui.annotate.Container.WRAPPER_CLASS = 'annotations-container';
 
 
@@ -46,20 +59,34 @@ app.ui.annotate.Container.prototype.canDecorate = function() {
 
 /** @inheritDoc */
 app.ui.annotate.Container.prototype.enterDocument = function(container) {
+    //the container is in the document as soon as the document loads
     goog.base(this, 'enterDocument');
     //TODO: add listeners
-
     //TODO: listen for esc key?
 
+    var overlay = this.getDomHelper().getElement(app.ui.annotate.Container.OVERLAY_ID);
     this.getHandler().listen(
-        this.getModel(),
-        app.models.Annotatable.EventType.ACTIVATE,
-        goog.bind(this.addChild, this),
+        overlay,
+        goog.events.EventType.CLICK,
+        goog.bind(this.hideContainer, this),
         false
     );
 
 }
 
+
+/**
+ *
+ * @param {goog.events.Event=} opt_e
+ */
+app.ui.annotate.Container.prototype.hideContainer = function(opt_e) {
+
+    var html = this.getDomHelper().getDocument().documentElement;
+    goog.dom.classes.remove(html, app.ui.annotate.Container.TOGGLE_CLASS);
+    console.log('hiding container');
+    this.removeChildren(true);
+
+}
 
 /** @inheritDoc */
 app.ui.annotate.Container.prototype.getModel = function() {
@@ -71,9 +98,18 @@ app.ui.annotate.Container.prototype.getContentElement = function() {
     return this.getElement().firstElementChild;
 }
 
-
 /**
  *
+ * @enum {string}
+ */
+app.ui.annotate.Container.EventType = {
+    HIDE_CONTAINER: goog.events.getUniqueId('hide-container'),
+    SHOW_CONTAINER: goog.events.getUniqueId('show-container')
+}
+
+
+/**
+ * this event proxies adding a child as an event handler
  * @param {goog.events.Event} e
  * @override
  */
@@ -82,9 +118,31 @@ app.ui.annotate.Container.prototype.addChild = function(e) {
     /**
      * @type {app.models.Annotatable}
      */
-    var annotatable = e.target;
+    console.log('addchild container method', e);
+    var annotatable = e.target.getModel();
     var annotatableUI = new app.ui.annotate.Annotatable(annotatable);
     goog.base(this, 'addChild', annotatableUI, true);
+    //TODO: add buttons here
+    var creationContainerUI = new app.ui.annotate.create.CreationContainer(annotatable);
+    goog.base(this, 'addChild', creationContainerUI, true);
+
+    this.showContainer(annotatableUI);
+
+}
+
+/**
+ *
+ * @param {app.ui.annotate.Annotatable} annoatableUI
+ */
+app.ui.annotate.Container.prototype.showContainer = function(annotatableUI) {
+
+    console.log('showcontainer method');
+
+    var dom = this.getDomHelper();
+    var html = dom.getDocument().documentElement;
+    goog.dom.classes.add(html, app.ui.annotate.Container.TOGGLE_CLASS);
+
+    annotatableUI.updatePosition();
 
 }
 

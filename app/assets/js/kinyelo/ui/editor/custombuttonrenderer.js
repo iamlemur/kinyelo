@@ -19,7 +19,7 @@
  * @author attila@google.com (Attila Bodis)
  */
 
-goog.provide('kinyelo.ui.CustomButtonRenderer');
+goog.provide('kinyelo.ui.editor.CustomButtonRenderer');
 
 goog.require('goog.a11y.aria.Role');
 goog.require('goog.dom');
@@ -38,11 +38,11 @@ goog.require('goog.ui.ControlContent');
  * @constructor
  * @extends {goog.ui.ButtonRenderer}
  */
-kinyelo.ui.CustomButtonRenderer = function() {
+kinyelo.ui.editor.CustomButtonRenderer = function() {
     goog.ui.ButtonRenderer.call(this);
 };
-goog.inherits(kinyelo.ui.CustomButtonRenderer, goog.ui.ButtonRenderer);
-goog.addSingletonGetter(kinyelo.ui.CustomButtonRenderer);
+goog.inherits(kinyelo.ui.editor.CustomButtonRenderer, goog.ui.ButtonRenderer);
+goog.addSingletonGetter(kinyelo.ui.editor.CustomButtonRenderer);
 
 
 /**
@@ -50,7 +50,7 @@ goog.addSingletonGetter(kinyelo.ui.CustomButtonRenderer);
  * by this renderer.
  * @type {string}
  */
-kinyelo.ui.CustomButtonRenderer.CSS_CLASS = goog.getCssName('k-rte-button');
+kinyelo.ui.editor.CustomButtonRenderer.CSS_CLASS = goog.getCssName('k-rte-button');
 
 
 /**
@@ -67,7 +67,7 @@ kinyelo.ui.CustomButtonRenderer.CSS_CLASS = goog.getCssName('k-rte-button');
  * @return {Element} Root element for the button.
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.createDom = function(control) {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.createDom = function(control) {
     var button = /** @type {goog.ui.Button} */ (control);
     var classNames = this.getClassNames(button);
     var attributes = {
@@ -88,7 +88,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.createDom = function(control) {
  * @return {goog.a11y.aria.Role|undefined} ARIA role.
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.getAriaRole = function() {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.getAriaRole = function() {
     return goog.a11y.aria.Role.BUTTON;
 };
 
@@ -102,7 +102,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.getAriaRole = function() {
  * @return {Element} The button's content element (if any).
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.getContentElement = function(element) {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.getContentElement = function(element) {
     return element && /** @type {Element} */ (element.firstChild.firstChild);
 };
 
@@ -122,7 +122,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.getContentElement = function(element) 
  * @param {goog.dom.DomHelper} dom DOM helper, used for document interaction.
  * @return {Element} Pseudo-rounded-corner box containing the content.
  */
-kinyelo.ui.CustomButtonRenderer.prototype.createButton = function(content, dom) {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.createButton = function(content, dom) {
     return dom.createDom('button', null, content);
 };
 
@@ -135,7 +135,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.createButton = function(content, dom) 
  * @return {boolean} Whether the renderer can decorate the element.
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.canDecorate = function(element) {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.canDecorate = function(element) {
     return element.tagName == 'LI';
 };
 
@@ -148,7 +148,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.canDecorate = function(element) {
  * @return {boolean} Whether the element has a box structure.
  * @protected
  */
-kinyelo.ui.CustomButtonRenderer.prototype.hasBoxStructure = function(
+kinyelo.ui.editor.CustomButtonRenderer.prototype.hasBoxStructure = function(
     button, element) {
     var outer = button.getDomHelper().getFirstElementChild(element);
     if (outer.tagName == goog.dom.TagName.BUTTON) {
@@ -169,12 +169,12 @@ kinyelo.ui.CustomButtonRenderer.prototype.hasBoxStructure = function(
  * @return {Element} Decorated element.
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.decorate = function(control, element) {
+kinyelo.ui.editor.CustomButtonRenderer.prototype.decorate = function(control, element) {
     var button = /** @type {goog.ui.Button} */ (control);
     // Trim text nodes in the element's child node list; otherwise madness
     // ensues (i.e. on Gecko, buttons will flicker and shift when moused over).
-    kinyelo.ui.CustomButtonRenderer.trimTextNodes_(element, true);
-    kinyelo.ui.CustomButtonRenderer.trimTextNodes_(element, false);
+    kinyelo.ui.editor.CustomButtonRenderer.trimTextNodes_(element, true);
+    kinyelo.ui.editor.CustomButtonRenderer.trimTextNodes_(element, false);
 
     // Create the buttom dom if it has not been created.
     if (!this.hasBoxStructure(button, element)) {
@@ -184,7 +184,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.decorate = function(control, element) 
 
     goog.dom.classes.add(element,
         goog.ui.INLINE_BLOCK_CLASSNAME, this.getCssClass());
-    return kinyelo.ui.CustomButtonRenderer.superClass_.decorate.call(this, button,
+    return kinyelo.ui.editor.CustomButtonRenderer.superClass_.decorate.call(this, button,
         element);
 };
 
@@ -195,8 +195,8 @@ kinyelo.ui.CustomButtonRenderer.prototype.decorate = function(control, element) 
  * @return {string} Renderer-specific CSS class.
  * @override
  */
-kinyelo.ui.CustomButtonRenderer.prototype.getCssClass = function() {
-    return kinyelo.ui.CustomButtonRenderer.CSS_CLASS;
+kinyelo.ui.editor.CustomButtonRenderer.prototype.getCssClass = function() {
+    return kinyelo.ui.editor.CustomButtonRenderer.CSS_CLASS;
 };
 
 
@@ -227,7 +227,7 @@ kinyelo.ui.CustomButtonRenderer.prototype.getCssClass = function() {
  * @param {boolean} fromStart Whether to trim from the start or from the end.
  * @private
  */
-kinyelo.ui.CustomButtonRenderer.trimTextNodes_ = function(element, fromStart) {
+kinyelo.ui.editor.CustomButtonRenderer.trimTextNodes_ = function(element, fromStart) {
     if (element) {
         var node = fromStart ? element.firstChild : element.lastChild, next;
         // Tag soup HTML may result in a DOM where siblings have different parents.

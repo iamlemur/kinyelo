@@ -25,6 +25,30 @@ class AnnotationController extends \BaseController {
 		return Response::json($payload);
 	}
 
+	public function store($postId) {
+		$post = Post::findOrFail($postId);
+		$user = Auth::user();
+
+		//TODO: validate
+		$annotation = new Annotation(array(
+			'annotatable_id' => Input::get('annotatable_id'),
+			'content' => Input::get('content'),
+			'type' => Input::get('type'),
+			'state' => Input::get('state')
+		));
+
+		$annotation->author()->associate($user);
+		$annotation->post()->associate($post);
+
+		if($annotation->push()) {
+			$annotation = Annotation::findOrFail($annotation->id);
+			return $this->getJsonResponse(true, $annotation);
+		}
+
+		return $this->getJsonResponse(false, null, "The annotation could not be created.");
+
+	}
+
 
 
 }

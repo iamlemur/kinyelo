@@ -13,44 +13,51 @@ goog.require('kinyelo.ui.Component');
  */
 app.ui.annotate.Annotation = function(model, opt_domHelper) {
     goog.base(this, opt_domHelper);
+    this.renderer_ = goog.ui.registry.getDefaultRenderer(this.constructor);
 
     this.setModel(model || null);
 
 }
 goog.inherits(app.ui.annotate.Annotation, kinyelo.ui.Component);
+goog.ui.registry.setDefaultRenderer(app.ui.annotate.Annotation, app.ui.annotate.AnnotationRenderer);
 
 /**
  * @const
  * @type {string}
  */
-app.ui.annotate.Annotation.CSS_CLASS = 'annotation';
+//app.ui.annotate.Annotation.CSS_CLASS = 'annotation';
 
 
 /** @inheritDoc */
-app.ui.annotate.Annotation.prototype.canDecorate = function() {
-    return false;
-}
+//app.ui.annotate.Annotation.prototype.canDecorate = function() {
+//    return false;
+//}
 
-/** @inheritDoc */
+
+/** @override */
 app.ui.annotate.Annotation.prototype.createDom = function() {
-    var dom = this.dom_;
-
-    /**
-     * @type {Element}
-     */
-    this.entryDiv = dom.createDom(
-        goog.dom.TagName.DIV,
-        'entry',
-        [this.getAvatar(), this.getAuthorLink(), this.getContent()]);
-/*
-    goog.array.forEach(this.getModel().getReplies(), function(reply) {
-        var control = '';
-    }, this);
-*/
-    var element = dom.createDom('li', app.ui.annotate.Annotation.CSS_CLASS, [this.entryDiv, this.getReplyButton()]);
-
+    var element = this.renderer_.createDom(this);
     this.setElementInternal(element);
 }
+//app.ui.annotate.Annotation.prototype.createDom = function() {
+//    var dom = this.dom_;
+//
+//    /**
+//     * @type {Element}
+//     */
+//    this.entryDiv = dom.createDom(
+//        goog.dom.TagName.DIV,
+//        'entry',
+//        [this.getAvatar(), this.getAuthorLink(), this.getContent()]);
+///*
+//    goog.array.forEach(this.getModel().getReplies(), function(reply) {
+//        var control = '';
+//    }, this);
+//*/
+//    var element = dom.createDom('li', app.ui.annotate.Annotation.CSS_CLASS, [this.entryDiv, this.getReplyButton()]);
+//
+//    this.setElementInternal(element);
+//}
 
 /** @inheritDoc */
 app.ui.annotate.Annotation.prototype.enterDocument = function() {
